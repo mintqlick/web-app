@@ -8,7 +8,7 @@ export default function AuthPage() {
       <div className=" lg:block w-11/12 text-right h-auto  lg:text-base">
         <span className="mr-1 lg:mr-1 text-[12px]">Don't have an account?</span>
         <span className=" ml-0 lg:ml-1 text-primary cursor-pointer font-bold">
-          <Link href={"/auth/sign-up"} className={"text-[12px]"}>Sign Up</Link>
+          <Link href={"/sign-up"} className={"text-[12px]"}>Sign Up</Link>
         </span>
       </div>
       <div className="w-full h-full flex justify-center items-center max-w-md lg:max-w-6xl">
@@ -38,7 +38,7 @@ export default function AuthPage() {
           </div>
           <div className="text-center mt-2">
             <span className="text-accent-foreground font-medium cursor-pointer">
-              <Link href="/auth/recover">forgot password</Link>
+              <Link href="/recover">forgot password</Link>
             </span>
           </div>
         </div>

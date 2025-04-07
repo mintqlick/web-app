@@ -18,7 +18,7 @@ export default function RecoverPassword() {
           <div className="flex my-4 justify-center gap-2  text-[12px] items-center">
             <span>Just remember?</span>
             <Link
-              href="/auth/sign-up"
+              href="/sign-up"
               className="text-primary text-[12px] font-bold"
             >
               Sign Up
