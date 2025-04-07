@@ -1,3 +1,4 @@
+import Footer from '@/components/Footer'
 import FrequentlyAsk from '@/components/FrequentlyAsk'
 import Header from '@/components/Header'
 import HeroSection from '@/components/HeroSection'
@@ -15,6 +16,7 @@ export default function Home() {
       <HowItWork />
       <Testimonials />
       <FrequentlyAsk />
+      <Footer />
     </div>
   )
 }
