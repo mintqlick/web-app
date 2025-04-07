@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* @import "tailwindcss";
+@import "tw-animate-css"; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -36,6 +36,7 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --primary: #1F7BF4;
 }
 
 .dark {
@@ -119,3 +120,5 @@
   }
 }
 
+@import "tailwindcss";
+@import "tw-animate-css";
