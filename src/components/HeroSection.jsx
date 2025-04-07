@@ -41,43 +41,42 @@ const HeroSection = () => {
             </div>
 
             {/* Images and Text Section */}
-            <div className="flex flex-row gap-4 mt-8 items-center">
-  {/* Images Section */}
-  <div className="flex">
-    <Image
-      src="/images/Ellipse14.svg"
-      alt="Hero"
-      width={50}
-      height={50}
-      className="rounded-lg object-contain max-w-full h-auto"
-    />
-    <Image
-      src="/images/Ellipse15.svg"
-      alt="Hero"
-      width={50}
-      height={50}
-      className="-ml-3 rounded-lg object-contain max-w-full h-auto"
-    />
-    <Image
-      src="/images/Ellipse16.svg"
-      alt="Hero"
-      width={50}
-      height={50}
-      className="-ml-3 rounded-lg object-contain max-w-full h-auto"
-    />
-  </div>
-
-  {/* Text Section */}
-  <div className="ml-4">
-  
-    <h2 className="text-3xl text-black"><RiArrowUpSFill />15 Million+</h2>
-    <p className="mt-4 text-2xl text-gray-400">
-      Trusted by millions of satisfied users, our financial services
-      have made a real impact on people's lives.
-    </p>
-  </div>
-</div>
-
+            <div className="flex flex-row gap-2 mt-8 justify-baseline items-center">
+              {/* Images Section */}
+              <div className="flex w-1/2">
+                <Image
+                  src="/images/Ellipse14.svg"
+                  alt="Hero"
+                  width={50}
+                  height={50}
+                  className="rounded-lg object-contain max-w-full h-auto"
+                />
+                <Image
+                  src="/images/Ellipse15.svg"
+                  alt="Hero"
+                  width={50}
+                  height={50}
+                  className="-ml-3 rounded-lg object-contain max-w-full h-auto"
+                />
+                <Image
+                  src="/images/Ellipse16.svg"
+                  alt="Hero"
+                  width={50}
+                  height={50}
+                  className="-ml-3 rounded-lg object-contain max-w-full h-auto"
+                />
+              </div>
+              {/* Text Section */}
+              <div className="w-1/2">
+                <h2 className="text-3xl text-black flex items-center">
+                  <RiArrowUpSFill className="mr-2" /> 15 Million+
+                </h2>
+                <p className="mt-4 text-2xl text-gray-400">
+                  Trusted by millions of satisfied users, our financial services
+                  have made a real impact on people's lives.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
