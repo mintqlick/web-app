@@ -28,10 +28,8 @@ const Testimonials = () => {
               Received my first payment in 7 days
             </h3>
             <p className="mt-4 text-base md:text-lg text-gray-600 max-w-xl">
-              Get merged to pay or receive payments within 24-48 hours,
-              ensuring a smooth and reliable transaction process.
-              Get merged to pay or receive payments within 24-48 hours,
-              ensuring a smooth and reliable transaction process.
+            “I joined with a simple contribution, and in 7 days, the community supported me back. The system works!”
+            – Verified Member, Lagos
             </p>
           </div>
         </div>
