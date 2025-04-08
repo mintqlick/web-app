@@ -61,19 +61,21 @@ export default function SignUpForm() {
               <Input
                 placeholder="Email Address"
                 {...field}
-                className={"bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"}
+                className={
+                  "bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
+                }
               />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       ></FormField>
-      <div className="flex gap-4">
+      <div className="flex gap-4 ">
         <FormField
           control={form.control}
           name="fistname"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className={"w-full"}>
               <FormControl>
                 <Input
                   placeholder="First Name"
@@ -91,7 +93,7 @@ export default function SignUpForm() {
           control={form.control}
           name="lastname"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-full">
               <FormControl>
                 <Input
                   placeholder="Last Name"
@@ -174,7 +176,11 @@ export default function SignUpForm() {
 
                             `}
                         >
-                          {["Weak", "Fair", "Good", "Strong","Strong"][passwordStrength]}
+                          {
+                            ["Weak", "Fair", "Good", "Strong", "Strong"][
+                              passwordStrength
+                            ]
+                          }
                         </span>
                       </div>
                     </div>
