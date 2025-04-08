@@ -9,7 +9,7 @@ export default function AuthPage() {
       <div className=" lg:block w-11/12 text-right h-auto txet-sm lg:text-base">
         <span className="mr-1 lg:mr-1 text-[12px]">Already have an account?</span>
         <span className="ml-0 lg:ml-1 text-primary cursor-pointer font-bold text-[12px]">
-          <Link href={"/auth/sign-in"}>Sign In</Link>
+          <Link href={"/sign-in"}>Sign In</Link>
         </span>
       </div>
       <div className="w-full h-full flex justify-center items-center max-w-md lg:max-w-6xl">
