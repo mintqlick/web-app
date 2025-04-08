@@ -41,37 +41,37 @@ const HeroSection = () => {
             </div>
 
             {/* Images and Text Section */}
-            <div className="flex flex-row gap-2 mt-8 justify-baseline items-center">
+            <div className="flex flex-row gap-2 mt-8 justify-start">
               {/* Images Section */}
-              <div className="flex w-1/2">
+              <div className="flex w-1/3">
                 <Image
                   src="/images/Ellipse14.svg"
                   alt="Hero"
-                  width={50}
-                  height={50}
+                  width={60}
+                  height={60}
                   className="rounded-lg object-contain max-w-full h-auto"
                 />
                 <Image
                   src="/images/Ellipse15.svg"
                   alt="Hero"
-                  width={50}
-                  height={50}
+                  width={60}
+                  height={60}
                   className="-ml-3 rounded-lg object-contain max-w-full h-auto"
                 />
                 <Image
                   src="/images/Ellipse16.svg"
                   alt="Hero"
-                  width={50}
-                  height={50}
+                  width={60}
+                  height={60}
                   className="-ml-3 rounded-lg object-contain max-w-full h-auto"
                 />
               </div>
               {/* Text Section */}
-              <div className="w-1/2">
+              <div className="w-2/3">
                 <h2 className="text-3xl text-black flex items-center">
                   <RiArrowUpSFill className="mr-2" /> 15 Million+
                 </h2>
-                <p className="mt-4 text-2xl text-gray-400">
+                <p className="mt-4 text-[15px] text-gray-400">
                   Trusted by millions of satisfied users, our financial services
                   have made a real impact on people's lives.
                 </p>
