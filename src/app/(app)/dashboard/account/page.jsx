@@ -1,0 +1,281 @@
+"use client";
+import Box from "@/components/Box/Box";
+import Image from "next/image";
+import React from "react";
+import { Copy, Plus } from "lucide-react"; // ensure this is imported
+
+const AccountPage = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      <Box
+        variant="card"
+        className="bg-[#EDF2FC]"
+        style={{
+          width: "100%",
+          padding: "20px",
+          borderRadius: "8px",
+          marginBottom: "20px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div className="flex flex-col md:flex-row items-center justify-between h-full w-full">
+          {/* Left section: User Info */}
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* User Icon */}
+            <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-gray-300 flex items-center justify-center">
+              <span className="text-xl md:text-2xl font-bold text-white">
+                JD
+              </span>
+            </div>
+
+            {/* User Info */}
+            <div className="text-center md:text-left">
+              <h2 className="text-lg font-bold">John Doe</h2>
+              <p className="text-sm text-gray-600">Contribution ID: 4040402</p>
+            </div>
+          </div>
+
+          {/* Right section: Save Changes button */}
+          <div className="mt-4 md:mt-0">
+            <button className="bg-[#1860d9] text-white text-lg rounded-2xl px-6 py-2">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </Box>
+      <Box
+        variant="card"
+        className="bg-[#EDF2FC]"
+        style={{
+          width: "100%",
+          padding: "20px",
+          marginBottom: "20px",
+          borderRadius: "8px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div className="flex flex-col h-full w-full">
+          <h2 className="text-[25px] font-bold mb-4 text-left">
+            Personal Information
+          </h2>
+
+          {/* Form Container */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+            {/* Full Name */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Full Name</label>
+              <input
+                type="text"
+                className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+            </div>
+
+            {/* Nick Name */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Nick Name</label>
+              <input
+                type="text"
+                className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+            </div>
+
+            {/* Gender */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Gender</label>
+              <select
+                name="gender"
+                className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            {/* Country */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Country</label>
+              <select
+                name="country"
+                className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              >
+                <option value="Nigeria">Nigeria</option>
+                <option value="USA">USA</option>
+                <option value="UK">UK</option>
+                {/* Add more countries as needed */}
+              </select>
+            </div>
+
+            {/* Time Zone */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Time Zone</label>
+              <select
+                name="timezone"
+                className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              >
+                <option value="GMT">GMT</option>
+                <option value="CET">CET</option>
+                <option value="EST">EST</option>
+                {/* Add more time zones as needed */}
+              </select>
+            </div>
+
+            {/* Language */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Language</label>
+              <select
+                name="language"
+                className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              >
+                <option value="English">English</option>
+                <option value="Spanish">Spanish</option>
+                <option value="French">French</option>
+                {/* Add more languages as needed */}
+              </select>
+            </div>
+          </div>
+        </div>
+      </Box>
+      <Box
+        variant="card"
+        className="bg-[#EDF2FC]"
+        style={{
+          width: "100%",
+          padding: "20px",
+          borderRadius: "8px",
+          marginBottom: "20px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div className="flex flex-col h-full w-full">
+          <h2 className="text-[25px] font-bold mb-4 text-left">
+            Contact Information
+          </h2>
+
+          {/* Form Container */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+            {/* Full Name */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Email</label>
+              <input
+                type="email"
+                className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+            </div>
+
+            {/* Nick Name */}
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">Phone Number</label>
+              <input
+                type="text"
+                className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm text-gray-600">
+                Telegram Username/Link
+              </label>
+              <input
+                type="text"
+                className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+            </div>
+          </div>
+        </div>
+      </Box>
+
+      <Box
+        variant="card"
+        className="bg-[#EDF2FC]"
+        style={{
+          width: "100%",
+          padding: "20px",
+          marginBottom: "20px",
+          borderRadius: "8px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div className="flex flex-col h-full w-full">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[25px] font-bold text-left">Wallets Details</h2>
+            <button className="bg-[#1860d9] text-white rounded-full p-2 hover:bg-blue-700">
+              <Plus size={20} />
+            </button>
+          </div>
+
+          {/* First Row */}
+          <div className="flex flex-wrap w-full gap-4 mb-4">
+            {/* Crypto Network */}
+            <div className="flex flex-col w-full lg:w-[40%]">
+              <label className="text-sm text-gray-600">Crypto Network</label>
+              <select className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]">
+                <option>Select Crypto Network</option>
+                <option value="TRC-20">TRC-20</option>
+                <option value="TON">TON</option>
+                <option value="APTOS">APTOS</option>
+                <option value="BET 20">BET 20</option>
+              </select>
+            </div>
+
+            {/* Wallet Address */}
+            <div className="flex flex-col w-full lg:w-[58%] relative">
+              <label className="text-sm text-gray-600">Wallet Address</label>
+              <input
+                type="text"
+                value="0x1234567890abcdef..."
+                readOnly
+                className="w-full bg-white border-gray-300 text-gray-500 border  p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText("0x1234567890abcdef...");
+                  alert("Wallet Address copied!");
+                }}
+                className="absolute right-2 top-8 text-[#1860d9]"
+              >
+                <Copy size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Second Row */}
+          <div className="flex flex-wrap w-full gap-4">
+            {/* Exchange */}
+            <div className="flex flex-col w-full lg:w-[40%]">
+              <label className="text-sm text-gray-600">Exchange User ID</label>
+              <select className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]">
+                <option>Select Exchange</option>
+                <option value="Binance">Binance</option>
+                <option value="Bybit">Bybit</option>
+                <option value="KuCoin">KuCoin</option>
+              </select>
+            </div>
+
+            {/* UID */}
+            <div className="flex flex-col w-full lg:w-[58%] relative">
+              <label className="text-sm text-gray-600">Enter UID</label>
+              <input
+                type="text"
+                value="UID-904930"
+                readOnly
+                className="w-full bg-white border-gray-300 border p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText("UID-904930");
+                  alert("UID copied!");
+                }}
+                className="absolute right-2 top-8 text-[#1860d9]"
+              >
+                <Copy size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </Box>
+    </div>
+  );
+};
+
+export default AccountPage;
