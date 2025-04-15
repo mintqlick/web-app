@@ -81,7 +81,7 @@ export default function Sidebar() {
                 href={item.href}
                 key={item.label}
                 className={clsx(
-                  'flex flex-col items-center justify-center font-bold text-xl transition',
+                  'flex flex-col items-center justify-around  text-sm transition',
                   isActive ? 'text-[#1860d9]' : 'text-gray-500 hover:text-[#1860d9]'
                 )}
               >

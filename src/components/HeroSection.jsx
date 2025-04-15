@@ -19,16 +19,15 @@ const HeroSection = () => {
         {/* Right - Text Section */}
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6">
           <div className="text-center lg:text-left">
-            <h2 className="text-3xl lg:text-6xl font-bold text-gray-800">
-              A Smarter,
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-800">
+            Empower Your ,
               <span className="hidden md:inline">
                 <br />
               </span>{" "}
-              Sustainable Way to Grow your Wealth.
+             Finances with Peer-to-Peer Contribution Cycles
             </h2>
             <p className="mt-4 text-lg text-gray-400">
-              Designed for longevity, our system offers predictable returns and
-              a strong foundation of financial success.
+            Experience the benefits of a community-driven support network built on trust, sustainability, and transparency.
             </p>
 
             <div className="flex flex-row gap-4 mt-8">
@@ -72,8 +71,7 @@ const HeroSection = () => {
                   <RiArrowUpSFill className="mr-2" /> 15 Million+
                 </h2>
                 <p className="mt-4 text-[15px] text-gray-400">
-                  Trusted by millions of satisfied users, our financial services
-                  have made a real impact on people's lives.
+                Supported transactions in peer-to-peer contribution cycles from communities around the world.
                 </p>
               </div>
             </div>
