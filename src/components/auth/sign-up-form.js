@@ -85,6 +85,13 @@ export default function SignUpForm() {
 
   return (
     <Form {...form}>
+      {/* Success / Error Message */}
+      {errorMess && (
+        <p className="text-red-500 mt-2 text-sm font-medium">{errorMess}</p>
+      )}
+      {sucessMess && (
+        <p className="text-green-600 mt-2 text-sm font-medium">{sucessMess}</p>
+      )}
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
@@ -185,7 +192,7 @@ export default function SignUpForm() {
                           style={{
                             width: `${(passwordStrength + 1) * 25}%`,
                             maxWidth: "100%",
-                            }}
+                          }}
                         ></div>
                       </div>
 
@@ -233,16 +240,6 @@ export default function SignUpForm() {
         >
           Create an account
         </Button>
-
-        {/* Success / Error Message */}
-        {errorMess && (
-          <p className="text-red-500 mt-2 text-sm font-medium">{errorMess}</p>
-        )}
-        {sucessMess && (
-          <p className="text-green-600 mt-2 text-sm font-medium">
-            {sucessMess}
-          </p>
-        )}
       </form>
     </Form>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import ResetPasswordLogicHandler from "@/components/auth/reset-password-logic";
+import Spinner from "@/components/auth/spinner";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -14,7 +15,7 @@ export default function RecoverPassword() {
             No worries! Just enter your email and we&amp;ll send you a reset
             password link.
           </div>
-          <Suspense fallback={<div>loading...</div>}>
+          <Suspense fallback={<Spinner size={50} />}>
             <ResetPasswordLogicHandler />
           </Suspense>
 
