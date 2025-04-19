@@ -29,7 +29,8 @@ const Testimonials = () => {
             </h3>
             <p className="mt-4 text-base md:text-lg text-gray-600 max-w-xl">
             “I joined with a simple contribution, and in 7 days, the community supported me back. The system works!”
-            – Verified Member, Lagos
+            – Verified Member, Estonia 
+
             </p>
           </div>
         </div>
