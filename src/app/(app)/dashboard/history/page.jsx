@@ -27,36 +27,42 @@ const HistoryPage = () => {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-separate [border-spacing:0]">
+            <table className="w-full text-left border-separate [border-spacing:0] text-xs sm:text-sm">
               <thead>
                 <tr className="border-b-[3px] border-black">
-                  <th className="py-3 px-4 font-semibold">Order ID</th>
-                  <th className="py-3 px-4 font-semibold">Date</th>
-                  <th className="py-3 px-4 font-semibold">Amount</th>
-                  <th className="py-3 px-4 font-semibold">Receiver Name</th>
-                  <th className="py-3 px-4 font-semibold">Status</th>
+                  <th className="py-2 px-2 font-semibold">Order ID</th>
+                  <th className="py-2 px-2 font-semibold">Date</th>
+                  <th className="py-2 px-2 font-semibold">Amount</th>
+                  <th className="py-2 px-2 font-semibold">Receiver Name</th>
+                  <th className="py-2 px-2 font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className=" border-gray-200">
-                  <td className="py-3 px-4">#12345</td>
-                  <td className="py-3 px-4">2025-04-13</td>
-                  <td className="py-3 px-4">$50</td>
-                  <td className="py-3 px-4">John Doe</td>
-                  <td className="py-3 px-4">
-                    <span className="bg-blue-500 text-white w-[200px] px-3 py-1 rounded-md text-sm">
-                      Completed
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-2">#12345</td>
+                  <td className="py-2 px-2">2025-04-13</td>
+                  <td className="py-2 px-2">$50</td>
+                  <td className="py-2 px-2">John Doe</td>
+                  <td className="py-2 px-2">
+                    <span
+                      className="inline-block w-3 h-3 sm:w-auto sm:h-auto sm:px-3 sm:py-1 bg-blue-500 rounded-full sm:rounded-md sm:text-white sm:text-xs text-transparent"
+                      title="Completed"
+                    >
+                      <span className="hidden sm:inline">Completed</span>
                     </span>
                   </td>
                 </tr>
                 <tr className="border-b border-gray-200">
-                  <td className="py-3 px-4">#12346</td>
-                  <td className="py-3 px-4">2025-04-12</td>
-                  <td className="py-3 px-4">$30</td>
-                  <td className="py-3 px-4">Jane Smith</td>
-                  <td className="py-3 px-4">
-                    <span className="bg-black text-white px-3 py-1 w-[200px] rounded-md text-sm underline">
-                      Pending
+                  <td className="py-2 px-2">#12346</td>
+                  <td className="py-2 px-2">2025-04-12</td>
+                  <td className="py-2 px-2">$30</td>
+                  <td className="py-2 px-2">Jane Smith</td>
+                  <td className="py-2 px-2">
+                    <span
+                      className="inline-block w-3 h-3 sm:w-auto sm:h-auto sm:px-3 sm:py-1 bg-black rounded-full sm:rounded-md sm:text-white sm:text-xs text-transparent underline"
+                      title="Pending"
+                    >
+                      <span className="hidden sm:inline">Pending</span>
                     </span>
                   </td>
                 </tr>

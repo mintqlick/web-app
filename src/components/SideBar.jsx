@@ -25,7 +25,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Sidebar for md and up */}
-      <Box className="hidden md:flex w-[220px] lg:w-[230px] h-[calc(100vh-100px)] bg-[#EDF2FC] mt-[90px] ml-4 mb-2 flex-col justify-between">
+      <Box className="hidden md:flex w-[220px] lg:w-[230px] h-[calc(100vh-100px)] bg-[#EDF2FC] mt-[110px] ml-4 mb-2 flex-col justify-between">
         {/* Top nav */}
         <div className="space-y-2">
           {navItems.map((item) => {
