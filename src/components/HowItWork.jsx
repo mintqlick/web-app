@@ -22,10 +22,10 @@ const HowItWork = () => {
             </div>
           </div>
           <h3 className="text-xl md:text-3xl lg:text-5xl text-black">
-            MintQlick offers a 50% return on Investments through a structured peer-to-peer system.
+            MintQlick offers a 45% return on Contribution through a structured peer-to-peer system.
           </h3>
           <p className="mt-4 text-base md:text-lg text-gray-400">
-            Your first payout is received in just 3 days, and every subsequent cycle follows a 7-day payout schedule.
+          Your first payout is processed 7 days after your first commitment
           </p>
         </div>
         

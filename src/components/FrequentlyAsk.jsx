@@ -27,7 +27,7 @@ const FrequentlyAsk = () => {
       value: "item-2",
       question: "How soon do I receive my first support payout?",
       answer:
-        "Your first payout is processed within 3 days. All subsequent payouts follow a 7-day cycle after recommitment.",
+        "Your first payout is processed 7 days after your first commitment",
     },
     {
       value: "item-3",
@@ -45,13 +45,13 @@ const FrequentlyAsk = () => {
       value: "item-5",
       question: "Can I contribute more than once?",
       answer:
-        "Only one active cycle per account is allowed. To run multiple cycles, you’ll need to register separate accounts and activate each with ₦2,500.",
+        "Only one active cycle per account is allowed. To run multiple cycles, you’ll need to register separate accounts and activate each with $2.",
     },
     {
       value: "item-6",
       question: "Why is there a membership fee?",
       answer:
-        "The ₦2,500 activation fee supports system maintenance and keeps the platform focused on serious, intentional participants.",
+        "The $2 activation fee supports system maintenance and keeps the platform focused on serious, intentional participants.",
     },
     {
       value: "item-7",
