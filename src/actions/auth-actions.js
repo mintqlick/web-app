@@ -40,10 +40,10 @@ const supabaseAdmin = createClient(
 export const SignUpAction = async (data, strength) => {
   const result = signup_schema.safeParse(data);
   if (!result.success) {
-    throw result.error.errors[0].message;
+    return { message: result.error.errors[0].message, error: true };
   }
   if (!(strength >= 3)) {
-    throw new Error("password not strong enough");
+    return { message: "password not strong enough", error: true };
   }
   const { email, password, firstname, lastname } = data;
 
@@ -80,7 +80,7 @@ export const SignUpAction = async (data, strength) => {
 export const signInAction = async (email, password) => {
   const result = signInschema.safeParse({ email, password });
   if (!result.success) {
-    throw result.error.errors[0].message;
+    return { message: result.error.errors[0].message, error: true };
   }
 
   const supabase = await serverCreateClient(); // Pass `req` for server-side
@@ -97,7 +97,7 @@ export const signInAction = async (email, password) => {
 export const sendRecoveryPassword = async (email) => {
   const result = recoverPasswordSchema.safeParse({ email });
   if (!result.success) {
-    throw result.error.errors[0].message;
+    return { message: result.error.errors[0].message, error: true };
   }
   try {
     const { data, error } = await supabaseAdmin.auth.admin.listUsers({
@@ -130,7 +130,7 @@ export const sendRecoveryPassword = async (email) => {
 export const UpdateUserPassword = async (data, strength, code) => {
   const result = resetPasswordSchema.safeParse(data);
   if (!result.success) {
-    throw result.error.errors[0].message;
+    return { message: result.error.errors[0].message, error: true };
   }
   if (!(strength >= 3)) {
     return { message: "password not strong enough", error: true };
@@ -153,5 +153,3 @@ export const UpdateUserPassword = async (data, strength, code) => {
     return { message: error.message, error: true };
   }
 };
-
-
