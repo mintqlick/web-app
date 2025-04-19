@@ -10,7 +10,7 @@ export default function AuthPage() {
     const result = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/success",
+        redirectTo: "http://localhost:3000/dashboard",
       },
     });
     if (result.error) {

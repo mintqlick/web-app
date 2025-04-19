@@ -1,26 +1,27 @@
-'use client';
+"use client";
 
-import {
-  LayoutDashboard,
-  History,
-  Users,
-  User,
-  LogOut,
-} from 'lucide-react';
-import Box from './Box/Box';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
+import { LayoutDashboard, History, Users, User, LogOut } from "lucide-react";
+import Box from "./Box/Box";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import clsx from "clsx";
+import { supabase } from "@/utils/supabase/super-base-client";
 
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-  { label: 'History', icon: History, href: '/dashboard/history' },
-  { label: 'Referral', icon: Users, href: '/dashboard/referrer' },
-  { label: 'My Account', icon: User, href: '/dashboard/account' },
+  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+  { label: "History", icon: History, href: "/dashboard/history" },
+  { label: "Referral", icon: Users, href: "/dashboard/referrer" },
+  { label: "My Account", icon: User, href: "/dashboard/account" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/sign-in");
+  };
 
   return (
     <>
@@ -37,10 +38,10 @@ export default function Sidebar() {
                 href={item.href}
                 key={item.label}
                 className={clsx(
-                  'group flex items-center gap-3 px-4 py-2 text-sm lg:text-md font-medium rounded-lg transition relative',
+                  "group flex items-center gap-3 px-4 py-2 text-sm lg:text-md font-medium rounded-lg transition relative",
                   {
-                    'text-[#1860d9]': isActive,
-                    'text-gray-800 hover:text-[#1860d9]': !isActive,
+                    "text-[#1860d9]": isActive,
+                    "text-gray-800 hover:text-[#1860d9]": !isActive,
                   }
                 )}
               >
@@ -50,8 +51,8 @@ export default function Sidebar() {
                 )}
                 <Icon
                   className={clsx(
-                    'w-5 h-5 transition-colors',
-                    isActive ? 'text-[#1860d9]' : 'group-hover:text-[#1860d9]'
+                    "w-5 h-5 transition-colors",
+                    isActive ? "text-[#1860d9]" : "group-hover:text-[#1860d9]"
                   )}
                 />
                 <span>{item.label}</span>
@@ -62,7 +63,10 @@ export default function Sidebar() {
 
         {/* Logout */}
         <div className="px-4 pb-4">
-          <button className="flex items-center gap-2 text-red-500 text-sm font-medium hover:bg-red-100 px-3 py-2 w-full rounded-lg transition">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-500 text-sm font-medium hover:bg-red-100 px-3 py-2 w-full rounded-lg transition"
+          >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
@@ -81,8 +85,10 @@ export default function Sidebar() {
                 href={item.href}
                 key={item.label}
                 className={clsx(
-                  'flex flex-col items-center justify-around  text-sm transition',
-                  isActive ? 'text-[#1860d9]' : 'text-gray-500 hover:text-[#1860d9]'
+                  "flex flex-col items-center justify-around  text-sm transition",
+                  isActive
+                    ? "text-[#1860d9]"
+                    : "text-gray-500 hover:text-[#1860d9]"
                 )}
               >
                 <Icon className="w-5 h-5 mb-1" />
@@ -91,7 +97,10 @@ export default function Sidebar() {
             );
           })}
           {/* Logout for small screen */}
-          <Link href="/logout" className="flex flex-col items-center justify-center text-xs text-red-500 hover:text-[#1860d9]">
+          <Link
+            href="/logout"
+            className="flex flex-col items-center justify-center text-xs text-red-500 hover:text-[#1860d9]"
+          >
             <LogOut className="w-5 h-5 mb-1" />
             <span>Logout</span>
           </Link>
