@@ -32,6 +32,11 @@ const resetPasswordSchema = z.object({
     .regex(/[0-9]/, "Password may contain at least one number"),
 });
 
+const NEXT_PUBLIC_APP_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://mintqlick.vercel.app";
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -62,7 +67,7 @@ export const SignUpAction = async (data, strength) => {
       password,
       options: {
         data: { first_name: firstname, last_name: lastname },
-        emailRedirectTo: "http://localhost:3000/success",
+        emailRedirectTo: `${NEXT_PUBLIC_APP_URL}/success`,
       },
     });
 
@@ -118,7 +123,7 @@ export const sendRecoveryPassword = async (email) => {
     const supabase = await serverCreateClient();
     const { data: resetData, error: resetErr } =
       await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/recover",
+        redirectTo: `${NEXT_PUBLIC_APP_URL}/recover`,
       });
     return { message: "success", error: false };
   } catch (error) {
