@@ -1,3 +1,4 @@
+'use client";'
 import AuthComponent from "@/components/auth/sign-in-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
