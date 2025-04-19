@@ -1,14 +1,33 @@
+"use client";
+
 import AuthComponent from "@/components/auth/sign-in-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { supabase } from "@/utils/supabase/super-base-client";
 
 export default function AuthPage() {
+  const googleClicked = async () => {
+    const result = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:3000/success",
+      },
+    });
+    if (result.error) {
+    }
+    window.location.href = result.data.url;
+  };
+
   return (
     <div className="w-full h-full bg-white flex flex-col pt-9 items-center ">
       <div className=" lg:block w-11/12 text-right h-auto  lg:text-base">
-        <span className="mr-1 lg:mr-1 text-[12px]">Don't have an account?</span>
+        <span className="mr-1 lg:mr-1 text-[12px]">
+          Don&apos;t have an account?
+        </span>
         <span className=" ml-0 lg:ml-1 text-primary cursor-pointer font-bold">
-          <Link href={"/sign-up"} className={"text-[12px]"}>Sign Up</Link>
+          <Link href={"/sign-up"} className={"text-[12px]"}>
+            Sign Up
+          </Link>
         </span>
       </div>
       <div className="w-full h-full flex justify-center items-center max-w-md lg:max-w-6xl">
@@ -22,6 +41,7 @@ export default function AuthPage() {
           </div>
           <div className="flex justify-between">
             <Button
+              onClick={googleClicked}
               className={
                 "w-5/12 rounded-3xl bg-white cursor-pointer text-black border-gray-400 border-1 hover:bg-white"
               }

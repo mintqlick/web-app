@@ -10,7 +10,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {" "}
         <div className="w-full h-screen landscape:h-auto lg:landscape:h-screen bg-primary flex ">
           <div className="hidden lg:block w-1/2 xl:w-5/12 h-full text-white pt-9 text-center ">
             <div className="w-full flex justify-center relative">
