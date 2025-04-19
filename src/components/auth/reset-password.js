@@ -51,6 +51,7 @@ export default function ResetPassword({ code }) {
     if (password.trim() === "") {
       setPasswordTouched(false);
       setPasswordStrength(0);
+
       setPasswordFeedback("");
       return;
     }
@@ -88,6 +89,7 @@ export default function ResetPassword({ code }) {
       setErrorMessage("");
       setSuccessMessage("password reset successfull");
       form.reset();
+      setPasswordTouched(false);
       setPasswordStrength(0);
       router.replace("/dashboard");
     } catch (error) {
