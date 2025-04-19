@@ -223,7 +223,7 @@ export default function ResetPassword({ code }) {
                     {showConfirmPass ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                   {confirmPasswordTouched && passwordTouched && (
-                    <span>
+                    <span className="text-[#98AAC8] text-sm">
                       {equal ? "password match" : "password do not match"}
                     </span>
                   )}

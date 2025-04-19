@@ -77,7 +77,7 @@ export default function AuthPage() {
       </div>
       <div className="w-full h-auto mb-3.5 landscape:my-4 lg:landscape:mb-3.5 text-sm flex justify-center items-center max-w-md lg:max-w-6xl">
         <div className="w-11/12 text-center lg:text-left lg:w-5/12 text-gray-400">
-          Protected by reCAPTCHA and subject to the Prism{" "}
+          Protected by reCAPTCHA and subject to the Prism
           <span className="text-primary  inline cursor-pointer">
             Privacy Policy
           </span>
