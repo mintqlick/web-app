@@ -95,22 +95,9 @@ export default function Header() {
           >
             About
           </Link>
-          <Link
-            href="#"
-            className="block text-gray-700 text-base hover:text-blue-600 transition duration-200"
-          >
-            Investments
-          </Link>
-          <Link
-            href="#"
-            className="block text-gray-700 text-base hover:text-blue-600 transition duration-200"
-          >
-            Support
-          </Link>
-          <button
-            onClick={() => router.push("/sign-in")}
-            className="w-full border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200"
-          >
+          <button 
+           onClick={() => router.push("/sign-in")}
+          className="w-full border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200">
             Login
           </button>
           <button

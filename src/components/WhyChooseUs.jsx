@@ -16,7 +16,7 @@ const WhyChooseUs = () => {
             Membership Fee For Sustainability
           </h3>
           <p className="text-base md:text-lg text-gray-600 max-w-xl">
-            A #2,500 activation fee ensures long-term platform stability,
+            A $2 activation fee ensures long-term platform stability,
             keeping the system running efficiently for all users.
           </p>
           <Image

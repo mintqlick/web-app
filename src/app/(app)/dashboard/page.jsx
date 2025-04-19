@@ -14,28 +14,36 @@ export default function MainPage() {
       <div className="flex-1 p-4 overflow-y-auto">
         {/* Top Card */}
         <div className="grid grid-cols-1 gap-4">
-          <div className="bg-[#EDF2FC] p-4 flex justify-between items-center rounded-lg shadow-md">
-            <h3 className="text-sm font-medium">
-              Contribution ID: <span className="font-bold">#1234556</span>
-            </h3>
-            <button
-              onClick={toggleCommitmentBox}
-              className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm cursor-pointer"
-            >
-              <div className="bg-white p-1 rounded-full">
-                <Plus className="w-4 h-4 text-blue-600" />
+          <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              {/* Contribution ID */}
+              <h3 className="text-sm font-medium">
+                Contribution ID: <span className="font-bold">#1234556</span>
+              </h3>
+
+              {/* Buttons (side-by-side on sm+, stacked on mobile) */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  onClick={toggleCommitmentBox}
+                  className="flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
+                >
+                  <div className="bg-white p-1 rounded-full">
+                    <Plus className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span>Add Commitment</span>
+                </button>
+
+                <button
+                  onClick={toggleCommitmentBox}
+                  className="flex items-center justify-center gap-2 bg-white text-black px-3 py-1.5 rounded-md text-sm"
+                >
+                  <div className="bg-gray-600 p-1 rounded-full">
+                    <Plus className="w-4 h-4 text-white" />
+                  </div>
+                  <span>Recommitment</span>
+                </button>
               </div>
-              <span>Add Commitment</span>
-            </button>
-            <button
-              onClick={toggleCommitmentBox}
-              className="flex items-center gap-2 bg-white text-black px-3 py-1.5 rounded-md text-sm cursor-pointer"
-            >
-              <div className="bg-gray-600 p-1  rounded-full">
-                <Plus className="w-4 h-4 text-white" />
-              </div>
-              <span>Recommitment</span>
-            </button>
+            </div>
           </div>
 
           {/* New Commitment Box */}
