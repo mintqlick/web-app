@@ -20,7 +20,7 @@ const HeroSection = () => {
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6">
           <div className="text-center lg:text-left">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-800">
-              Empower Your ,
+              Empower Your
               <span className="hidden md:inline">
                 <br />
               </span>{" "}
