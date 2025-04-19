@@ -16,7 +16,6 @@ export default function RootLayout({ children }) {
               <Image src={LogoImage} alt="" height={120} width={150} />
             </div>
           </div>
-
           {children}
         </div>
       </body>

@@ -10,7 +10,7 @@ import React from 'react'
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#ffffff] overflow-auto">
-      <Header />
+      <Header variant="landing" />
       <HeroSection />
       <WhyChooseUs />
       <HowItWork />

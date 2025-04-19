@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { signUpWithGoogle } from "@/actions/auth-actions";
+
 import SignUpForm from "@/components/auth/sign-up-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,8 +76,8 @@ export default function AuthPage() {
           Protected by reCAPTCHA and subject to the Prism{" "}
           <span className="text-primary  inline cursor-pointer">
             Privacy Policy
-          </span>{" "}
-          and{" "}
+          </span>
+          and
           <span className="text-primary inline cursor-pointer">
             Terms of Service.
           </span>
