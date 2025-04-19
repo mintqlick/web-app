@@ -15,8 +15,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { UpdateUserPassword } from "@/actions/auth-actions";
+import supabase from "@/utils/supabase/super-base-client";
 
-export default function ResetPassword() {
+export default function ResetPassword({ code }) {
   const form = useForm({
     defaultValues: {
       password: "",
@@ -31,6 +33,9 @@ export default function ResetPassword() {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
   const [equal, setEqual] = useState(false);
+  const [errorMess, setErrorMessage] = useState("");
+
+  const [successMess, setSuccessMessage] = useState("");
 
   const changeSeePassword = () => {
     setShowPass((prev) => !prev);
@@ -72,69 +77,93 @@ export default function ResetPassword() {
     setEqual(isEqual);
   };
 
-  const submitForm = (e) => {
-    e.preventDefault();
-    router.replace("/auth/success");
+  const submitForm = async (data) => {
+    try {
+      const result = await UpdateUserPassword(data, passwordStrength, code);
+      if (result.error) {
+        setSuccessMessage("");
+        setErrorMessage(result.message);
+        return;
+      }
+      setErrorMessage("");
+      setSuccessMessage("password reset successfull");
+      form.reset();
+      router.replace("/dashboard");
+    } catch (error) {
+      setSuccessMessage("");
+      if (error.message) {
+        setErrorMessage(error.message);
+      }
+    }
   };
 
   return (
-    <Form {...form} onSubmit={(e) => submitForm(e)}>
-      <FormField
-        control={form.control}
-        name="password"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <div className="relative">
-                <Input
-                  type={showPass ? "text" : "password"}
-                  placeholder="New Password"
-                  {...field}
-                  className={
-                    "bg-none h-14 lg:h-12 mb-5 pr-8 bg-white border-[#98AAC8] border-2"
-                  }
-                  onChange={(e) => handlePasswordChange(e, field.onChange)}
-                />
-                <button
-                  type="button"
-                  onClick={changeSeePassword}
-                  className="absolute top-3 right-3 cursor-pointer"
-                >
-                  {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-                {/* Password strength progress bar */}
-                {passwordTouched && (
-                  <div className="">
-                    <div className="relative">
-                      <div
-                        className="flex items-center justify-between"
-                        style={{
-                          width: `${(passwordStrength + 1) * 25}%`, // Progress bar width based on strength
-                          maxWidth: "100%",
-                        }}
-                      >
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(submitForm)} className="w-full">
+        {errorMess && (
+          <p className="text-red-400 font-bold text-sm my-1">{errorMess}</p>
+        )}
+        {successMess && (
+          <p className="text-green-400 font-bold text-sm my-1">{successMess}</p>
+        )}
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    type={showPass ? "text" : "password"}
+                    placeholder="New Password"
+                    {...field}
+                    required
+                    className={
+                      "bg-none h-14 lg:h-12 mb-5 pr-8 bg-white border-[#98AAC8] border-2"
+                    }
+                    onChange={(e) => handlePasswordChange(e, field.onChange)}
+                  />
+                  <button
+                    type="button"
+                    onClick={changeSeePassword}
+                    className="absolute top-3 right-3 cursor-pointer"
+                  >
+                    {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                  {/* Password strength progress bar */}
+                  {passwordTouched && (
+                    <div className="">
+                      <div className="relative">
                         <div
-                          className={`flex-1 px-1 transition-all duration-300 ease-in-out h-3 rounded-xl ${
-                            passwordStrength === 0
-                              ? "bg-red-500"
-                              : passwordStrength === 1
-                              ? "bg-yellow-500"
-                              : passwordStrength === 2
-                              ? "bg-blue-500 "
-                              : "bg-green-500"
-                          }`}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold inline-block">
-                          {passwordStrength > 2 && (
-                            <p className="text-[12px] mt-1 font-normal text-[#878E99]">
-                              Your password is great. Nice work!
-                            </p>
-                          )}
-                        </span>
-                        <span
-                          className={`text-xs font-semibold inline-block
+                          className="flex items-center justify-between"
+                          style={{
+                            width: `${(passwordStrength + 1) * 25}%`, // Progress bar width based on strength
+                            maxWidth: "100%",
+                          }}
+                        >
+                          <div
+                            className={`flex-1 px-1 transition-all duration-300 ease-in-out h-3 rounded-xl ${
+                              passwordStrength === 0
+                                ? "bg-red-500"
+                                : passwordStrength === 1
+                                ? "bg-yellow-500"
+                                : passwordStrength === 2
+                                ? "bg-blue-500 "
+                                : "bg-green-500"
+                            }`}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold inline-block">
+                            {passwordStrength > 2 && (
+                              <p className="text-[12px] mt-1 font-normal text-[#878E99]">
+                                Your password is great. Nice work!
+                              </p>
+                            )}
+                          </span>
+                          <span
+                            className={`text-xs font-semibold inline-block
                             ${
                               passwordStrength === 0
                                 ? "text-red-500"
@@ -146,68 +175,75 @@ export default function ResetPassword() {
                             }
 
                             `}
-                        >
-                          {
-                            ["Weak", "Fair", "Good", "Strong", "Strong"][
-                              passwordStrength
-                            ]
-                          }
-                        </span>
+                          >
+                            {
+                              ["Weak", "Fair", "Good", "Strong", "Strong"][
+                                passwordStrength
+                              ]
+                            }
+                          </span>
+                        </div>
                       </div>
+                      {/* Password feedback */}
                     </div>
-                    {/* Password feedback */}
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="confirm_password"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <div className="mb-5 relative">
-                <Input
-                  type={showConfirmPass ? "text" : "password"}
-                  placeholder="Confirm New Password"
-                  {...field}
-                  className={
-                    "bg-none h-14 lg:h-12 mb-1 border-[#98AAC8] border-2"
-                  }
-                  onChange={(e) =>
-                    handleConfirmPasswordChange(e, field.onChange)
-                  }
-                />
-                <button
-                  type="button"
-                  onClick={changeSeeConfirmPassword}
-                  className="absolute top-3 right-3 cursor-pointer"
-                >
-                  {showConfirmPass ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-                {confirmPasswordTouched && passwordTouched && (
-                  <span>
-                    {equal ? "password match" : "password do not match"}
-                  </span>
-                )}
-              </div>
-            </FormControl>
+                  )}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirm_password"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="mb-5 relative">
+                  <Input
+                    type={showConfirmPass ? "text" : "password"}
+                    placeholder="Confirm New Password"
+                    required
+                    {...field}
+                    className={
+                      "bg-none h-14 lg:h-12 mb-1 border-[#98AAC8] border-2"
+                    }
+                    onChange={(e) =>
+                      handleConfirmPasswordChange(e, field.onChange)
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={changeSeeConfirmPassword}
+                    className="absolute top-3 right-3 cursor-pointer"
+                  >
+                    {showConfirmPass ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                  {confirmPasswordTouched && passwordTouched && (
+                    <span>
+                      {equal ? "password match" : "password do not match"}
+                    </span>
+                  )}
+                </div>
+              </FormControl>
 
-            <FormMessage />
-          </FormItem>
-        )}
-      ></FormField>
+              <FormMessage />
+            </FormItem>
+          )}
+        ></FormField>
 
-      <Button
-        onClick={(e) => submitForm(e)}
-        className={"rounded-3xl font-bold text-[12px] cursor-pointer h-14 lg:h-12"}
-      >
-        Set new password
-      </Button>
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className={`w-full rounded-3xl mt-3 font-bold text-[12px] cursor-pointer h-14 lg:h-12
+            ${
+              form.formState.isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }
+            `}
+        >
+          Set new password
+        </Button>
+      </form>
     </Form>
   );
 }
