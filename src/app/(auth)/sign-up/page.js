@@ -1,3 +1,4 @@
+'use client'
 import SignUpForm from "@/components/auth/sign-up-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
