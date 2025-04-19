@@ -2,9 +2,9 @@
 
 import ResetPasswordLogicHandler from "@/components/auth/reset-password-logic";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function RecoverPassword() {
-
   return (
     <div className="w-full h-full bg-white flex flex-col pt-9 items-center ">
       <div className="w-full h-full flex justify-center items-center max-w-md lg:max-w-6xl">
@@ -14,7 +14,9 @@ export default function RecoverPassword() {
             No worries! Just enter your email and we&amp;ll send you a reset
             password link.
           </div>
-          <ResetPasswordLogicHandler />
+          <Suspense fallback={<div>loading...</div>}>
+            <ResetPasswordLogicHandler />
+          </Suspense>
 
           <div className="flex my-4 justify-center gap-2  text-[12px] items-center">
             <span>Just remember?</span>
