@@ -1,5 +1,4 @@
-'use client'
-
+"use client";
 
 import SignUpForm from "@/components/auth/sign-up-form";
 import { Button } from "@/components/ui/button";
@@ -11,11 +10,16 @@ export default function AuthPage() {
   const appleClicked = async () => {
     console.log("Ademola");
   };
+  const NEXT_PUBLIC_APP_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://mintqlick.vercel.app";
+
   const googleClicked = async () => {
     const result = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/dashboard",
+        redirectTo: `${NEXT_PUBLIC_APP_URL}/dashboard`,
       },
     });
     if (result.error) {

@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 export default function SuccessComponent() {
   const router = useRouter();
   const clicked = () => {
-    router.replace("/dashboard");
+    router.push("/dashboard");
   };
   return (
     <div className=" w-full my-4">
