@@ -22,7 +22,7 @@ const HowItWork = () => {
             </div>
           </div>
           <h3 className="text-xl md:text-3xl lg:text-5xl text-black">
-            MintQlick offers a 45% return on Contribution through a structured peer-to-peer system.
+          Participants receive up to 45% in redistributed support through our structured peer-to-peer system.
           </h3>
           <p className="mt-4 text-base md:text-lg text-gray-400">
           Your first payout is processed 7 days after your first commitment
