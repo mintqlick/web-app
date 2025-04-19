@@ -20,7 +20,7 @@ const WhyChooseUs = () => {
             keeping the system running efficiently for all users.
           </p>
           <Image
-            src="/images/image2.png"
+            src="/images/edd.png"
             alt="Membership"
             width={550}
             height={500}
@@ -38,7 +38,7 @@ const WhyChooseUs = () => {
             you with any questions or issues.
           </p>
           <Image
-            src="/images/image2.png"
+            src="/images/support.jpg"
             alt="Support"
             width={550}
             height={500}
@@ -56,15 +56,14 @@ const WhyChooseUs = () => {
               Guaranteed Payout
             </h3>
             <p className="mt-4 text-base md:text-lg text-gray-600">
-              Get merged to pay or receive payments within 24–48 hours, ensuring
-              a smooth and reliable transaction process.
+            Get responsive assistance at any time. Our team ensures your contribution journey remains smooth and stress-free.
             </p>
           </div>
 
           {/* Right - Image */}
           <div className="w-full lg:w-1/2 flex justify-center">
             <Image
-              src="/images/image2.png"
+              src="/images/guaranteed_payout.jpg"
               alt="Guaranteed Payout"
               width={550}
               height={500} // Reduced image height

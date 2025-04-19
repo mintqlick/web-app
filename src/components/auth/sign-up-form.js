@@ -84,6 +84,7 @@ export default function SignUpForm() {
 
   return (
     <Form {...form}>
+<<<<<<< HEAD
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
         {errorMess && (
           <p className="text-red-400 font-bold text-sm my-1">{errorMess}</p>
@@ -91,11 +92,32 @@ export default function SignUpForm() {
         {sucessMess && (
           <p className="text-green-400 font-bold text-sm my-1">{sucessMess}</p>
         )}
+=======
+      <FormField
+        control={form.control}
+        name="email"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                placeholder="Email Address"
+                {...field}
+                className={
+                  "bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
+                }
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      ></FormField>
+      <div className="flex gap-4 ">
+>>>>>>> 0c75dab9a04733c531deca91ef733e7f89b1235c
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className={"w-full"}>
               <FormControl>
                 <Input
                   placeholder="Email Address"
@@ -155,7 +177,7 @@ export default function SignUpForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-full">
               <FormControl>
                 <div className="relative">
                   <Input
@@ -219,6 +241,7 @@ export default function SignUpForm() {
                             }
 
                             `}
+<<<<<<< HEAD
                           >
                             {
                               ["Weak", "Fair", "Good", "Strong", "Strong"][
@@ -227,6 +250,15 @@ export default function SignUpForm() {
                             }
                           </span>
                         </div>
+=======
+                        >
+                          {
+                            ["Weak", "Fair", "Good", "Strong", "Strong"][
+                              passwordStrength
+                            ]
+                          }
+                        </span>
+>>>>>>> 0c75dab9a04733c531deca91ef733e7f89b1235c
                       </div>
                       {/* Password feedback */}
                     </div>

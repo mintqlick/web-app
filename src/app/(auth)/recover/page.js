@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 "use client";
 
 import ResetPasswordLogicHandler from "@/components/auth/reset-password-logic";
+=======
+/* eslint-disable react/no-unescaped-entities */
+
+>>>>>>> 0c75dab9a04733c531deca91ef733e7f89b1235c
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
