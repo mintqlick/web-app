@@ -24,6 +24,7 @@ export default function SignUpForm() {
       lastname: "",
     },
   });
+
   const [showPass, setShowPass] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordFeedback, setPasswordFeedback] = useState("");
@@ -61,7 +62,7 @@ export default function SignUpForm() {
           result.message ===
           `duplicate key value violates unique constraint "profiles_pkey"`
         ) {
-          setErrorMessage("email address already exist");
+          setErrorMessage("Email address already exists");
           return;
         } else {
           setErrorMessage(result.message);
@@ -84,95 +85,65 @@ export default function SignUpForm() {
 
   return (
     <Form {...form}>
-<<<<<<< HEAD
-      <FormField
-        control={form.control}
-        name="email"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <Input
-                placeholder="Email Address"
-                {...field}
-                className={
-                  "bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
-                }
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      ></FormField>
-      <div className="flex gap-4 ">
-=======
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-        {errorMess && (
-          <p className="text-red-400 font-bold text-sm my-1">{errorMess}</p>
-        )}
-        {sucessMess && (
-          <p className="text-green-400 font-bold text-sm my-1">{sucessMess}</p>
-        )}
->>>>>>> master
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className={"w-full"}>
+            <FormItem className="w-full">
               <FormControl>
                 <Input
                   placeholder="Email Address"
                   {...field}
                   required
-                  type={"email"}
-                  className={
-                    "bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
-                  }
+                  type="email"
+                  className="bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        ></FormField>
+        />
+
+        {/* Firstname + Lastname */}
         <div className="flex gap-4">
           <FormField
             control={form.control}
             name="firstname"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     placeholder="First Name"
                     {...field}
                     required
-                    className={
-                      "bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
-                    }
+                    className="bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          ></FormField>
+          />
           <FormField
             control={form.control}
             name="lastname"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     placeholder="Last Name"
                     {...field}
                     required
-                    className={
-                      "bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
-                    }
+                    className="bg-none h-14 lg:h-12 mb-5 border-[#98AAC8] border-2"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          ></FormField>
+          />
         </div>
+
+        {/* Password Field with Strength */}
         <FormField
           control={form.control}
           name="password"
@@ -185,9 +156,7 @@ export default function SignUpForm() {
                     placeholder="Password"
                     {...field}
                     required
-                    className={
-                      "bg-none h-14 lg:h-12 mb-5 pr-8 bg-white border-[#98AAC8] border-2"
-                    }
+                    className="bg-none h-14 lg:h-12 mb-5 pr-8 bg-white border-[#98AAC8] border-2"
                     onChange={(e) => handlePasswordChange(e, field.onChange)}
                   />
                   <button
@@ -197,51 +166,46 @@ export default function SignUpForm() {
                   >
                     {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
+
                   {/* Password strength progress bar */}
                   {passwordTouched && (
-                    <div className="">
-                      <div className="relative">
+                    <div>
+                      <div className="relative mb-1">
                         <div
-                          className="flex items-center justify-between"
-                          style={{
-                            width: `${(passwordStrength + 1) * 25}%`, // Progress bar width based on strength
-                            maxWidth: "100%",
-                          }}
-                        >
-                          <div
-                            className={`flex-1 px-1 transition-all duration-300 ease-in-out h-3 rounded-xl ${
-                              passwordStrength === 0
-                                ? "bg-red-500"
-                                : passwordStrength === 1
-                                ? "bg-yellow-500"
-                                : passwordStrength === 2
-                                ? "bg-blue-500 "
-                                : "bg-green-500"
-                            }`}
-                          />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold inline-block">
-                            {passwordStrength > 2 && (
-                              <p className="text-[12px] mt-1 font-normal text-[#878E99]">
-                                Your password is great. Nice work!
-                              </p>
-                            )}
-                          </span>
-                          <span
-                            className={`text-xs font-semibold inline-block
+                          className={`
                             ${
-                              passwordStrength === 0
-                                ? "text-red-500"
-                                : passwordStrength === 1
-                                ? "text-yellow-500"
-                                : passwordStrength === 2
-                                ? "text-blue-500 "
-                                : "text-green-500"
+                              [
+                                "bg-red-500",
+                                "bg-yellow-500",
+                                "bg-blue-500",
+                                "bg-green-500",
+                              ][Math.min(passwordStrength, 3)]
                             }
+                            transition-all duration-300 ease-in-out h-3 rounded-xl flex items-center justify-between`}
+                          style={{
+                            width: `${(passwordStrength + 1) * 25}%`,
+                            maxWidth: "100%",
+                            }}
+                        ></div>
+                      </div>
 
-                            `}
-<<<<<<< HEAD
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs font-semibold">
+                          {passwordStrength > 2 && (
+                            <p className="text-[12px] mt-1 font-normal text-[#878E99]">
+                              Your password is great. Nice work!
+                            </p>
+                          )}
+                        </div>
+                        <span
+                          className={`text-xs font-semibold ${
+                            [
+                              "text-red-500",
+                              "text-yellow-500",
+                              "text-blue-500",
+                              "text-green-500",
+                            ][Math.min(passwordStrength, 3)]
+                          }`}
                         >
                           {
                             ["Weak", "Fair", "Good", "Strong", "Strong"][
@@ -249,18 +213,7 @@ export default function SignUpForm() {
                             ]
                           }
                         </span>
-=======
-                          >
-                            {
-                              ["Weak", "Fair", "Good", "Strong", "Strong"][
-                                passwordStrength
-                              ]
-                            }
-                          </span>
-                        </div>
->>>>>>> master
                       </div>
-                      {/* Password feedback */}
                     </div>
                   )}
                 </div>
@@ -269,17 +222,27 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
+
+        {/* Submit Button */}
         <Button
           type="submit"
           disabled={form.formState.isSubmitting}
-          className={`w-full rounded-3xl mt-3 font-bold text-[12px] cursor-pointer h-14 lg:h-12
-            ${
-              form.formState.isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-            }
-            `}
+          className={`w-full rounded-3xl mt-3 font-bold text-[12px] cursor-pointer h-14 lg:h-12 ${
+            form.formState.isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           Create an account
         </Button>
+
+        {/* Success / Error Message */}
+        {errorMess && (
+          <p className="text-red-500 mt-2 text-sm font-medium">{errorMess}</p>
+        )}
+        {sucessMess && (
+          <p className="text-green-600 mt-2 text-sm font-medium">
+            {sucessMess}
+          </p>
+        )}
       </form>
     </Form>
   );

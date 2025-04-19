@@ -88,6 +88,7 @@ export default function ResetPassword({ code }) {
       setErrorMessage("");
       setSuccessMessage("password reset successfull");
       form.reset();
+      setPasswordStrength(0);
       router.replace("/dashboard");
     } catch (error) {
       setSuccessMessage("");
