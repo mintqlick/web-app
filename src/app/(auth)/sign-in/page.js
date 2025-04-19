@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 "use client";
 
-=======
-/* eslint-disable react/no-unescaped-entities */
-
-'use client';
->>>>>>> 0c75dab9a04733c531deca91ef733e7f89b1235c
 import AuthComponent from "@/components/auth/sign-in-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

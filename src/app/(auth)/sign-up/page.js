@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-"use client";
-
-import { signUpWithGoogle } from "@/actions/auth-actions";
-=======
-/* eslint-disable react/no-unescaped-entities */
-
 'use client'
->>>>>>> 0c75dab9a04733c531deca91ef733e7f89b1235c
+
+
 import SignUpForm from "@/components/auth/sign-up-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
