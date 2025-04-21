@@ -15,7 +15,7 @@ import { Button } from "../ui/button";
 import zxcvbn from "zxcvbn";
 import { SignUpAction } from "@/actions/auth-actions";
 
-export default function SignUpForm() {
+export default function SignUpForm({ checked }) {
   const form = useForm({
     defaultValues: {
       email: "",
@@ -55,7 +55,7 @@ export default function SignUpForm() {
 
   const onSubmit = async (data) => {
     try {
-      const result = await SignUpAction(data, passwordStrength);
+      const result = await SignUpAction(data, passwordStrength, checked);
       if (result.error) {
         setSuccessMessage("");
         if (

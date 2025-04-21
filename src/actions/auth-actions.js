@@ -42,13 +42,16 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export const SignUpAction = async (data, strength) => {
+export const SignUpAction = async (data, strength, checked) => {
   const result = signup_schema.safeParse(data);
   if (!result.success) {
     return { message: result.error.errors[0].message, error: true };
   }
   if (!(strength >= 3)) {
     return { message: "password not strong enough", error: true };
+  }
+  if (!checked) {
+    return { message: "Agree to terms and policy to continue", error: true };
   }
   const { email, password, firstname, lastname } = data;
 

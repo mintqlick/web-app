@@ -71,11 +71,11 @@ export default function AuthPage() {
       <div className="w-full h-auto mb-3.5 landscape:my-4 lg:landscape:mb-3.5 text-[12px] flex justify-center items-center max-w-md lg:max-w-6xl">
         <div className="w-11/12 text-center lg:text-left lg:w-5/12 text-[#878E99]">
           Protected by reCAPTCHA and subject to the Prism
-          <span className="text-primary  inline cursor-pointer">
+          <span className="text-primary  inline cursor-pointer mx-1.5">
             Privacy Policy
           </span>
           and
-          <span className="text-primary inline cursor-pointer">
+          <span className="ml-1.5 text-primary inline cursor-pointer">
             Terms of Service.
           </span>
         </div>
