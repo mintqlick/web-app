@@ -66,15 +66,18 @@ export const SignUpAction = async (data, strength, checked) => {
 
     const supabase = await serverCreateClient();
     const { data: signupData, error: signupEror } = await supabase.auth.signUp({
-      email,
-      password,
+      email: "adeakanfea@gmail.com",
+      password: "passwordA123",
       options: {
-        data: { first_name: firstname, last_name: lastname },
+        data: {
+          full_name: `${firstname} ${lastname}`,
+        },
         emailRedirectTo: `${NEXT_PUBLIC_APP_URL}/success`,
       },
     });
 
     if (signupEror) {
+      console.log(signupEror);
       return { message: signupEror.message, error: true };
     }
 
