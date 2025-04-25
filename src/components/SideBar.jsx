@@ -5,7 +5,7 @@ import Box from "./Box/Box";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
-import { supabase } from "@/utils/supabase/super-base-client";
+import { createClient } from "@/utils/supabase/client";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
@@ -17,6 +17,7 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = createClient();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

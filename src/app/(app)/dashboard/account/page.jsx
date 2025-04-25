@@ -3,12 +3,17 @@ import Box from "@/components/Box/Box";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Copy, Plus } from "lucide-react"; // ensure this is imported
-import { supabase } from "@/utils/supabase/super-base-client";
+import { createClient } from "@/utils/supabase/client";
 
-const AccountPage = ({ userId }) => {
+
+
+const AccountPage = () => {
+
+  // Initialize Supabase client
   const [formData, setFormData] = useState({
-    email: "",
     name: "",
+    telegram: "",
+    email: "",
     nick_name: "",
     gender: "",
     phone: "",
@@ -16,16 +21,60 @@ const AccountPage = ({ userId }) => {
     address: "",
     exchange: "",
     uid: "",
+    country: "",
+    timezone: "",
+    language: "English", // default language
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [gender, setGender] = useState("");
+  const [userData, setUserData] = useState(null); 
+  const [userId, setUserId] = useState(null); // State to hold user ID
+
+ 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const supabase = createClient();
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Error fetching user:', error.message);
+      } else {
+        setUserId(user?.id);
+        const { data: userData, error: userDataError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user?.id)
+          .single();
+        if (userDataError) {
+          console.error('Error fetching user data:', userDataError.message);
+        } else {
+          const { data: accountData, error: accountError } = await supabase
+            .from('account')
+            .select('*')
+            .eq('user_id', user?.id)
+            .limit(1)
+            .single();
+          if (accountError) {
+            console.error('Error fetching account data:', accountError.message);
+          } else {
+            console.log('Account data:', accountData);
+            setUserData({ ...userData, account: accountData });
+          }
+        }
+        console.log('User data:', userData);
+      }
+    };
+    fetchUserData();
+  }, []);
+  
+
 
   useEffect(() => {
+    console.log("User ID:", userId);
     async function fetchData() {
       try {
+        const supabase = createClient();
         const { data: user, error: userError } = await supabase
           .from("users")
           .select("*")
@@ -42,9 +91,14 @@ const AccountPage = ({ userId }) => {
 
         setFormData({
           name: user?.name || "",
+          telegram: user?.telegram || "",
+          email: user?.email || "",
           nick_name: user?.nick_name || "",
           gender: user?.gender || "",
           phone: user?.phone || "",
+          country: user?.country || "",
+          timezone: user?.timezone || "",
+          language: user?.language || "English",
           network: account?.network || "",
           address: account?.address || "",
           exchange: account?.exchange || "",
@@ -63,8 +117,10 @@ const AccountPage = ({ userId }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setGender(e.target.value);
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -73,25 +129,26 @@ const AccountPage = ({ userId }) => {
     setSuccess("");
 
     // Simple validation
-    if (
-      !formData.email ||
-      !formData.name ||
-      !formData.network ||
-      !formData.address
-    ) {
+    if (!formData.name || !formData.network || !formData.address) {
       setError("Please fill in all required fields.");
       return;
     }
 
     try {
       setLoading(true);
-
+     const supabase = createClient();
       const { error: userError } = await supabase.from("users").upsert({
         id: userId,
         name: formData.name,
+        email: formData.email,
         nick_name: formData.nick_name || null,
         gender: formData.gender || null,
+        country: formData.country || null,
+        timezone: formData.timezone || null,
+        language: formData.language || null,
         phone: formData.phone || null,
+        telegram: formData.telegram || null,
+
       });
 
       const { error: accountError } = await supabase.from("account").upsert({
@@ -113,11 +170,12 @@ const AccountPage = ({ userId }) => {
     }
   };
 
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="w-full">
         <Box
           variant="card"
           className="bg-[#EDF2FC]"
@@ -135,15 +193,21 @@ const AccountPage = ({ userId }) => {
               {/* User Icon */}
               <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-gray-300 flex items-center justify-center">
                 <span className="text-xl md:text-2xl font-bold text-white">
-                  JD
+                  {userData?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase() || "?"}
                 </span>
               </div>
 
               {/* User Info */}
               <div className="text-center md:text-left">
-                <h2 className="text-lg font-bold">John Doe</h2>
+                <h2 className="text-lg font-bold">
+                  {userData?.name || "Loading..."}
+                </h2>
                 <p className="text-sm text-gray-600">
-                  Contribution ID: 4040402
+                  Contribution ID: {userData?.id || "N/A"}
                 </p>
               </div>
             </div>
@@ -208,7 +272,7 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">Gender</label>
                 <select
                   name="gender"
-                  value={gender}
+                  value={formData.gender}
                   onChange={handleChange}
                   className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 >
@@ -223,12 +287,20 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">Country</label>
                 <select
                   name="country"
+                  value={formData.country}
+                  onChange={handleChange}
                   className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 >
+                  <option value="">Select Country</option>
                   <option value="Nigeria">Nigeria</option>
-                  <option value="USA">USA</option>
-                  <option value="UK">UK</option>
-                  {/* Add more countries as needed */}
+                  <option value="Ghana">Ghana</option>
+                  <option value="Kenya">Kenya</option>
+                  <option value="Uganda">Uganda</option>
+                  <option value="Tanzania">Tanzania</option>
+                  <option value="Rwanda">Rwanda</option>
+                  <option value="Cameroon">Cameroon</option>
+                  <option value="South Africa">South Africa</option>
+                  <option value="Estonia">Estonia</option>
                 </select>
               </div>
 
@@ -237,12 +309,15 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">Time Zone</label>
                 <select
                   name="timezone"
+                  value={formData.timezone}
+                  onChange={handleChange}
                   className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 >
+                  <option value="">Select Time Zone</option>
+                  <option value="PST">PST</option>
                   <option value="GMT">GMT</option>
                   <option value="CET">CET</option>
                   <option value="EST">EST</option>
-                  {/* Add more time zones as needed */}
                 </select>
               </div>
 
@@ -251,12 +326,13 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">Language</label>
                 <select
                   name="language"
+                  value={formData.language}
+                  onChange={handleChange}
                   className="bg-white border-gray-300 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 >
                   <option value="English">English</option>
                   <option value="Spanish">Spanish</option>
                   <option value="French">French</option>
-                  {/* Add more languages as needed */}
                 </select>
               </div>
             </div>
@@ -280,29 +356,40 @@ const AccountPage = ({ userId }) => {
 
             {/* Form Container */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              {/* Full Name */}
+              {/* Email */}
               <div className="flex flex-col">
                 <label className="text-sm text-gray-600">Email</label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 />
               </div>
 
-              {/* Nick Name */}
+              {/* Phone Number */}
               <div className="flex flex-col">
                 <label className="text-sm text-gray-600">Phone Number</label>
                 <input
                   type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 />
               </div>
+
+              {/* Telegram Username/Link */}
               <div className="flex flex-col">
                 <label className="text-sm text-gray-600">
                   Telegram Username/Link
                 </label>
                 <input
                   type="text"
+                  name="telegram"
+                  value={formData.telegram}
+                  onChange={handleChange}
                   className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 />
               </div>
@@ -336,12 +423,17 @@ const AccountPage = ({ userId }) => {
               {/* Crypto Network */}
               <div className="flex flex-col w-full lg:w-[40%]">
                 <label className="text-sm text-gray-600">Crypto Network</label>
-                <select className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]">
-                  <option>Select Crypto Network</option>
+                <select
+                  name="network"
+                  value={formData.network}
+                  onChange={handleChange}
+                  className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+                >
+                  <option value="">Select Crypto Network</option>
                   <option value="TRC-20">TRC-20</option>
                   <option value="TON">TON</option>
                   <option value="APTOS">APTOS</option>
-                  <option value="BET 20">BET 20</option>
+                  <option value="BET 20">BET20</option>
                 </select>
               </div>
 
@@ -350,14 +442,15 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">Wallet Address</label>
                 <input
                   type="text"
-                  value="0x1234567890abcdef..."
-                  readOnly
-                  className="w-full bg-white border-gray-300 text-gray-500 border  p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="w-full bg-white border-gray-300 text-gray-500 border p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 />
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText("0x1234567890abcdef...");
+                    navigator.clipboard.writeText(formData.address);
                     alert("Wallet Address copied!");
                   }}
                   className="absolute right-2 top-8 text-[#1860d9]"
@@ -374,8 +467,13 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">
                   Exchange User ID
                 </label>
-                <select className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]">
-                  <option>Select Exchange</option>
+                <select
+                  name="exchange"
+                  value={formData.exchange}
+                  onChange={handleChange}
+                  className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+                >
+                  <option value="">Select Exchange</option>
                   <option value="Binance">Binance</option>
                   <option value="Bybit">Bybit</option>
                   <option value="KuCoin">KuCoin</option>
@@ -387,14 +485,15 @@ const AccountPage = ({ userId }) => {
                 <label className="text-sm text-gray-600">Enter UID</label>
                 <input
                   type="text"
-                  value="UID-904930"
-                  readOnly
+                  name="uid"
+                  value={formData.uid}
+                  onChange={handleChange}
                   className="w-full bg-white border-gray-300 border p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                 />
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText("UID-904930");
+                    navigator.clipboard.writeText(formData.uid);
                     alert("UID copied!");
                   }}
                   className="absolute right-2 top-8 text-[#1860d9]"

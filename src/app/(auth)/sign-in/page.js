@@ -3,7 +3,7 @@
 import AuthComponent from "@/components/auth/sign-in-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { supabase } from "@/utils/supabase/super-base-client";
+import { supabase } from "@/utils/supabase/client";
 
 export default function AuthPage() {
   const NEXT_PUBLIC_APP_URL =
@@ -12,6 +12,7 @@ export default function AuthPage() {
       : "https://mintqlick.vercel.app";
 
   const googleClicked = async () => {
+    const supabase = createClient();
     const result = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {

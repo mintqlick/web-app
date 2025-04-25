@@ -1,7 +1,7 @@
 "use client";
 
 import Spinner from "@/components/auth/spinner";
-import { supabase } from "@/utils/supabase/super-base-client";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -9,6 +9,7 @@ export default function Logout() {
   const router = useRouter();
   useEffect(() => {
     async function logout() {
+      const supabase = createClient();
       await supabase.auth.signOut();
       router.replace("/sign-in");
     }

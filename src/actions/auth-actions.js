@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { serverCreateClient } from "@/utils/supabase/server";
+import { createClientForServer } from "@/utils/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 
 const signup_schema = z.object({
@@ -64,7 +64,7 @@ export const SignUpAction = async (data, strength, checked) => {
       return { message: "email is in use", error: true };
     }
 
-    const supabase = await serverCreateClient();
+    const supabase = await createClientForServer();
     const { data: signupData, error: signupEror } = await supabase.auth.signUp({
       email,
       password,
@@ -94,7 +94,7 @@ export const signInAction = async (email, password) => {
     return { message: result.error.errors[0].message, error: true };
   }
 
-  const supabase = await serverCreateClient(); // Pass `req` for server-side
+  const supabase = await createClientForServer(); // Pass `req` for server-side
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -126,7 +126,7 @@ export const sendRecoveryPassword = async (email) => {
       };
     }
 
-    const supabase = await serverCreateClient();
+    const supabase = await createClientForServer();
     const { data: resetData, error: resetErr } =
       await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${NEXT_PUBLIC_APP_URL}/recover`,
@@ -150,7 +150,7 @@ export const UpdateUserPassword = async (data, strength, code) => {
     return { message: "passwords must match", error: true };
   }
   try {
-    const supabase = await serverCreateClient();
+    const supabase = await createClientForServer();
     // const { data: updateData, error } = await supabase.auth.getSession();
     const { data: updateData, error: updateError } =
       await supabase.auth.updateUser({
