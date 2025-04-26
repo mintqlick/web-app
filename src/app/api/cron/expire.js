@@ -1,7 +1,8 @@
-import supabase from '@/utils/supabase/admin';
+import{createClient} from '@/utils/supabase/client';
 
 export default async function handler(req, res) {
   const now = new Date().toISOString();
+  const supabase = createClient();
 
   await supabase
     .from('merge_givers')

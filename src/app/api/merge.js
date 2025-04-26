@@ -1,7 +1,8 @@
 // /api/merge.js
-import supabase from '@/utils/supabase/admin';
+import{createClient} from '@/utils/supabase/client';
 
 export default async function handler(req, res) {
+  const supabase = createClient();  
   const { data: givers } = await supabase
     .from('merge_givers')
     .select('*')
