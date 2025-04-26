@@ -4,6 +4,12 @@ import { Copy } from "lucide-react";
 import React from "react";
 
 const ReferrerPage = () => {
+
+  const NEXT_PUBLIC_APP_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://mintqlick.vercel.app";
+
   return (
     <div className="flex flex-col items-center justify-center w-full px-4 sm:px-6 md:px-8 lg:px-0 animate-fadeIn">
       <div className="w-full  space-y-5">
@@ -47,6 +53,8 @@ const ReferrerPage = () => {
               <input
                 type="text"
                 placeholder="https://example.com/referral-link"
+                value={`${NEXT_PUBLIC_APP_URL}/sign-up?ref`}
+                disabled
                 className="bg-white w-full border border-gray-300 text-gray-500 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9] transition-all duration-200"
               />
               <button
