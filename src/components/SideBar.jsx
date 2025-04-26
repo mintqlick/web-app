@@ -17,6 +17,7 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = createClient();
 
   const handleLogout = async () => {
     const supabase = createClient();

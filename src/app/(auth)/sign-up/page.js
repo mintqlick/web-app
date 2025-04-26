@@ -20,6 +20,7 @@ export default function AuthPage() {
       : "https://mintqlick.vercel.app";
 
   const googleClicked = async () => {
+    
     const supabase = createClient();
     const result = await supabase.auth.signInWithOAuth({
       provider: "google",

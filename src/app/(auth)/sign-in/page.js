@@ -34,6 +34,7 @@ export default function AuthPage() {
   }, [searchParams, router]);
 
   const googleClicked = async () => {
+    
     const supabase = createClient();
     const result = await supabase.auth.signInWithOAuth({
       provider: "google",
