@@ -44,7 +44,7 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export const SignUpAction = async (data, strength, checked) => {
+export const SignUpAction = async (data, strength, checked, ref) => {
   const result = signup_schema.safeParse(data);
   if (!result.success) {
     return { message: result.error.errors[0].message, error: true };
@@ -67,6 +67,18 @@ export const SignUpAction = async (data, strength, checked) => {
     }
 
     const supabase = await serverCreateClient();
+    let ref_by_id = null;
+    if (ref) {
+      const { data: referralData, error: referralError } = await supabase
+        .from("referrals")
+        .select("user_id")
+        .eq("referral_code", ref)
+        .single();
+      if (referralError || !referralData) {
+        return { message: "Invalid referral code", error: true }; // If no record is found
+      }
+      ref_by_id = referralData.user_id;
+    }
     const { data: signupData, error: signupEror } = await supabase.auth.signUp({
       email,
       password,
@@ -81,6 +93,21 @@ export const SignUpAction = async (data, strength, checked) => {
     if (signupEror) {
       console.log(signupEror);
       return { message: signupEror.message, error: true };
+    }
+
+    const { error: insertReferralError } = await supabase
+      .from("referrals")
+      .insert([
+        {
+          user_id: signupData.user.id, // Referred user (new user)
+          referred_by: ref_by_id, // Referrer user (from the referral code)
+          referral_code: `REF-${signupData.user.id.slice(0, 8)}`, // Unique referral code
+        },
+      ]);
+
+    if (insertReferralError) {
+      console.log(insertReferralError);
+      return { message: insertReferralError.message, error: true };
     }
     return { message: "User created successfully", error: false };
   } catch (error) {
