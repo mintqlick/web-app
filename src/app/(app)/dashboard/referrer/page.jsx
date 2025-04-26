@@ -48,10 +48,7 @@ const ReferrerPage = () => {
         .select("*", { count: "exact", head: true }) // Only get the count, no data
         .eq("referred_by", activeUserId);
 
-      console.log(count);
-
       if (countError) {
-        console.error("Error fetching total referrals:", countError.message);
         return;
       }
 
