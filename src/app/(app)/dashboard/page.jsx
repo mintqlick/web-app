@@ -1,18 +1,56 @@
 "use client";
-import { PrivatePage } from "@/actions/auth-actions";
 import { Calendar, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+   const [userData, setUserData] = useState(null);
+    const [userId, setUserId] = useState(null); // State to hold user ID
+    const [amount, setAmount] = useState('');
+  const profit = amount ? (parseFloat(amount) * 0.45).toFixed(2) : '0.00';
+  const totalReceive = amount ? (parseFloat(amount) + parseFloat(profit)).toFixed(2) : '0.00';
 
-  useEffect(() => {
-    const getMe = async () => {
-      const me = await PrivatePage();
-      console.log(me);
-    };
-    getMe();
-  });
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        const supabase = createClient();
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Error fetching user:", error.message);
+        } else {
+          setUserId(user?.id);
+          const { data: userData, error: userDataError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", user?.id)
+            .single();
+          if (userDataError) {
+            console.error("Error fetching user data:", userDataError.message);
+          } else {
+            const { data: accountData, error: accountError } = await supabase
+              .from("account")
+              .select("*")
+              .eq("user_id", user?.id)
+              .limit(1)
+              .single();
+            if (accountError) {
+              console.error("Error fetching account data:", accountError.message);
+            } else {
+              console.log("Account data:", accountData);
+              setUserData({ ...userData, account: accountData });
+            }
+          }
+          console.log("User data:", userData);
+        }
+      };
+      fetchUserData();
+    }, []);
 
   const toggleCommitmentBox = () => {
     setShowCommitmentBox(!showCommitmentBox);
