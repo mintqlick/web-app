@@ -11,12 +11,12 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { signInAction } from "@/actions/auth-actions";
 import { useRouter } from "next/navigation";
 
-export default function AuthComponent() {
+export default function AuthComponent({ message }) {
   const form = useForm({
     defaultValues: {
       email: "",
@@ -25,8 +25,15 @@ export default function AuthComponent() {
   });
   const [showPass, setShowPass] = useState(false);
   const [errorMess, setErrorMessage] = useState("");
-  const [successMess, setSuccessMess] = useState("");
+  const [successMess, setSuccessMess] = useState(message ? message : "");
   const router = useRouter();
+
+  useEffect(() => {
+    if (message) {
+      setSuccessMess(message);
+    }
+    return () => setSuccessMess("");
+  }, [message]);
 
   const changeSetPassword = () => {
     setShowPass((prev) => !prev);
@@ -42,9 +49,13 @@ export default function AuthComponent() {
       }
       setSuccessMess(result.message);
       setErrorMessage("");
-      router.replace("/dashboard");
     } catch (error) {
       if (error.message) {
+        if (error.message === "NEXT_REDIRECT") {
+          setErrorMessage("");
+          setSuccessMess("successfully authentocated");
+          return;
+        }
         setSuccessMess("");
         setErrorMessage(error.message);
       }

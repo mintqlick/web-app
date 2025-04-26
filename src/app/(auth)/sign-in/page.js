@@ -3,15 +3,38 @@
 import AuthComponent from "@/components/auth/sign-in-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { supabase } from "@/utils/supabase/super-base-client";
+import { createClient } from "@/utils/supabase/super-base-client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function AuthPage() {
+  const searchParams = useSearchParams();
+  const [message, setMessage] = useState("");
+  const router = useRouter();
   const NEXT_PUBLIC_APP_URL =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://mintqlick.vercel.app";
 
+  useEffect(() => {
+    const msg = searchParams.get("message");
+    if (msg) {
+      setMessage(msg);
+      // Remove the query param from the URL
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.delete("message");
+
+      const basePath = window.location.pathname;
+      const updatedUrl = `${basePath}${
+        newParams.toString() ? `?${newParams}` : ""
+      }`;
+
+      router.replace(updatedUrl, { scroll: false });
+    }
+  }, [searchParams, router]);
+
   const googleClicked = async () => {
+    const supabase = createClient();
     const result = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -38,7 +61,7 @@ export default function AuthPage() {
       <div className="w-full h-full flex justify-center items-center max-w-md lg:max-w-6xl">
         <div className="w-11/12 lg:w-5/12 max-w-2xl flex flex-col">
           <div className="font-bold text-4xl mb-6 lg:my-3">Sign In</div>
-          <AuthComponent />
+          <AuthComponent message={message} />
           <div className="flex items-center my-5">
             <div className="flex-grow h-px bg-gray-300" />
             <span className="px-4 text-[12px] text-[#878E99]">or</span>

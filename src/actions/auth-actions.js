@@ -1,8 +1,10 @@
 "use server";
 
 import { z } from "zod";
-import { serverCreateClient } from "@/utils/supabase/server";
+import { createClient as serverCreateClient } from "@/utils/supabase/server";
 import { createClient } from "@supabase/supabase-js";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const signup_schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -80,8 +82,6 @@ export const SignUpAction = async (data, strength, checked) => {
       console.log(signupEror);
       return { message: signupEror.message, error: true };
     }
-
-    // return user;
     return { message: "User created successfully", error: false };
   } catch (error) {
     return { message: error.message ? error.message : error, error: true };
@@ -102,7 +102,8 @@ export const signInAction = async (email, password) => {
   if (error) {
     return { message: error.message, error: true };
   }
-  return { message: "successfully signed in", error: false };
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard");
 };
 
 export const sendRecoveryPassword = async (email) => {
@@ -143,24 +144,49 @@ export const UpdateUserPassword = async (data, strength, code) => {
   if (!result.success) {
     return { message: result.error.errors[0].message, error: true };
   }
-  if (!(strength >= 3)) {
-    return { message: "password not strong enough", error: true };
+
+  if (strength < 3) {
+    return { message: "Password not strong enough", error: true };
   }
+
   if (data.password !== data.confirm_password) {
-    return { message: "passwords must match", error: true };
+    return { message: "Passwords must match", error: true };
   }
-  try {
-    const supabase = await serverCreateClient();
-    // const { data: updateData, error } = await supabase.auth.getSession();
-    const { data: updateData, error: updateError } =
-      await supabase.auth.updateUser({
-        password: data.password,
-      });
-    if (updateError) {
-      return { message: updateError.message, error: true };
-    }
-    return { message: "password updated", error: false };
-  } catch (error) {
-    return { message: error.message, error: true };
+
+  const supabase = await serverCreateClient();
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData?.user) {
+    return {
+      message: "Authentication failed. Please sign in again.",
+      error: true,
+    };
   }
+
+  const { data: updateData, error: updateError } =
+    await supabase.auth.updateUser({
+      password: data.password,
+    });
+
+  if (updateError) {
+    return { message: updateError.message, error: true };
+  }
+
+  // ✅ Sign the user out to clear session + cookies
+  const { error: signOutError } = await supabase.auth.signOut();
+  if (signOutError) {
+    console.error("Error signing out:", signOutError.message);
+  }
+
+  revalidatePath(`/sign-in`, "layout");
+  redirect(`/sign-in?message="password reset successful"`);
 };
+
+export async function PrivatePage() {
+  const supabase = await serverCreateClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    redirect("/sign-in");
+  }
+  return { user: data.user };
+}

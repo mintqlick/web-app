@@ -1,9 +1,18 @@
 "use client";
+import { PrivatePage } from "@/actions/auth-actions";
 import { Calendar, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
+
+  useEffect(() => {
+    const getMe = async () => {
+      const me = await PrivatePage();
+      console.log(me);
+    };
+    getMe();
+  });
 
   const toggleCommitmentBox = () => {
     setShowCommitmentBox(!showCommitmentBox);
