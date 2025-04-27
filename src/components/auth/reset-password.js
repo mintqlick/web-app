@@ -13,10 +13,10 @@ import { Input } from "../ui/input";
 import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UpdateUserPassword } from "@/actions/auth-actions";
-import supabase from "@/utils/supabase/super-base-client";
+import { createClient } from "@/utils/supabase/super-base-client";
 
 export default function ResetPassword({ code }) {
   const form = useForm({
@@ -36,6 +36,17 @@ export default function ResetPassword({ code }) {
   const [errorMess, setErrorMessage] = useState("");
 
   const [successMess, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const getSessionFromUrl = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        setErrorMessage("Session error: " + error.message);
+      }
+    };
+    getSessionFromUrl();
+  }, []);
 
   const changeSeePassword = () => {
     setShowPass((prev) => !prev);
@@ -91,8 +102,13 @@ export default function ResetPassword({ code }) {
       form.reset();
       setPasswordTouched(false);
       setPasswordStrength(0);
-      router.replace("/dashboard");
+      router.replace("/sign-in");
     } catch (error) {
+      if (error.message === "NEXT_REDIRECT") {
+        setErrorMessage("");
+        setSuccessMessage("password reset successful");
+        return;
+      }
       setSuccessMessage("");
       if (error.message) {
         setErrorMessage(error.message);

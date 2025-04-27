@@ -3,14 +3,17 @@
 import SignUpForm from "@/components/auth/sign-up-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/super-base-client";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function AuthPage() {
   const appleClicked = async () => {
     console.log("Ademola");
   };
+  const param = useSearchParams();
+  const refValue = param.get("ref");
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -48,7 +51,7 @@ export default function AuthPage() {
       <div className="w-full h-full flex justify-center items-center max-w-md lg:max-w-6xl">
         <div className="w-11/12 lg:w-5/12 max-w-2xl flex flex-col">
           <div className="font-bold text-4xl mb-6 lg:my-3">Sign Up</div>
-          <SignUpForm checked={isChecked} />
+          <SignUpForm checked={isChecked} ref={refValue} />
           <div className="flex items-center my-5">
             <div className="flex-grow h-px bg-gray-300" />
             <span className="px-4 text-sm text-gray-500">or</span>
