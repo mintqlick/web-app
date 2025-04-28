@@ -52,14 +52,14 @@ export default function NewCommitmentDetails({
                 <span className="text-blue-600">
                   {newCommitment.amount} USDT
                 </span>{" "}
-                <span className="text-blue-800">
+                <span className="text-black">
                   to Contribution ID: {userId}
                 </span>
-                <p className="text-xs md:text-sm font-bold text-gray-700 mb-2">
+                <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
                   Order ID: #{newCommitment.orderId}
                 </p>
               </p>
-              <p className="text-xs md:text-sm font-bold text-gray-700 mb-2">
+              <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
                 You will be merged with receiver soon, please wait.
               </p>
             </>
