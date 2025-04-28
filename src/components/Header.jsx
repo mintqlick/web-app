@@ -29,7 +29,7 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Image src="/images/logo.png" alt="Logo" width={150} height={60} />
+            <Image src="/images/logo3.png" alt="Logo" width={150} height={60} />
           </div>
 
           {/* Desktop Nav */}

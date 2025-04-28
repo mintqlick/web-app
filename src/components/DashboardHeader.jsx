@@ -10,11 +10,11 @@ export default function DashboardHeader() {
         {/* Logo Section */}
         <div className="flex items-center">
           <Image
-            src="/images/logo.png"
+            src="/images/logo31.png"
             alt="Logo"
             width={90}
             height={45}
-            className="md:w-[100px] md:h-[50px] lg:w-[120px] lg:h-[60px] object-contain"
+            className="md:w-[100px] md:h-[50px] lg:w-[220px] lg:h-[80px] object-contain"
           />
         </div>
 
