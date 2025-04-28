@@ -77,7 +77,7 @@ const Footer = () => {
           {/* Logo on Top Left */}
           <div className="flex justify-start">
             <Image
-              src="/images/logo.png"
+              src="/images/logo31.png"
               alt="logo"
               width={200}
               height={100}
