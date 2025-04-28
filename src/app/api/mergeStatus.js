@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/client";
 export default async function handler(req, res) {
   const { userId } = req.query; // Get userId from the query parameters
   const supabase = createClient();
-
+  console.log("Ademola");
   // Fetch the givers and receivers for the user
   const { data: givers } = await supabase
     .from("merge_givers")
