@@ -10,6 +10,7 @@ import CommitmentBox from "@/components/CommitmentBox";
 import CommitmentNote from "@/components/CommitmentNote";
 import NewCommitmentDetails from "@/components/NewCommitmentDetails";
 
+
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,6 +37,7 @@ export default function MainPage() {
         data: { user },
         error,
       } = await supabase.auth.getUser();
+      
       if (error) {
         console.error("Error fetching user:", error.message);
       } else {
