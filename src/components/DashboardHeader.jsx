@@ -2,8 +2,50 @@
 
 import { Bell } from 'lucide-react'
 import Image from 'next/image'
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from 'react';
 
 export default function DashboardHeader() {
+  const [userData, setUserData] = useState(null);
+    const [userId, setUserId] = useState(null); // State to hold user ID
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        const supabase = createClient();
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Error fetching user:", error.message);
+        } else {
+          setUserId(user?.id);
+          const { data: userData, error: userDataError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", user?.id)
+            .single();
+          if (userDataError) {
+            console.error("Error fetching user data:", userDataError.message);
+          } else {
+            const { data: accountData, error: accountError } = await supabase
+              .from("account")
+              .select("*")
+              .eq("user_id", user?.id)
+              .limit(1)
+              .single();
+            if (accountError) {
+              console.error("Error fetching account data:", accountError.message);
+            } else {
+              console.log("Account data:", accountData);
+              setUserData({ ...userData, account: accountData });
+            }
+          }
+          console.log("User data:", userData);
+        }
+      };
+      fetchUserData();
+    }, []);
   return (
     <header className="fixed top-0 left-0 z-50 w-full flex justify-center pointer-events-none">
       <div className="w-full max-w-[95%] mt-4 mx-4 rounded-2xl bg-[#EDF2FC] shadow-md h-[70px] px-8 md:px-6 flex items-center justify-between pointer-events-auto">
@@ -14,7 +56,7 @@ export default function DashboardHeader() {
             alt="Logo"
             width={90}
             height={45}
-            className="md:w-[100px] md:h-[50px] lg:w-[220px] lg:h-[80px] object-contain"
+            className="md:w-[100px] md:h-[50px] lg:w-[120px] lg:h-[0px] object-contain"
           />
         </div>
 
@@ -32,10 +74,16 @@ export default function DashboardHeader() {
           <div className="flex items-center gap-2">
             {/* Username hidden on small screens */}
             <span className="hidden sm:inline text-xs md:text-sm font-medium text-gray-800">
-              John Doe
+              {userData?.name || "User"}
             </span>
             <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gray-300 flex items-center justify-center">
-              <span className="text-xs md:text-sm font-bold text-white">JD</span>
+              <span className="text-xs md:text-sm font-bold text-white">
+              {userData?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase() || "?"}
+              </span>
             </div>
           </div>
         </div>
