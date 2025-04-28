@@ -14,8 +14,10 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import zxcvbn from "zxcvbn";
 import { SignUpAction } from "@/actions/auth-actions";
+import { useSearchParams } from "next/navigation";
 
-export default function SignUpForm({ checked,ref }) {
+
+export default function SignUpForm({ checked }) {
   const form = useForm({
     defaultValues: {
       email: "",
@@ -24,6 +26,9 @@ export default function SignUpForm({ checked,ref }) {
       lastname: "",
     },
   });
+
+  const param = useSearchParams();
+  const ref = param.get("ref");
 
   const [showPass, setShowPass] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);

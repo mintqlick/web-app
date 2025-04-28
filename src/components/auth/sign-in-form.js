@@ -15,18 +15,39 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { signInAction } from "@/actions/auth-actions";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
-export default function AuthComponent({ message }) {
+export default function AuthComponent() {
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
   });
+  const searchParams = useSearchParams();
+  const [message, setMessage] = useState("");
+
   const [showPass, setShowPass] = useState(false);
   const [errorMess, setErrorMessage] = useState("");
-  const [successMess, setSuccessMess] = useState(message ? message : "");
+  const [successMess, setSuccessMess] = useState();
   const router = useRouter();
+
+  useEffect(() => {
+    const msg = searchParams.get("message");
+    if (msg) {
+      setMessage(msg);
+      // Remove the query param from the URL
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.delete("message");
+
+      const basePath = window.location.pathname;
+      const updatedUrl = `${basePath}${
+        newParams.toString() ? `?${newParams}` : ""
+      }`;
+
+      router.replace(updatedUrl, { scroll: false });
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     if (message) {
