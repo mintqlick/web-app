@@ -7,6 +7,114 @@ import { createClient } from "@/utils/supabase/client";
 
 const AccountPage = () => {
   // Initialize Supabase client
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   telegram: "",
+  //   email: "",
+  //   nick_name: "",
+  //   gender: "",
+  //   phone: "",
+  //   network: "",
+  //   address: "",
+  //   exchange: "",
+  //   uid: "",
+  //   country: "",
+  //   timezone: "",
+  //   language: "English", // default language
+  // });
+
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState("");
+  // const [success, setSuccess] = useState("");
+  // const [userData, setUserData] = useState(null);
+  // const [userId, setUserId] = useState(null); // State to hold user ID
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const supabase = createClient();
+  //     const {
+  //       data: { user },
+  //       error,
+  //     } = await supabase.auth.getUser();
+
+  //     if (error) {
+  //       console.error("Error fetching user:", error.message);
+  //     } else {
+  //       setUserId(user?.id);
+  //       const { data: userData, error: userDataError } = await supabase
+  //         .from("users")
+  //         .select("*")
+  //         .eq("id", user?.id)
+  //         .single();
+  //       if (userDataError) {
+  //         console.error("Error fetching user data:", userDataError.message);
+  //       } else {
+  //         const { data: accountData, error: accountError } = await supabase
+  //           .from("account")
+  //           .select("*")
+  //           .eq("user_id", user?.id)
+  //           .limit(1)
+  //           .single();
+  //         if (accountError) {
+  //           console.error("Error fetching account data:", accountError.message);
+  //         } else {
+  //           console.log("Account data:", accountData);
+  //           setUserData({ ...userData, account: accountData });
+  //         }
+  //       }
+  //       console.log("User data:", userData.name);
+  //     }
+  //   };
+  //   fetchUserData();
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log("User ID:", userId);
+  //   async function fetchData() {
+  //     try {
+  //       const supabase = createClient();
+  //       const { data: user, error: userError } = await supabase
+  //         .from("users")
+  //         .select("*")
+  //         .eq("id", userId)
+  //         .single();
+
+  //       const { data: account, error: accountError } = await supabase
+  //         .from("account")
+  //         .select("*")
+  //         .eq("user_id", userId)
+  //         .maybeSingle();
+
+  //       console.log("Here is working");
+
+  //       if (userError || accountError) throw userError || accountError;
+
+  //       setFormData({
+  //         name: user?.name || "",
+  //         telegram: user?.telegram || "",
+  //         email: user?.email || "",
+  //         nick_name: user?.nick_name || "",
+  //         gender: user?.gender || "",
+  //         phone: user?.phone || "",
+  //         country: user?.country || "",
+  //         timezone: user?.timezone || "",
+  //         language: user?.language || "English",
+  //         network: account?.network || "",
+  //         address: account?.address || "",
+  //         exchange: account?.exchange || "",
+  //         uid: account?.uid || "",
+  //       });
+  //     } catch (err) {
+  //       console.error(err, "error");
+  //       setError("Failed to fetch user data.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+
+  //   if (userId) fetchData();
+  // }, [userId]);
+
   const [formData, setFormData] = useState({
     name: "",
     telegram: "",
@@ -20,58 +128,63 @@ const AccountPage = () => {
     uid: "",
     country: "",
     timezone: "",
-    language: "English", // default language
+    language: "English",
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [userData, setUserData] = useState(null);
-  const [userId, setUserId] = useState(null); // State to hold user ID
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const supabase = createClient();
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-      if (error) {
-        console.error("Error fetching user:", error.message);
-      } else {
-        setUserId(user?.id);
-        const { data: userData, error: userDataError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", user?.id)
-          .single();
-        if (userDataError) {
-          console.error("Error fetching user data:", userDataError.message);
-        } else {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        if (userError) throw new Error(userError.message);
+
+        if (user?.id) {
+          setUserId(user.id);
+
+          const { data: userData, error: userDataError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
+          if (userDataError) throw new Error(userDataError.message);
+
           const { data: accountData, error: accountError } = await supabase
             .from("account")
             .select("*")
-            .eq("user_id", user?.id)
-            .limit(1)
-            .single();
-          if (accountError) {
-            console.error("Error fetching account data:", accountError.message);
-          } else {
-            console.log("Account data:", accountData);
-            setUserData({ ...userData, account: accountData });
-          }
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+          if (accountError) throw new Error(accountError.message);
+
+          setUserData({ ...userData, account: accountData });
+          console.log("Fetched user data:", userData.name);
+          console.log("Fetched account data:", accountData);
         }
-        console.log("User data:", userData);
+      } catch (error) {
+        console.error("Error fetching user or account data:", error.message);
+        setError("Failed to fetch user or account data.");
       }
     };
+
     fetchUserData();
   }, []);
 
   useEffect(() => {
-    console.log("User ID:", userId);
-    async function fetchData() {
+    const fetchFormData = async () => {
+      if (!userId) return;
+
+      const supabase = createClient();
       try {
-        const supabase = createClient();
         const { data: user, error: userError } = await supabase
           .from("users")
           .select("*")
@@ -82,7 +195,7 @@ const AccountPage = () => {
           .from("account")
           .select("*")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
         if (userError || accountError) throw userError || accountError;
 
@@ -101,15 +214,17 @@ const AccountPage = () => {
           exchange: account?.exchange || "",
           uid: account?.uid || "",
         });
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch user data.");
+
+        console.log("Form data populated successfully.");
+      } catch (error) {
+        console.error("Error fetching form data:", error.message);
+        setError("Failed to fetch user form data.");
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    if (userId) fetchData();
+    fetchFormData();
   }, [userId]);
 
   const handleChange = (e) => {
@@ -134,30 +249,32 @@ const AccountPage = () => {
       setLoading(true);
       const supabase = createClient();
 
-      const { error: userError } = await supabase.from("users").upsert({
-        id: userId, // ✅ FIXED HERE
-        name: formData.name,
-        email: formData.email,
-        nick_name: formData.nick_name || null,
-        gender: formData.gender || null,
-        country: formData.country || null,
-        timezone: formData.timezone || null,
-        language: formData.language || null,
-        phone: formData.phone || null,
-        telegram: formData.telegram || null,
-      },
-      { onConflict: ['id'] }
-    );
+      const { error: userError } = await supabase.from("users").upsert(
+        {
+          id: userId, // ✅ FIXED HERE
+          name: formData.name,
+          email: formData.email,
+          nick_name: formData.nick_name || null,
+          gender: formData.gender || null,
+          country: formData.country || null,
+          timezone: formData.timezone || null,
+          language: formData.language || null,
+          phone: formData.phone || null,
+          telegram: formData.telegram || null,
+        },
+        { onConflict: ["id"] }
+      );
 
-      const { error: accountError } = await supabase.from("account").upsert({
-        user_id: userId,
-        network: formData.network,
-        address: formData.address,
-        exchange: formData.exchange || null,
-        uid: formData.uid || null,
-      },
-      { onConflict: ['user_id'] }
-    );
+      const { error: accountError } = await supabase.from("account").upsert(
+        {
+          user_id: userId,
+          network: formData.network,
+          address: formData.address,
+          exchange: formData.exchange || null,
+          uid: formData.uid || null,
+        },
+        { onConflict: ["user_id"] }
+      );
 
       if (userError || accountError) throw userError || accountError;
 
