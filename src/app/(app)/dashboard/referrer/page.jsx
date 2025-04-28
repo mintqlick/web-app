@@ -36,7 +36,6 @@ const ReferrerPage = () => {
         .single();
 
       if (referralError) {
-        console.error("Error fetching referral code:", referralError.message);
         return;
       }
 
