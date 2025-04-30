@@ -24,6 +24,14 @@ export default function MainPage() {
   const [isMerged, setIsMerged] = useState(false);
   const [receiverId, setReceiverId] = useState(null); // State to hold receiver ID
   const [isConfirmed, setIsConfirmed] = useState(false); // State to hold confirmation status
+  const [showReceiverModal, setShowReceiverModal] = useState(false);
+const [screenshotUrl, setScreenshotUrl] = useState("");
+
+const handleShowReceiverModal = (url) => {
+  setScreenshotUrl(url);
+  setShowReceiverModal(true);
+};
+
 
   const profit = amount ? (parseFloat(amount) * 0.45).toFixed(2) : "0.00";
   const totalReceive = amount
