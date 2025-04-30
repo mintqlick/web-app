@@ -1,26 +1,40 @@
-// /api/confirm-giver.js
-import{createClient} from '@/utils/supabase/client';
+// /api/confirm-receiver.js
+import { createClient } from '@/utils/supabase/client';
 
 export default async function handler(req, res) {
   const supabase = createClient();
-  const { giver_id } = req.body;
-  const { data: giver, error } = await supabase
-    .from('merge_givers')
-    .update({ confirmed: true })
-    .eq('id', giver_id)
+  const { receiver_id } = req.body;
+
+  // Step 1: Mark receiver as completed
+  const { data: receiver, error: receiverError } = await supabase
+    .from('merge_receivers')
+    .update({ status: 'completed' })
+    .eq('id', receiver_id)
     .select()
     .single();
 
-  if (error || !giver) return res.status(400).json(error);
+  if (receiverError || !receiver) return res.status(400).json(receiverError);
 
-  const roi = giver.original_amount * 1.4;
+  // Step 2: Reduce giver's amount_remaining in merge_givers
+  const { data: giver, error: giverError } = await supabase
+    .from('merge_givers')
+    .select('id, amount_remaining')
+    .eq('id', receiver.source_giver_id)
+    .single();
 
-  const { error: insertErr } = await supabase.from('merge_receivers').insert({
-    user_id: giver.user_id,
-    amount: roi,
-    amount_remaining: roi,
-    source_giver_id: giver.id
-  });
+  if (giverError || !giver) return res.status(400).json(giverError);
 
-  res.status(insertErr ? 400 : 200).json(insertErr || { success: true });
+  const newAmountRemaining = parseFloat(giver.amount_remaining) - parseFloat(receiver.amount);
+
+  const { error: updateGiverError } = await supabase
+    .from('merge_givers')
+    .update({
+      amount_remaining: newAmountRemaining,
+      status: newAmountRemaining <= 0 ? 'completed' : 'in_progress'
+    })
+    .eq('id', giver.id);
+
+  if (updateGiverError) return res.status(400).json(updateGiverError);
+
+  return res.status(200).json({ success: true });
 }
