@@ -9,7 +9,7 @@ import ReceiverDetailsModal from "@/components/ReceiverDetailsModal";
 import CommitmentBox from "@/components/CommitmentBox";
 import CommitmentNote from "@/components/CommitmentNote";
 import NewCommitmentDetails from "@/components/NewCommitmentDetails";
-
+import { useRouter } from "next/navigation";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -25,13 +25,16 @@ export default function MainPage() {
   const [receiverId, setReceiverId] = useState(null); // State to hold receiver ID
   const [isConfirmed, setIsConfirmed] = useState(false); // State to hold confirmation status
   const [showReceiverModal, setShowReceiverModal] = useState(false);
-const [screenshotUrl, setScreenshotUrl] = useState("");
+  const [screenshotUrl, setScreenshotUrl] = useState("");
+  const [commitmentsArr, setCommitmentArr] = useState([]);
+  const router = useRouter();
+  const [canCommit, setCanCommit] = useState(false);
+  const [canWithdraw, setCanWithdraw] = useState(false);
 
-const handleShowReceiverModal = (url) => {
-  setScreenshotUrl(url);
-  setShowReceiverModal(true);
-};
-
+  const handleShowReceiverModal = (url) => {
+    setScreenshotUrl(url);
+    setShowReceiverModal(true);
+  };
 
   const profit = amount ? (parseFloat(amount) * 0.45).toFixed(2) : "0.00";
   const totalReceive = amount
@@ -45,7 +48,7 @@ const handleShowReceiverModal = (url) => {
         data: { user },
         error,
       } = await supabase.auth.getUser();
-      
+
       if (error) {
         console.error("Error fetching user:", error.message);
       } else {
@@ -122,8 +125,19 @@ const handleShowReceiverModal = (url) => {
 
     setLoading(false);
   };
-  const handleCancelCommitment = async () => {
+  const handleCancelCommitment = async (id) => {
     console.log("Cancel commitment clicked");
+
+    const supabase = createClient();
+
+    const { error: deleteErr } = await supabase
+      .from("merge_givers")
+      .delete()
+      .eq("id", id);
+    console.log(deleteErr, "error");
+    if (deleteErr) return;
+    location.reload();
+
     // Later, you will write the real cancel logic here (like deleting the record from database)
   };
 
@@ -133,6 +147,11 @@ const handleShowReceiverModal = (url) => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const withDraw = async () => {
+    
+  };
+
   useEffect(() => {
     let timer;
     if (countdown > 0) {
@@ -144,6 +163,43 @@ const handleShowReceiverModal = (url) => {
     }
     return () => clearInterval(timer);
   }, [countdown]);
+
+  useEffect(() => {
+    const fetchCommitment = async () => {
+      const supabase = createClient();
+
+      const { data, error } = await supabase
+        .from("merge_givers")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("status", "waiting");
+      console.log(error, "cmt error");
+      if (data) {
+        setCommitmentArr(data);
+        console.log(data, "datatatat");
+        if (data.length < 1) {
+          setCanCommit(true);
+        } else {
+          setCanCommit(false);
+        }
+      }
+    };
+
+    fetchCommitment();
+  }, [userId]);
+
+  useEffect(() => {
+    const check_receiver = async () => {
+      const supabase = createClient();
+      const { data, error: receiverErr } = await supabase
+        .from("merge_receivers")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+      if (data) setCanWithdraw(true);
+    };
+    check_receiver();
+  }, [userId]);
 
   return (
     <div className="flex w-full h-full">
@@ -162,13 +218,25 @@ const handleShowReceiverModal = (url) => {
               {/* Buttons (side-by-side on sm+, stacked on mobile) */}
               <div className="flex flex-col sm:flex-row gap-2">
                 <button
+                  disabled={!canCommit}
                   onClick={toggleCommitmentBox}
-                  className="flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
+                  className="disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
                 >
                   <div className="bg-white p-1 rounded-full">
                     <Plus className="w-4 h-4 text-blue-600" />
                   </div>
                   <span>Add Commitment</span>
+                </button>
+
+                <button
+                  disabled={!canWithdraw}
+                  onClick={withDraw}
+                  className="disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
+                >
+                  <div className="bg-white p-1 rounded-full">
+                    <Plus className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span>Withdraw</span>
                 </button>
               </div>
             </div>
@@ -176,36 +244,75 @@ const handleShowReceiverModal = (url) => {
 
           {/* New Commitment Box */}
           {showCommitmentBox && (
-          <>
-            <CommitmentBox
-              amount={amount}
-              setAmount={setAmount}
-              onCommit={handleCommit}
-              loading={loading}
+            <>
+              <CommitmentBox
+                amount={amount}
+                setAmount={setAmount}
+                onCommit={handleCommit}
+                loading={loading}
+              />
+              <CommitmentNote profit={profit} totalReceive={totalReceive} />
+            </>
+          )}
+          {newCommitment && (
+            <NewCommitmentDetails
+              newCommitment={newCommitment}
+              isMerged={isMerged}
+              receiverId={receiverId}
+              userId={userId}
+              countdown={countdown}
+              handleCancelCommitment={() =>
+                handleCancelCommitment(newCommitment.orderId)
+              }
+              handleViewReceiverDetails={handleViewReceiverDetails}
             />
-            <CommitmentNote profit={profit} totalReceive={totalReceive} />
-          </>
-        )}
-            {newCommitment && (
-          <NewCommitmentDetails
+          )}
+          {commitmentsArr &&
+            commitmentsArr.map((el) => {
+              console.log(el, "This is el");
+              const cmtdetail = {
+                amount: el.original_amount,
+                orderId: el.id,
+                id: userId,
+              };
+              const targetDate = new Date(el.expires_at);
+              const now = new Date();
+              const diffMs = targetDate - now;
+              let timeLeft;
+              if (diffMs > 0) {
+                const totalSeconds = Math.floor(diffMs / 1000);
+                const days = Math.floor(totalSeconds / (3600 * 24));
+                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                timeLeft = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+              }
+
+              return (
+                <NewCommitmentDetails
+                  key={el.id}
+                  newCommitment={cmtdetail}
+                  isMerged={isMerged}
+                  receiverId={receiverId}
+                  userId={userId}
+                  countdown={timeLeft}
+                  handleCancelCommitment={() => handleCancelCommitment(el.id)}
+                  handleViewReceiverDetails={handleViewReceiverDetails}
+                />
+              );
+            })}
+
+          <ReceiverDetailsModal
+            showModal={showModal}
+            handleCloseModal={handleCloseModal}
             newCommitment={newCommitment}
-            isMerged={isMerged}
-            receiverId={receiverId}
-            userId={userId}
-            countdown={countdown}
-            handleCancelCommitment={handleCancelCommitment}
-            handleViewReceiverDetails={handleViewReceiverDetails}
-           
           />
-        )}
-<ReceiverDetailsModal showModal={showModal} handleCloseModal={handleCloseModal} newCommitment={newCommitment} />
 
           {/* You can add the second box here if needed */}
         </div>
       </div>
 
-     <RightSideBar />
+      <RightSideBar />
     </div>
   );
 }
-

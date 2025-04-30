@@ -52,9 +52,7 @@ export default function NewCommitmentDetails({
                 <span className="text-blue-600">
                   {newCommitment.amount} USDT
                 </span>{" "}
-                <span className="text-black">
-                  to Contribution ID: {userId}
-                </span>
+                <span className="text-black">to Contribution ID: {userId}</span>
                 <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
                   Order ID: #{newCommitment.orderId}
                 </p>
@@ -68,7 +66,8 @@ export default function NewCommitmentDetails({
       </div>
 
       <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
-        Time left: {formatCountdown(countdown)}
+        Time left:{" "}
+        {typeof countdown === "string" ? countdown : formatCountdown(countdown)}
       </p>
 
       {/* Buttons */}
