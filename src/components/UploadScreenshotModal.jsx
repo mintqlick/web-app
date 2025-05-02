@@ -19,8 +19,8 @@ const UploadScreenshotModal = ({ show, onClose, onConfirm, userId }) => {
 
     const formData = new FormData();
     formData.append("screenshot", screenshot);
+    formData.append("giver_id", userId); // Include giver_id here
 
-    // Upload the screenshot to the server (or Supabase Storage, etc.)
     const uploadResponse = await fetch("/api/upload-screenshot", {
       method: "POST",
       body: formData,
@@ -29,19 +29,18 @@ const UploadScreenshotModal = ({ show, onClose, onConfirm, userId }) => {
     const uploadData = await uploadResponse.json();
 
     if (uploadData.success) {
-      // After uploading, confirm the payment in the database
-      const confirmResponse = await fetch("/api/confirm-payment", {
+      const confirmResponse = await fetch("/api/confirm-giver", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: userId, type: "giver" }),
+        body: JSON.stringify({ giver_id: userId }),
       });
 
       const confirmData = await confirmResponse.json();
       if (confirmData.success) {
         alert("Payment confirmed!");
-        onConfirm(); // Notify parent to close the modal or refresh state
+        onConfirm();
       } else {
         alert("Error confirming payment");
       }
