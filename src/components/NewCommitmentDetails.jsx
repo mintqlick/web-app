@@ -13,6 +13,7 @@ export default function NewCommitmentDetails({
   handleViewReceiverDetails,
   handleConfirmPayment,
   handleCancelCommitment,
+  status,
 }) {
   return (
     <motion.div
@@ -57,21 +58,31 @@ export default function NewCommitmentDetails({
                   Order ID: #{newCommitment.orderId}
                 </p>
               </p>
-              <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
-                You will be merged with receiver soon, please wait.
-              </p>
+              {status !== "pending" ? (
+                <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
+                  You will be merged with receiver soon, please wait.
+                </p>
+              ) : (
+                <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
+                  you have been matched to a user
+                </p>
+              )}
             </>
           )}
         </div>
       </div>
 
-      <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
-        Time left:{" "}
-        {typeof countdown === "string" ? countdown : formatCountdown(countdown)}
-      </p>
+      {status !== "pending" && (
+        <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
+          Time left:{" "}
+          {typeof countdown === "string"
+            ? countdown
+            : formatCountdown(countdown)}
+        </p>
+      )}
 
       {/* Buttons */}
-      {isMerged ? (
+      {status === "pending" ? (
         <>
           <button
             className="w-full bg-white text-gray-800 font-semibold border border-gray-400 px-3 md:px-4 py-2 md:py-3 rounded-lg mb-4 hover:bg-gray-100 transition text-sm md:text-base"

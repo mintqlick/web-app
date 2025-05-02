@@ -10,6 +10,8 @@ import CommitmentBox from "@/components/CommitmentBox";
 import CommitmentNote from "@/components/CommitmentNote";
 import NewCommitmentDetails from "@/components/NewCommitmentDetails";
 import { useRouter } from "next/navigation";
+import { set } from "zod";
+import UploadScreenshotModal from "@/components/UploadScreenshotModal";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -30,6 +32,8 @@ export default function MainPage() {
   const router = useRouter();
   const [canCommit, setCanCommit] = useState(false);
   const [canWithdraw, setCanWithdraw] = useState(false);
+  const [receive_data, set_receiver_data] = useState(null);
+  const [pay, setPay] = useState(false);
 
   const handleShowReceiverModal = (url) => {
     setScreenshotUrl(url);
@@ -141,7 +145,45 @@ export default function MainPage() {
     // Later, you will write the real cancel logic here (like deleting the record from database)
   };
 
-  const handleViewReceiverDetails = () => {
+  const handleViewReceiverDetails = async () => {
+    const supabase = createClient();
+
+    const {
+      data: { receiver_id, matched_amount },
+      error: giver_error,
+    } = await supabase
+      .from("merge_matches")
+      .select("*")
+      .eq("giver_id", commitmentsArr[0]?.id)
+      .single();
+
+    const { data: receive_data, error: receiver_error } = await supabase
+      .from("merge_receivers")
+      .select(`*`)
+      .eq("id", receiver_id)
+      .single();
+
+    const { data: profile_data, error: profile_error } = await supabase
+      .from("users")
+      .select(`*`)
+      .eq("id", receive_data.user_id)
+      .single();
+
+    const { data: AccData, error: accErr } = await supabase
+      .from("account")
+      .select("*")
+      .eq("user_id", receive_data.user_id)
+      .single();
+
+    const { name, phone } = profile_data;
+    const { network, address } = AccData;
+    set_receiver_data({
+      name,
+      phone,
+      address,
+      network,
+      amount: matched_amount,
+    });
     setShowModal(true);
   };
   const handleCloseModal = () => {
@@ -149,7 +191,33 @@ export default function MainPage() {
   };
 
   const withDraw = async () => {
-    
+    try {
+      const res = await fetch("/api/join-receiver", {
+        method: "POST",
+        "Content-Type": "application/json",
+        body: JSON.stringify({
+          user_id: userId,
+          amount: 30,
+          amount_remaining: 30,
+        }),
+      });
+
+      if (res.ok) {
+        const result = await fetch("/api/merge", {
+          method: "GET",
+          "Content-Type": "application/json",
+        });
+        if (result.ok) {
+          console.log("successful");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleConfirmPayment = () => {
+    setPay(true);
   };
 
   useEffect(() => {
@@ -172,8 +240,8 @@ export default function MainPage() {
         .from("merge_givers")
         .select("*")
         .eq("user_id", userId)
-        .eq("status", "waiting");
-      console.log(error, "cmt error");
+        .or("status.eq.waiting,status.eq.pending");
+
       if (data) {
         setCommitmentArr(data);
         console.log(data, "datatatat");
@@ -229,7 +297,7 @@ export default function MainPage() {
                 </button>
 
                 <button
-                  disabled={!canWithdraw}
+                  // disabled={!canWithdraw}
                   onClick={withDraw}
                   className="disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
                 >
@@ -298,6 +366,8 @@ export default function MainPage() {
                   countdown={timeLeft}
                   handleCancelCommitment={() => handleCancelCommitment(el.id)}
                   handleViewReceiverDetails={handleViewReceiverDetails}
+                  handleConfirmPayment={handleConfirmPayment}
+                  status={el.status}
                 />
               );
             })}
@@ -306,6 +376,14 @@ export default function MainPage() {
             showModal={showModal}
             handleCloseModal={handleCloseModal}
             newCommitment={newCommitment}
+            receive_data={receive_data}
+          />
+
+          <UploadScreenshotModal
+            show={pay}
+            onClose={() => setPay(false)}
+            userId={userId}
+            // onConfirm={}
           />
 
           {/* You can add the second box here if needed */}
