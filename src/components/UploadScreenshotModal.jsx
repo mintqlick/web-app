@@ -41,6 +41,7 @@ const UploadScreenshotModal = ({ show, onClose, onConfirm, userId }) => {
 
     const formData = new FormData();
     formData.append("screenshot", screenshot);
+    formData.append("giver_id", userId); // Include giver_id here
 
     // Upload screenshot and confirm payment logic here...
 
