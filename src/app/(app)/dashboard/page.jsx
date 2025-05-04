@@ -24,7 +24,7 @@ export default function MainPage() {
   const [userId, setUserId] = useState(null); // State to hold user ID
   const [amount, setAmount] = useState("");
   const [newCommitment, setNewCommitment] = useState(null); // To hold the new commitment data
-  const [countdown, setCountdown] = useState(7 * 24 * 60 * 60); // 7 days countdown in seconds
+  const [countdown, setCountdown] = useState( 24 * 60 * 60); // 7 days countdown in seconds
   const [showModal, setShowModal] = useState(false);
   const [isMerged, setIsMerged] = useState(false);
   const [receiverId, setReceiverId] = useState(null); // State to hold receiver ID
@@ -129,7 +129,7 @@ export default function MainPage() {
         amount: numAmount,
         orderId: data.id, // This assumes your 'merge_givers' table has 'id' field
       });
-      setCountdown(7 * 24 * 60 * 60); // Reset countdown to 7 days
+      setCountdown( 24 * 60 * 60); // Reset countdown to 7 days
       setShowCommitmentBox(false); // Hide the commitment box after successful commit
     }
 
