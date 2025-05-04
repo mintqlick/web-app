@@ -9,8 +9,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/client";
 
-const UploadScreenshotModal = ({ show, onClose, onConfirm, userId }) => {
+const UploadScreenshotModal = ({
+  show,
+  onClose,
+  onConfirm,
+  userId,
+  upload,
+}) => {
   const [screenshot, setScreenshot] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,37 +53,17 @@ const UploadScreenshotModal = ({ show, onClose, onConfirm, userId }) => {
     // Upload screenshot and confirm payment logic here...
 
     setIsLoading(false);
-    // onConfirm(); // Or close the modal
 
-    //  Upload the screenshot to the server (or Supabase Storage, etc.)
-    const uploadResponse = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await upload(formData);
+    alert("uploaded");
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("merge_givers")
+      .update({ confirmed: true }) // Use object here
+      .eq("user_id", userId);
+    console.log(error, "page 65");
 
-    const uploadData = await uploadResponse.json();
-
-    console.log(uploadData);
-    // if (uploadData.success) {
-    //   // After uploading, confirm the payment in the database
-    //   const confirmResponse = await fetch("/api/confirm-payment", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ user_id: userId, type: "giver" }),
-    //   });
-
-    //   const confirmData = await confirmResponse.json();
-    //   if (confirmData.success) {
-    //     alert("Payment confirmed!");
-    //     onConfirm(); // Notify parent to close the modal or refresh state
-    //   } else {
-    //     alert("Error confirming payment");
-    //   }
-    // } else {
-    //   alert("Error uploading screenshot");
-    // }
+    onConfirm();
   };
 
   return (
@@ -118,7 +105,10 @@ const UploadScreenshotModal = ({ show, onClose, onConfirm, userId }) => {
               Close
             </Button>
           </DialogClose>
-          <Button onClick={handleButtonClick} disabled={isLoading}>
+          <Button
+            onClick={screenshot ? handleSubmit : handleButtonClick}
+            disabled={isLoading}
+          >
             {screenshot ? "Upload Screenshot" : "Choose File"}
           </Button>
         </DialogFooter>

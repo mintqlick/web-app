@@ -7,7 +7,7 @@ export async function GET() {
   const { data: givers } = await supabase
     .from("merge_givers")
     .select("*")
-    .eq("confirmed", true)
+    // .eq("confirmed", true)
     .gt("amount_remaining", 0)
     .order("created_at");
 

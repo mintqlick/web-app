@@ -75,17 +75,17 @@ const HistoryPage = () => {
       }
     }
 
-    console.log(query)
+    console.log(query);
 
     setVisibleTransactions(newTrans.slice(from, to));
     setLoading(false);
-  }, [transactions, page, pageSize,query]);
+  }, [transactions, page, pageSize, query]);
 
   useEffect(() => {
     const length = Math.floor(transactions.length / pageSize);
     const arrVal = Array.from({ length: length }, (_, i) => i + 1);
     setArrVal(arrVal);
-  }, [pageSize, transactions.length, page,query]);
+  }, [pageSize, transactions.length, page, query]);
 
   const handleMore = (type) => {
     if (type === "back") {
@@ -167,8 +167,17 @@ const HistoryPage = () => {
                       <td className="py-2 px-2">
                         {new Date(el.created_at).toLocaleDateString()}
                       </td>
-                      <td className="py-2 px-2">${el.original_amount}</td>
-                      <td className="py-2 px-2">John Doe</td>
+                      {console.log(el, "ella")}
+                      <td className="py-2 px-2">
+                        ${el?.original_amount || el?.amount}
+                      </td>
+                      <td className="py-2 px-2">
+                        #
+                        {el?.source_giver_id
+                          ? el?.source_giver_id.slice(0, 8)
+                          : "#123"}
+                        ...
+                      </td>
                       <td className="py-2 px-2">
                         <span
                           className={`inline-block w-3 h-3 sm:w-auto sm:h-auto sm:px-3 sm:py-1 ${

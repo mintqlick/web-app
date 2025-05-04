@@ -14,13 +14,16 @@ export default function NewCommitmentDetails({
   handleConfirmPayment,
   handleCancelCommitment,
   status,
+  confirmed,
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4"
+      className={`bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4 ${
+        confirmed ? "hidden" : "block"
+      }`}
     >
       <div className="bg-white p-3 md:p-4 rounded-2xl text-sm mb-4 flex flex-col md:flex-row items-start gap-4">
         {/* Icon Section */}
