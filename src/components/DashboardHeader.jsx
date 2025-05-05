@@ -4,6 +4,7 @@ import { Bell } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import Notification from "./Notification";
 
 export default function DashboardHeader() {
   const [userData, setUserData] = useState(null);
@@ -63,12 +64,13 @@ export default function DashboardHeader() {
         {/* Right Side (Notification + User) */}
         <div className="flex items-center gap-4 md:gap-6">
           {/* Notification Bell */}
-          <div className="relative bg-white p-2 rounded-full shadow-md">
-            <Bell className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+          <Notification />
+          {/* <div className="relative bg-white p-2 rounded-full shadow-md">
+            <Bell  className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
             <span className="absolute top-0 right-0 bg-red-500 text-white text-[9px] md:text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-              3
+              {}
             </span>
-          </div>
+          </div> */}
 
           {/* Username + Avatar */}
           <div className="flex items-center gap-2">

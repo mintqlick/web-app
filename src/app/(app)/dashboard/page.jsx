@@ -504,15 +504,22 @@ export default function MainPage() {
             </div>
           </div>
 
-          {/* New Commitment Box */}
-
-          <ActiveCommitment
-            loading={withdrawLoading}
-            onWithdraw={withDraw}
-            amount={commitmentsArr[0]?.original_amount}
-            countdown={7 * 24 * 3600}
-            cmtData={commitmentsArr[0]}
-          />
+          {/* Active commitment */}
+          {commitmentsArr.some((item) => item.status === "completed") && (
+            <ActiveCommitment
+              loading={withdrawLoading}
+              onWithdraw={withDraw}
+              amount={
+                commitmentsArr.find((item) => item.status === "completed")
+                  ?.original_amount
+              }
+              countdown={7 * 24 * 3600}
+              cmtData={commitmentsArr.find(
+                (item) => item.status === "completed"
+              )}
+              onRecommitment={() => setShowCommitmentBox(true)}
+            />
+          )}
 
           {showCommitmentBox && (
             <>

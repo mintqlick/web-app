@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { BellIcon } from '@heroicons/react/24/outline';
+import { Bell } from "lucide-react";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -21,7 +21,7 @@ const Notification = () => {
         .from('notifications')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         console.error('Error fetching notifications:', error);
       } else {
@@ -65,15 +65,15 @@ const Notification = () => {
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   return (
-    <div className="relative">
+    <div className="relative bg-white p-2 rounded-full shadow-md">
       {/* Notification Bell Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none"
+        className="relative p-1 text-gray-700 hover:text-gray-900 focus:outline-none"
       >
-        <BellIcon className="h-6 w-6" />
+        <Bell className="w-4 h-4 md:w-5 md:h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 block h-4 w-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+          <span className="absolute top-0 right-0 bg-red-500 text-white text-[9px] md:text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
             {unreadCount}
           </span>
         )}
@@ -81,7 +81,7 @@ const Notification = () => {
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 transform transition-all duration-300 ease-in-out origin-top-right scale-100">
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 transform transition-all duration-300 ease-in-out origin-top-right scale-100 z-50">
           <div className="p-4">
             <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
             {loading && <p className="text-gray-500">Loading...</p>}
