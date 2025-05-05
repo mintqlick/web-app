@@ -11,7 +11,7 @@ export default function CommitmentBox({ amount, setAmount, onCommit, loading }) 
       </p>
 
       <div className="flex flex-col gap-2 text-sm mb-4">
-        <p><span className="font-semibold">Maximum Commitment:</span> 100.0 USDT</p>
+        <p><span className="font-semibold">Maximum Commitment:</span> 1000.0 USDT</p>
         <p><span className="font-semibold">Minimum Commitment:</span> 10.0 USDT</p>
       </div>
 

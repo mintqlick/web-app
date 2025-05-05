@@ -99,8 +99,8 @@ export default function MainPage() {
   const handleCommit = async () => {
     const supabase = createClient();
     const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount < 10 || numAmount > 100) {
-      setMessage("Please enter an amount between 10 and 100 USDT.");
+    if (isNaN(numAmount) || numAmount < 10 || numAmount > 1000) {
+      setMessage("Please enter an amount between 10 and 1000 USDT.");
       return;
     }
 
