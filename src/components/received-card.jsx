@@ -57,7 +57,7 @@ export default function CommitmentSuccessfull({
           </>
         </div>
       </div>
-      {/* Buttons */}
+      {/* Buttons statement */}
       <button
         className="mt-4 w-full bg-green-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 md:py-2 rounded-md cursor-pointer"
         onClick={clicked}
