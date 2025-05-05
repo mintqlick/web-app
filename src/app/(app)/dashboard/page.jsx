@@ -62,7 +62,7 @@ export default function MainPage() {
       } = await supabase.auth.getUser();
 
       if (error) {
-        console.error("Error fetching user:", error.message);
+        
       } else {
         setUserId(user?.id);
         const { data: userData, error: userDataError } = await supabase
@@ -71,7 +71,7 @@ export default function MainPage() {
           .eq("id", user?.id)
           .single();
         if (userDataError) {
-          console.error("Error fetching user data:", userDataError.message);
+          
         } else {
           const { data: accountData, error: accountError } = await supabase
             .from("account")
@@ -80,13 +80,13 @@ export default function MainPage() {
             .limit(1)
             .single();
           if (accountError) {
-            console.error("Error fetching account data:", accountError.message);
+            
           } else {
-            console.log("Account data:", accountData);
+            
             setUserData({ ...userData, account: accountData });
           }
         }
-        console.log("User data:", userData);
+        
       }
     };
     fetchUserData();
@@ -138,7 +138,7 @@ export default function MainPage() {
     setLoading(false);
   };
   const handleCancelCommitment = async (id) => {
-    console.log("Cancel commitment clicked");
+    
 
     const supabase = createClient();
 
@@ -146,7 +146,7 @@ export default function MainPage() {
       .from("merge_givers")
       .delete()
       .eq("id", id);
-    console.log(deleteErr, "error");
+    
     if (deleteErr) return;
     location.reload();
 
@@ -165,7 +165,7 @@ export default function MainPage() {
       .eq("giver_id", commitmentsArr[0]?.id)
       .single();
 
-    console.log(receiver_id, "receiver_id");
+    
 
     setReceiverId(receiver_id);
     const { data: receive_data, error: receiver_error } = await supabase
@@ -231,11 +231,11 @@ export default function MainPage() {
           "Content-Type": "application/json",
         });
         if (result.ok) {
-          console.log("successful");
+          
         }
       }
     } catch (error) {
-      console.log(error);
+      
     }
     setWithDrawLoading(false);
   };
@@ -278,7 +278,7 @@ export default function MainPage() {
         .eq("user_id", userId)
         .or("status.eq.waiting,status.eq.pending");
 
-      console.log(data, "Done");
+      
 
       if (data) {
         setCommitmentArr(data);
@@ -305,7 +305,7 @@ export default function MainPage() {
           .single();
 
         if (receiverErr) {
-          console.log("Error fetching receiver data:", receiverErr);
+          
           return; // Early return if there's an error fetching data
         }
 
@@ -315,7 +315,7 @@ export default function MainPage() {
           setCanWithdraw(false); // In case there's no data
         }
       } catch (error) {
-        console.error("Unexpected error:", error);
+        
       }
     };
 
@@ -330,7 +330,7 @@ export default function MainPage() {
 
       // If there are commitments, log them
       if (commitmentsArr[0]) {
-        console.log(commitmentsArr, "COmmits");
+        
       }
 
       try {
@@ -341,12 +341,12 @@ export default function MainPage() {
           .single();
 
         if (gvr_error) {
-          console.log(gvr_error);
+          
         } else {
-          console.log(gvr);
+          
         }
 
-        console.log(gvr);
+        
         // Log any error
 
         // Uncomment this if needed
@@ -356,10 +356,10 @@ export default function MainPage() {
           .eq("giver_id", gvr?.id)
           .single();
 
-        console.log(giver_error, "Data");
+        
         setReceiverId(data.receiver_id);
       } catch (err) {
-        console.error("Unexpected error:", err);
+        
       }
     };
 
@@ -381,9 +381,9 @@ export default function MainPage() {
           .single();
 
         if (rcr_error) {
-          console.log(rcr_error, "merge_receive err");
+          
         } else {
-          console.log(rcr, "Accdtl");
+          
         }
 
         // Log any error
@@ -412,7 +412,7 @@ export default function MainPage() {
 
         setRcvDetail({ ...giver_det, success: true });
       } catch (err) {
-        console.error("Unexpected error:", err);
+        
       }
     };
 
@@ -433,7 +433,7 @@ export default function MainPage() {
   //         .maybeSingle();
 
   //       if (rcr_error || !rcr) {
-  //         console.log("merge_receivers error:", rcr_error || "No record found");
+  
   //         return;
   //       }
 
@@ -445,10 +445,10 @@ export default function MainPage() {
   //         .eq("receiver_id", rcr.id)
   //         .maybeSingle();
   //       if (receiver_error) {
-  //         console.log(error);
+  
   //         return;
   //       }
-  //       console.log(match, "Accdtl");
+  
 
   //       const { data: giver_det, error: giver_error } = await supabase
   //         .from("merge_givers")
@@ -456,16 +456,16 @@ export default function MainPage() {
   //         .eq("id", match?.giver_id)
   //         .maybeSingle();
 
-  //         console.log("here 3")
+  
   //       if (giver_error) {
-  //         console.log("merge_givers error:", giver_error || "No giver found");
+  
 
   //       }
 
   //       setRcvDetail({ ...giver_det, ...match });
-  //       console.log(rcv_detail, "Accdtl123");
+  
   //     } catch (err) {
-  //       console.error("Unexpected error:", err);
+  
   //     }
   //   };
 
