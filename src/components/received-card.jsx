@@ -9,6 +9,8 @@ export default function CommitmentSuccessfull({
   giver_id,
   clicked,
 }) {
+  console.log(giver_id, "giver_id");
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -26,16 +28,16 @@ export default function CommitmentSuccessfull({
         <div className="flex flex-col justify-start">
           <>
             <h4 className="text-sm md:text-base font-bold mb-2 text-gray-800">
-              {newCommitment.amount
+              {giver_id
                 ? "You've been sent"
-                : "Money will be sent to you soon stay tuned"}
+                : `${newCommitment?.amount} be sent to you soon stay tuned`}
             </h4>
-            {newCommitment.amount ? (
+            {newCommitment.amount && giver_id? (
               <p className="text-base md:text-lg font-bold text-gray-700 mb-2">
                 <span className="text-blue-600">
                   {newCommitment.amount} USDT
                 </span>
-                <span className="text-blue-800"> by {giver_id}</span>
+                <span className="text-blue-800">  {giver_id}</span>
               </p>
             ) : (
               ""
@@ -47,6 +49,7 @@ export default function CommitmentSuccessfull({
                 <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
                   Order ID: #{newCommitment.orderId}
                 </p>
+                
               ) : (
                 ""
               )}

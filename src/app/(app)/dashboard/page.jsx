@@ -15,6 +15,7 @@ import UploadScreenshotModal from "@/components/UploadScreenshotModal";
 import CommitmentSuccessfull from "@/components/commitment-successful";
 import ReceiverConfirmationModal from "@/components/ReceiverConfirmationModal";
 import CommitmentSuccessfullCard from "@/components/received-card";
+import ActiveCommitment from "@/components/active-commitment";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -24,7 +25,7 @@ export default function MainPage() {
   const [userId, setUserId] = useState(null); // State to hold user ID
   const [amount, setAmount] = useState("");
   const [newCommitment, setNewCommitment] = useState(null); // To hold the new commitment data
-  const [countdown, setCountdown] = useState( 24 * 60 * 60); // 7 days countdown in seconds
+  const [countdown, setCountdown] = useState(24 * 60 * 60); // 7 days countdown in seconds
   const [showModal, setShowModal] = useState(false);
   const [isMerged, setIsMerged] = useState(false);
   const [receiverId, setReceiverId] = useState(null); // State to hold receiver ID
@@ -38,8 +39,9 @@ export default function MainPage() {
   const [receive_data, set_receiver_data] = useState(null);
   const [pay, setPay] = useState(false);
   const [rcv_detail, setRcvDetail] = useState(null); // set all needed equiement of reciever i.e giver and receiver for receiver use only
-
+  const [orderId, setOrderId] = useState(null);
   const [openRcv, setOpenRcv] = useState(false);
+  const [withdrawLoading, setWithDrawLoading] = useState(false);
 
   const handleShowReceiverModal = (url) => {
     setScreenshotUrl(url);
@@ -129,7 +131,7 @@ export default function MainPage() {
         amount: numAmount,
         orderId: data.id, // This assumes your 'merge_givers' table has 'id' field
       });
-      setCountdown( 24 * 60 * 60); // Reset countdown to 7 days
+      setCountdown(24 * 60 * 60); // Reset countdown to 7 days
       setShowCommitmentBox(false); // Hide the commitment box after successful commit
     }
 
@@ -212,15 +214,14 @@ export default function MainPage() {
     return res;
   };
 
-  const withDraw = async () => {
+  const withDraw = async (amt) => {
+    setWithDrawLoading(true);
     try {
       const res = await fetch("/api/join-receiver", {
         method: "POST",
-
         body: JSON.stringify({
           user_id: userId,
-          amount: 30, // amount to withdraw
-          amount_remaining: 30, // amount remaining
+          amount: amt, // amount to withdraw
         }),
       });
 
@@ -236,6 +237,7 @@ export default function MainPage() {
     } catch (error) {
       console.log(error);
     }
+    setWithDrawLoading(false);
   };
 
   const handleConfirmPayment = () => {
@@ -276,9 +278,10 @@ export default function MainPage() {
         .eq("user_id", userId)
         .or("status.eq.waiting,status.eq.pending");
 
+      console.log(data, "Done");
+
       if (data) {
         setCommitmentArr(data);
-        console.log(data, "datatatat");
         if (data.length < 1) {
           setCanCommit(true);
         } else {
@@ -305,8 +308,6 @@ export default function MainPage() {
           console.log("Error fetching receiver data:", receiverErr);
           return; // Early return if there's an error fetching data
         }
-
-       
 
         if (data) {
           setCanWithdraw(true);
@@ -380,12 +381,13 @@ export default function MainPage() {
           .single();
 
         if (rcr_error) {
-          console.log(rcr_error,"merge_receive err");
+          console.log(rcr_error, "merge_receive err");
         } else {
-          console.log(rcr,"Accdtl");
+          console.log(rcr, "Accdtl");
         }
 
         // Log any error
+        setRcvDetail(rcr);
 
         // Uncomment this if needed
         const {
@@ -397,14 +399,18 @@ export default function MainPage() {
           .eq("receiver_id", rcr?.id)
           .single();
 
+        if (!giver_id) {
+          setRcvDetail(rcr);
+          return;
+        }
+
         const { data: giver_det, error: giver_error } = await supabase
           .from("merge_givers")
           .select("*")
           .eq("id", giver_id)
           .single();
 
-        console.log(giver_det, giver_error, "ade");
-        setRcvDetail({ ...giver_det });
+        setRcvDetail({ ...giver_det, success: true });
       } catch (err) {
         console.error("Unexpected error:", err);
       }
@@ -414,6 +420,59 @@ export default function MainPage() {
       handler();
     }
   }, [userId]);
+
+  // useEffect(() => {
+  //   const handler = async () => {
+  //     const supabase = createClient();
+  //     try {
+  //       const { data: rcr, error: rcr_error } = await supabase
+  //         .from("merge_receivers")
+  //         .select("*")
+  //         .eq("user_id", userId)
+  //         .eq("status", "waiting")
+  //         .maybeSingle();
+
+  //       if (rcr_error || !rcr) {
+  //         console.log("merge_receivers error:", rcr_error || "No record found");
+  //         return;
+  //       }
+
+  //       setReceiverId(rcr.user_id);
+
+  //       const { data: match, error: receiver_error } = await supabase
+  //         .from("merge_matches")
+  //         .select("*")
+  //         .eq("receiver_id", rcr.id)
+  //         .maybeSingle();
+  //       if (receiver_error) {
+  //         console.log(error);
+  //         return;
+  //       }
+  //       console.log(match, "Accdtl");
+
+  //       const { data: giver_det, error: giver_error } = await supabase
+  //         .from("merge_givers")
+  //         .select("*")
+  //         .eq("id", match?.giver_id)
+  //         .maybeSingle();
+
+  //         console.log("here 3")
+  //       if (giver_error) {
+  //         console.log("merge_givers error:", giver_error || "No giver found");
+
+  //       }
+
+  //       setRcvDetail({ ...giver_det, ...match });
+  //       console.log(rcv_detail, "Accdtl123");
+  //     } catch (err) {
+  //       console.error("Unexpected error:", err);
+  //     }
+  //   };
+
+  //   if (userId) {
+  //     handler();
+  //   }
+  // }, [userId]);
 
   return (
     <div className="flex w-full h-full">
@@ -426,39 +485,35 @@ export default function MainPage() {
               {/* Contribution ID */}
               <h3 className="text-sm font-medium">
                 Contribution ID:{" "}
-                <span className="font-bold">{userData?.id || "N/A"}</span>
+                <span className="font-bold">{userId || "N/A"}</span>
               </h3>
 
               {/* Buttons (side-by-side on sm+, stacked on mobile) */}
               <div className="flex flex-col sm:flex-row gap-2">
-                {!canWithdraw ? (
-                  <button
-                    disabled={!canCommit}
-                    onClick={toggleCommitmentBox}
-                    className="disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
-                  >
-                    <div className="bg-white p-1 rounded-full">
-                      <Plus className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <span>Add Commitment</span>
-                  </button>
-                ) : (
-                  <button
-                    // disabled={!canWithdraw}
-                    onClick={withDraw}
-                    className="disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
-                  >
-                    <div className="bg-white p-1 rounded-full">
-                      <Plus className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <span>Withdraw</span>
-                  </button>
-                )}
+                <button
+                  disabled={!canCommit}
+                  onClick={toggleCommitmentBox}
+                  className="disabled:bg-red-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm"
+                >
+                  <div className="bg-white p-1 rounded-full">
+                    <Plus className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span>Add Commitment</span>
+                </button>
               </div>
             </div>
           </div>
 
           {/* New Commitment Box */}
+
+          <ActiveCommitment
+            loading={withdrawLoading}
+            onWithdraw={withDraw}
+            amount={commitmentsArr[0]?.original_amount}
+            countdown={7 * 24 * 3600}
+            cmtData={commitmentsArr[0]}
+          />
+
           {showCommitmentBox && (
             <>
               <CommitmentBox
@@ -496,11 +551,10 @@ export default function MainPage() {
               let timeLeft;
               if (diffMs > 0) {
                 const totalSeconds = Math.floor(diffMs / 1000);
-                const days = Math.floor(totalSeconds / (3600 * 24));
                 const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
                 const seconds = totalSeconds % 60;
-                timeLeft = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                timeLeft = `${hours}h ${minutes}m ${seconds}s`;
               }
 
               return (
@@ -535,7 +589,7 @@ export default function MainPage() {
             onConfirm={() => setPay(false)}
           />
 
-          {commitmentsArr[0]?.confirmed && (
+          {/* {commitmentsArr[0]?.confirmed && (
             <CommitmentSuccessfull
               countdown={commitmentsArr[0]?.eligible_as_receiver || ""}
               receiverId={receiverId}
@@ -545,11 +599,8 @@ export default function MainPage() {
                 orderId: commitmentsArr[0].id,
               }}
             />
-          )}
+          )} */}
           {/* You can add the second box here if needed */}
-
-
-
 
           {openRcv && (
             <ReceiverConfirmationModal
@@ -563,12 +614,13 @@ export default function MainPage() {
 
           {rcv_detail && (
             <CommitmentSuccessfullCard
-              giver_id={rcv_detail.user_id}
+              giver_id={rcv_detail.success ? rcv_detail.user_id : null}
               clicked={() => setOpenRcv(true)}
               newCommitment={{
-                amount: rcv_detail.original_amount,
+                amount: rcv_detail.amount,
                 orderId: rcv_detail.id,
               }}
+              receiver_data={rcv_detail}
             />
           )}
         </div>

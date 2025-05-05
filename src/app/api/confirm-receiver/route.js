@@ -33,7 +33,7 @@ export async function POST(req) {
     .from("merge_givers")
     .update({
       amount_remaining: newAmountRemaining,
-      eligible_as_receiver: new Date(Date.now()),
+      eligible_time: new Date(Date.now()),
       status: newAmountRemaining <= 0 ? "completed" : "in_progress",
     })
     .eq("id", giver.id);
