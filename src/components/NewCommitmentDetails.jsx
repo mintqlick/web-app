@@ -63,7 +63,7 @@ export default function NewCommitmentDetails({
               </p>
               {status !== "pending" ? (
                 <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
-                  You will be merged with receiver soon, please wait.
+                  You're in a que. A match will be assigned shortly.
                 </p>
               ) : (
                 <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
