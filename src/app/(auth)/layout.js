@@ -10,9 +10,15 @@ export default function RootLayout({ children }) {
   return (
     <body>
       <div className="w-full h-screen landscape:h-auto lg:landscape:h-screen bg-primary flex ">
-        <div className="hidden lg:block w-1/2 xl:w-5/12 h-full text-white pt-9 text-center ">
-          <div className="w-full flex justify-center relative">
-            <Image src={LogoImage} alt="" height={120} width={150} />
+        <div className="hidden lg:block w-1/2 xl:w-5/12 h-full text-white pt-9 text-center relative">
+          <div className="w-full flex justify-center absolute -top-10">
+            <Image
+              src={"/images/logo31.png"}
+              alt="The Page logo"
+              height={400}
+              width={350}
+              // className="-mt-[120px]"
+            />
           </div>
         </div>
 
