@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "mintqlick",
-  description: "This is the official mintqlick page",
+  title: "nodalcircle",
+  description: "This is the official nodalcircle page",
 };
 
 export default function RootLayout({ children }) {
