@@ -25,15 +25,21 @@ export default function Header() {
         isSticky ? "fixed bg-white shadow-md" : "relative bg-[#EDF2FC]"
       }`}
     >
-      <div className="max-w-screen-xl w-full mx-auto px-6">
+      <div className="max-w-screen-xl w-full mx-auto px-2">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center">
-            <Image src="/images/logo31.png" alt="Logo" width={300} height={60} priority />
+          <div className="flex items-center -ml-[4rem]">
+            <Image
+              src="/images/logo31.png"
+              alt="Logo"
+              width={300}
+              height={60}
+              priority
+            />
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-x-8">
+          <nav className="hidden lg:flex items-center gap-x-2">
             <Link
               href="#"
               className="flex items-center space-x-1 text-gray-700 hover:text-black"
@@ -95,9 +101,10 @@ export default function Header() {
           >
             About
           </Link>
-          <button 
-           onClick={() => router.push("/sign-in")}
-          className="w-full border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200">
+          <button
+            onClick={() => router.push("/sign-in")}
+            className="w-full border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200"
+          >
             Login
           </button>
           <button
