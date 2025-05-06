@@ -517,7 +517,7 @@ export default function MainPage() {
               cmtData={commitmentsArr.find(
                 (item) => item.status === "completed"
               )}
-              onRecommitment={() => setShowCommitmentBox(true)}
+             
             />
           )}
 

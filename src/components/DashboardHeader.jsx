@@ -53,7 +53,7 @@ export default function DashboardHeader() {
         {/* Logo Section */}
         <div className="flex items-center">
           <Image
-            src="/images/logo31.png"
+            src="/images/logo.png"
             alt="Logo"
             width={90}
             height={45}

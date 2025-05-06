@@ -1,106 +1,9 @@
-// "use client";
-
-// import React from "react";
-
-// export default function ActiveCommitment({
-//   onWithdraw,
-//   loading,
-//   countdown,
-//   amount,
-//   cmtData,
-// }) {
-//   const now = new Date();
-//   const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
-//     ? new Date(cmtData.eligible_as_receiver)
-//     : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
-
-//   const diffMs = eligibleAsReceiverDate - now;
-//   let timeLeft;
-//   if (diffMs > 0) {
-//     const totalSeconds = Math.floor(diffMs / 1000);
-//     const days = Math.floor(totalSeconds / (3600 * 24));
-//     const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-//     const minutes = Math.floor((totalSeconds % 3600) / 60);
-//     const seconds = totalSeconds % 60;
-//     timeLeft = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-//   } else {
-//     timeLeft = "0d 0h 0m 0s"; // already eligible
-//   }
-
-//   const isEligible =
-//     cmtData?.eligible_as_receiver &&
-//     new Date(cmtData.eligible_as_receiver) <= new Date();
-
-//   return (
-//     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">
-//       <h4 className="text-base text-blue-600 font-semibold mb-1">
-//         Active Commitment
-//       </h4>
-//       <div className="flex flex-col gap-2 text-sm mb-4">
-//         <p>
-//           <span className="font-semibold">Amount committed:</span> {amount} USDT
-//         </p>
-//         <p>
-//           <span className="font-semibold">Amount to be received:</span>{" "}
-//           {amount * 1.45} USDT
-//         </p>
-//         <p>
-//           <span className="font-semibold">Withdraw time/date: </span>
-//           {formatDate(cmtData?.eligible_as_receiver) || null}
-//         </p>
-//         <p>
-//           <span className="font-semibold">Cycle Start Date/Time: </span>
-//           {formatDate(cmtData?.eligible_time) || null}
-//         </p>
-
-//         <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
-//           Time left to receive payment: 
-//           {timeLeft}
-//         </p>
-
-//         <button
-//           onClick={() => onWithdraw(30)}
-//         //   disabled={!isEligible}
-//           className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
-//         >
-//           {!loading ? "Withdraw" : "Withdrawing"}
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-// function formatCountdown(seconds) {
-//   const days = Math.floor(seconds / (3600 * 24));
-//   const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-//   const minutes = Math.floor((seconds % 3600) / 60);
-//   const secs = Math.floor(seconds % 60);
-//   return `${days}d ${hours}h ${minutes}m ${secs}s`;
-// }
-
-// const formatDate = (rawDate) => {
-//   let formatted = "N/A";
-
-//   if (rawDate) {
-//     const date = new Date(rawDate);
-//     formatted = `${
-//       date.getMonth() + 1
-//     }/${date.getDate()}/${date.getFullYear()} at ${date
-//       .getHours()
-//       .toString()
-//       .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
-//   }
-//   return formatted; // "5/5/2025 at 00:56" or "N/A"
-// };
-
-
 "use client";
 
 import React from "react";
 
 export default function ActiveCommitment({
   onWithdraw,
-  onRecommitment, // 🆕 function from main page
   loading,
   countdown,
   amount,
@@ -109,16 +12,20 @@ export default function ActiveCommitment({
   const now = new Date();
   const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
     ? new Date(cmtData.eligible_as_receiver)
-    : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // fallback 7 days
+    : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
 
   const diffMs = eligibleAsReceiverDate - now;
-
-  const totalSeconds = Math.floor(diffMs / 1000);
-  const days = Math.floor(totalSeconds / (3600 * 24));
-  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const timeLeft = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  let timeLeft;
+  if (diffMs > 0) {
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    timeLeft = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  } else {
+    timeLeft = "0d 0h 0m 0s"; // already eligible
+  }
 
   const isEligible =
     cmtData?.eligible_as_receiver &&
@@ -129,7 +36,6 @@ export default function ActiveCommitment({
       <h4 className="text-base text-blue-600 font-semibold mb-1">
         Active Commitment
       </h4>
-
       <div className="flex flex-col gap-2 text-sm mb-4">
         <p>
           <span className="font-semibold">Amount committed:</span> {amount} USDT
@@ -140,48 +46,51 @@ export default function ActiveCommitment({
         </p>
         <p>
           <span className="font-semibold">Withdraw time/date: </span>
-          {formatDate(cmtData?.eligible_as_receiver) || "N/A"}
+          {formatDate(cmtData?.eligible_as_receiver) || null}
         </p>
         <p>
           <span className="font-semibold">Cycle Start Date/Time: </span>
-          {formatDate(cmtData?.eligible_time) || "N/A"}
+          {formatDate(cmtData?.eligible_time) || null}
         </p>
 
         <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
-          Time left to receive payment: {timeLeft}
+          Time left to receive payment: 
+          {timeLeft}
         </p>
 
-        {isEligible ? (
-          <button
-            onClick={() => onWithdraw(30)}
-            disabled={loading}
-            className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
-          >
-            {!loading ? "Withdraw" : "Withdrawing..."}
-          </button>
-        ) : (
-          <button
-          disabled={!canCommit}
-          onClick={toggleCommitmentBox}
-          className=" flex items-center justify-center gap-2 border-2 border-gray-600 bg-white text-gray-600 px-3 py-1.5 rounded-md text-sm"
+        <button
+          onClick={() => onWithdraw(30)}
+        //   disabled={!isEligible}
+          className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
         >
-          <div className="bg-white p-1 rounded-full">
-            <Plus className="w-4 h-4 text-blue-600" />
-          </div>
-          <span>Recommitment</span>
+          {!loading ? "Withdraw" : "Withdrawing"}
         </button>
-          
-        )}
       </div>
     </div>
   );
 }
 
+function formatCountdown(seconds) {
+  const days = Math.floor(seconds / (3600 * 24));
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${days}d ${hours}h ${minutes}m ${secs}s`;
+}
+
 const formatDate = (rawDate) => {
-  if (!rawDate) return "N/A";
-  const date = new Date(rawDate);
-  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} at ${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  let formatted = "N/A";
+
+  if (rawDate) {
+    const date = new Date(rawDate);
+    formatted = `${
+      date.getMonth() + 1
+    }/${date.getDate()}/${date.getFullYear()} at ${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  }
+  return formatted; // "5/5/2025 at 00:56" or "N/A"
 };
+
+

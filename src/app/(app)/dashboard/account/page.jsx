@@ -6,115 +6,6 @@ import { Copy, Plus } from "lucide-react"; // ensure this is imported
 import { createClient } from "@/utils/supabase/client";
 
 const AccountPage = () => {
-  // Initialize Supabase client
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   telegram: "",
-  //   email: "",
-  //   nick_name: "",
-  //   gender: "",
-  //   phone: "",
-  //   network: "",
-  //   address: "",
-  //   exchange: "",
-  //   uid: "",
-  //   country: "",
-  //   timezone: "",
-  //   language: "English", // default language
-  // });
-
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState("");
-  // const [success, setSuccess] = useState("");
-  // const [userData, setUserData] = useState(null);
-  // const [userId, setUserId] = useState(null); // State to hold user ID
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const supabase = createClient();
-  //     const {
-  //       data: { user },
-  //       error,
-  //     } = await supabase.auth.getUser();
-
-  //     if (error) {
-  //       console.error("Error fetching user:", error.message);
-  //     } else {
-  //       setUserId(user?.id);
-  //       const { data: userData, error: userDataError } = await supabase
-  //         .from("users")
-  //         .select("*")
-  //         .eq("id", user?.id)
-  //         .single();
-  //       if (userDataError) {
-  //         console.error("Error fetching user data:", userDataError.message);
-  //       } else {
-  //         const { data: accountData, error: accountError } = await supabase
-  //           .from("account")
-  //           .select("*")
-  //           .eq("user_id", user?.id)
-  //           .limit(1)
-  //           .single();
-  //         if (accountError) {
-  //           console.error("Error fetching account data:", accountError.message);
-  //         } else {
-  //           console.log("Account data:", accountData);
-  //           setUserData({ ...userData, account: accountData });
-  //         }
-  //       }
-  //       console.log("User data:", userData.name);
-  //     }
-  //   };
-  //   fetchUserData();
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log("User ID:", userId);
-  //   async function fetchData() {
-  //     try {
-  //       const supabase = createClient();
-  //       const { data: user, error: userError } = await supabase
-  //         .from("users")
-  //         .select("*")
-  //         .eq("id", userId)
-  //         .single();
-
-  //       const { data: account, error: accountError } = await supabase
-  //         .from("account")
-  //         .select("*")
-  //         .eq("user_id", userId)
-  //         .maybeSingle();
-
-  //       console.log("Here is working");
-
-  //       if (userError || accountError) throw userError || accountError;
-
-  //       setFormData({
-  //         name: user?.name || "",
-  //         telegram: user?.telegram || "",
-  //         email: user?.email || "",
-  //         nick_name: user?.nick_name || "",
-  //         gender: user?.gender || "",
-  //         phone: user?.phone || "",
-  //         country: user?.country || "",
-  //         timezone: user?.timezone || "",
-  //         language: user?.language || "English",
-  //         network: account?.network || "",
-  //         address: account?.address || "",
-  //         exchange: account?.exchange || "",
-  //         uid: account?.uid || "",
-  //       });
-  //     } catch (err) {
-  //       console.error(err, "error");
-  //       setError("Failed to fetch user data.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-
-  //   if (userId) fetchData();
-  // }, [userId]);
-
   const [formData, setFormData] = useState({
     name: "",
     telegram: "",
@@ -122,8 +13,7 @@ const AccountPage = () => {
     nick_name: "",
     gender: "",
     phone: "",
-    network: "",
-    address: "",
+    wallets: [{ network: "", address: "" }], // changed to wallets array with network and address
     exchange: "",
     uid: "",
     country: "",
@@ -199,6 +89,25 @@ const AccountPage = () => {
 
         if (userError || accountError) throw userError || accountError;
 
+        // Parse wallets from stored network and address strings
+        const wallets = [];
+        if (account?.network && account?.address) {
+          const networks = account.network.split(",");
+          const addresses = account.address.split(",");
+          for (
+            let i = 0;
+            i < Math.max(networks.length, addresses.length);
+            i++
+          ) {
+            wallets.push({
+              network: networks[i] || "",
+              address: addresses[i] || "",
+            });
+          }
+        } else {
+          wallets.push({ network: "", address: "" });
+        }
+
         setFormData({
           name: user?.name || "",
           telegram: user?.telegram || "",
@@ -209,8 +118,7 @@ const AccountPage = () => {
           country: user?.country || "",
           timezone: user?.timezone || "",
           language: user?.language || "English",
-          network: account?.network || "",
-          address: account?.address || "",
+          wallets: wallets,
           exchange: account?.exchange || "",
           uid: account?.uid || "",
         });
@@ -229,10 +137,26 @@ const AccountPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name.startsWith("wallet-network-")) {
+      const index = parseInt(name.split("-")[2], 10);
+      setFormData((prev) => {
+        const newWallets = [...prev.wallets];
+        newWallets[index] = { ...newWallets[index], network: value };
+        return { ...prev, wallets: newWallets };
+      });
+    } else if (name.startsWith("wallet-address-")) {
+      const index = parseInt(name.split("-")[2], 10);
+      setFormData((prev) => {
+        const newWallets = [...prev.wallets];
+        newWallets[index] = { ...newWallets[index], address: value };
+        return { ...prev, wallets: newWallets };
+      });
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -240,7 +164,14 @@ const AccountPage = () => {
     setError("");
     setSuccess("");
 
-    if (!formData.name || !formData.network || !formData.address) {
+    if (
+      !formData.name ||
+      !formData.wallets ||
+      formData.wallets.length === 0 ||
+      formData.wallets.some(
+        (wallet) => wallet.network.trim() === "" || wallet.address.trim() === ""
+      )
+    ) {
       setError("Please fill in all required fields.");
       return;
     }
@@ -268,8 +199,8 @@ const AccountPage = () => {
       const { error: accountError } = await supabase.from("account").upsert(
         {
           user_id: userId,
-          network: formData.network,
-          address: formData.address,
+          network: formData.wallets.map((w) => w.network).join(","), // join networks array to string
+          address: formData.wallets.map((w) => w.address).join(","), // join addresses array to string
           exchange: formData.exchange || null,
           uid: formData.uid || null,
         },
@@ -529,56 +460,67 @@ const AccountPage = () => {
               <h2 className="text-[25px] font-bold text-left">
                 Wallets Details
               </h2>
-              <button className="bg-[#1860d9] text-white rounded-full p-2 hover:bg-blue-700">
+              <button
+                type="button"
+                className="bg-[#1860d9] text-white rounded-full p-2 hover:bg-blue-700"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    wallets: [...prev.wallets, { network: "", address: "" }],
+                  }));
+                }}
+              >
                 <Plus size={20} />
               </button>
             </div>
 
-            {/* First Row */}
             <div className="flex flex-wrap w-full gap-4 mb-4">
-              {/* Crypto Network */}
-              <div className="flex flex-col w-full lg:w-[40%]">
-                <label className="text-sm text-gray-600">Crypto Network</label>
-                <select
-                  name="network"
-                  value={formData.network}
-                  onChange={handleChange}
-                  className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
-                >
-                  <option value="">Select Crypto Network</option>
-                  <option value="TRC-20">TRC-20</option>
-                  <option value="TON">TON</option>
-                  <option value="APTOS">APTOS</option>
-                  <option value="BET 20">BET20</option>
-                </select>
-              </div>
-
-              {/* Wallet Address */}
-              <div className="flex flex-col w-full lg:w-[58%] relative">
-                <label className="text-sm text-gray-600">Wallet Address</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full bg-white border-gray-300 text-gray-500 border p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(formData.address);
-                    alert("Wallet Address copied!");
-                  }}
-                  className="absolute right-2 top-8 text-[#1860d9]"
-                >
-                  <Copy size={18} />
-                </button>
-              </div>
+              {formData.wallets.map((wallet, index) => (
+                <React.Fragment key={index}>
+                  <div className="flex flex-col w-full lg:w-[40%]">
+                    <label className="text-sm text-gray-600">
+                      Crypto Network
+                    </label>
+                    <select
+                      name={`wallet-network-${index}`}
+                      value={wallet.network}
+                      onChange={handleChange}
+                      className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+                    >
+                      <option value="">Select Crypto Network</option>
+                      <option value="TRC-20">TRC-20</option>
+                      <option value="TON">TON</option>
+                      <option value="APTOS">APTOS</option>
+                      <option value="BET 20">BET20</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col w-full lg:w-[58%] relative mb-4">
+                    <label className="text-sm text-gray-600">
+                      Wallet Address {index + 1}
+                    </label>
+                    <input
+                      type="text"
+                      name={`wallet-address-${index}`}
+                      value={wallet.address}
+                      onChange={handleChange}
+                      className="w-full bg-white border-gray-300 text-gray-500 border p-2 pr-10 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(wallet.address);
+                        alert("Wallet Address copied!");
+                      }}
+                      className="absolute right-2 top-8 text-[#1860d9]"
+                    >
+                      <Copy size={18} />
+                    </button>
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
 
-            {/* Second Row */}
             <div className="flex flex-wrap w-full gap-4">
-              {/* Exchange */}
               <div className="flex flex-col w-full lg:w-[40%]">
                 <label className="text-sm text-gray-600">
                   Exchange User ID
@@ -596,7 +538,6 @@ const AccountPage = () => {
                 </select>
               </div>
 
-              {/* UID */}
               <div className="flex flex-col w-full lg:w-[58%] relative">
                 <label className="text-sm text-gray-600">Enter UID</label>
                 <input
