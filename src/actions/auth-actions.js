@@ -109,6 +109,7 @@ export const SignUpAction = async (data, strength, checked, ref) => {
       console.log(insertReferralError);
       return { message: insertReferralError.message, error: true };
     }
+    
     return { message: "User created successfully", error: false };
   } catch (error) {
     return { message: error.message ? error.message : error, error: true };
@@ -146,13 +147,13 @@ export const sendRecoveryPassword = async (email) => {
     if (!exist) {
       return { message: "User with email does not exist", error: true };
     }
-    if (!exist.confirmed_at) {
-      return {
-        message:
-          "Your account has not been confirmed yet. Please check your email to verify your account.",
-        error: true,
-      };
-    }
+    // if (!exist.confirmed_at) {
+    //   return {
+    //     message:
+    //       "Your account has not been confirmed yet. Please check your email to verify your account.",
+    //     error: true,
+    //   };
+    // }
 
     const supabase = await serverCreateClient();
     const { data: resetData, error: resetErr } =
