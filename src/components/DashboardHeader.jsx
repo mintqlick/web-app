@@ -55,9 +55,9 @@ export default function DashboardHeader() {
           <Image
             src="/images/logo.png"
             alt="Logo"
-            width={90}
-            height={45}
-            className="md:w-[100px] md:h-[50px] lg:w-[120px] lg:h-[0px] object-contain"
+            width={1080}
+            height={1090}
+            className=" -ml-[2rem] md:ml-0 w-[150px] md:w-[250px] md:h-[200px] lg:w-[200px] lg:h-[200px] object-contain"
           />
         </div>
 

@@ -14,8 +14,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import zxcvbn from "zxcvbn";
 import { SignUpAction } from "@/actions/auth-actions";
-import { useSearchParams } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignUpForm({ checked }) {
   const form = useForm({
@@ -29,7 +28,7 @@ export default function SignUpForm({ checked }) {
 
   const param = useSearchParams();
   const ref = param.get("ref");
-
+  const router = useRouter();
   const [showPass, setShowPass] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordFeedback, setPasswordFeedback] = useState("");
@@ -60,7 +59,7 @@ export default function SignUpForm({ checked }) {
 
   const onSubmit = async (data) => {
     try {
-      const result = await SignUpAction(data, passwordStrength, checked,ref);
+      const result = await SignUpAction(data, passwordStrength, checked, ref);
       if (result.error) {
         setSuccessMessage("");
         if (
@@ -80,6 +79,7 @@ export default function SignUpForm({ checked }) {
       );
       setPasswordTouched(false);
       form.reset();
+      router.push("/dashboard");
     } catch (error) {
       setSuccessMessage("");
       if (error.message) {
