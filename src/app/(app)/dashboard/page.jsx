@@ -62,7 +62,6 @@ export default function MainPage() {
       } = await supabase.auth.getUser();
 
       if (error) {
-        
       } else {
         setUserId(user?.id);
         const { data: userData, error: userDataError } = await supabase
@@ -71,7 +70,6 @@ export default function MainPage() {
           .eq("id", user?.id)
           .single();
         if (userDataError) {
-          
         } else {
           const { data: accountData, error: accountError } = await supabase
             .from("account")
@@ -80,13 +78,10 @@ export default function MainPage() {
             .limit(1)
             .single();
           if (accountError) {
-            
           } else {
-            
             setUserData({ ...userData, account: accountData });
           }
         }
-        
       }
     };
     fetchUserData();
@@ -138,15 +133,13 @@ export default function MainPage() {
     setLoading(false);
   };
   const handleCancelCommitment = async (id) => {
-    
-
     const supabase = createClient();
 
     const { error: deleteErr } = await supabase
       .from("merge_givers")
       .delete()
       .eq("id", id);
-    
+
     if (deleteErr) return;
     location.reload();
 
@@ -164,8 +157,6 @@ export default function MainPage() {
       .select("*")
       .eq("giver_id", commitmentsArr[0]?.id)
       .single();
-
-    
 
     setReceiverId(receiver_id);
     const { data: receive_data, error: receiver_error } = await supabase
@@ -231,12 +222,9 @@ export default function MainPage() {
           "Content-Type": "application/json",
         });
         if (result.ok) {
-          
         }
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
     setWithDrawLoading(false);
   };
 
@@ -278,8 +266,6 @@ export default function MainPage() {
         .eq("user_id", userId)
         .or("status.eq.waiting,status.eq.pending");
 
-      
-
       if (data) {
         setCommitmentArr(data);
         if (data.length < 1) {
@@ -305,7 +291,6 @@ export default function MainPage() {
           .single();
 
         if (receiverErr) {
-          
           return; // Early return if there's an error fetching data
         }
 
@@ -314,9 +299,7 @@ export default function MainPage() {
         } else {
           setCanWithdraw(false); // In case there's no data
         }
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     };
 
     if (userId) {
@@ -330,7 +313,6 @@ export default function MainPage() {
 
       // If there are commitments, log them
       if (commitmentsArr[0]) {
-        
       }
 
       try {
@@ -341,12 +323,9 @@ export default function MainPage() {
           .single();
 
         if (gvr_error) {
-          
         } else {
-          
         }
 
-        
         // Log any error
 
         // Uncomment this if needed
@@ -356,11 +335,8 @@ export default function MainPage() {
           .eq("giver_id", gvr?.id)
           .single();
 
-        
         setReceiverId(data.receiver_id);
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     };
 
     if (userId) {
@@ -381,9 +357,7 @@ export default function MainPage() {
           .single();
 
         if (rcr_error) {
-          
         } else {
-          
         }
 
         // Log any error
@@ -411,9 +385,7 @@ export default function MainPage() {
           .single();
 
         setRcvDetail({ ...giver_det, success: true });
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     };
 
     if (userId) {
@@ -433,7 +405,7 @@ export default function MainPage() {
   //         .maybeSingle();
 
   //       if (rcr_error || !rcr) {
-  
+
   //         return;
   //       }
 
@@ -445,10 +417,9 @@ export default function MainPage() {
   //         .eq("receiver_id", rcr.id)
   //         .maybeSingle();
   //       if (receiver_error) {
-  
+
   //         return;
   //       }
-  
 
   //       const { data: giver_det, error: giver_error } = await supabase
   //         .from("merge_givers")
@@ -456,16 +427,14 @@ export default function MainPage() {
   //         .eq("id", match?.giver_id)
   //         .maybeSingle();
 
-  
   //       if (giver_error) {
-  
 
   //       }
 
   //       setRcvDetail({ ...giver_det, ...match });
-  
+
   //     } catch (err) {
-  
+
   //     }
   //   };
 
@@ -473,6 +442,43 @@ export default function MainPage() {
   //     handler();
   //   }
   // }, [userId]);
+
+  // check if user has entry in referral table
+  
+  useEffect(() => {
+    const handleReferralInsert = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const isOAuth = user.app_metadata?.provider !== "email";
+
+      if (isOAuth) {
+        const { data: existing, error } = await supabase
+          .from("referrals")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+
+        if (!existing) {
+          const referralCode = `REF-${user.id.slice(0, 8)}`;
+
+          await supabase.from("referrals").insert([
+            {
+              user_id: user.id,
+              referral_code: referralCode,
+              referred_by: null,
+            },
+          ]);
+        }
+      }
+    };
+
+    handleReferralInsert();
+  }, []);
 
   return (
     <div className="flex w-full h-full">

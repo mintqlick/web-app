@@ -14,7 +14,7 @@ export default function AuthPage() {
   const NEXT_PUBLIC_APP_URL =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://mintqlick.vercel.app";
+      : "https://www.nodalcircle.com";
 
   const googleClicked = async () => {
     const supabase = createClient();
@@ -52,22 +52,16 @@ export default function AuthPage() {
             <span className="px-4 text-[12px] text-[#878E99]">or</span>
             <div className="flex-grow h-px bg-gray-300" />
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-center">
             <Button
               onClick={googleClicked}
               className={
-                "w-5/12 rounded-3xl bg-white cursor-pointer text-black border-gray-400 border-1 hover:bg-white"
+                "w-full rounded-3xl bg-white cursor-pointer text-black border-gray-400 border-1 hover:bg-white"
               }
             >
               Google
             </Button>
-            <Button
-              className={
-                "w-5/12 rounded-3xl cursor-pointer bg-white text-black border-gray-400 border-1 hover:bg-white"
-              }
-            >
-              Apple
-            </Button>
+           
           </div>
           <div className="text-center mt-2">
             <span className="text-accent-foreground font-medium cursor-pointer">
