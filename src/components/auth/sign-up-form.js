@@ -16,6 +16,8 @@ import zxcvbn from "zxcvbn";
 import { SignUpAction } from "@/actions/auth-actions";
 import { useRouter, useSearchParams } from "next/navigation";
 
+
+
 export default function SignUpForm({ checked }) {
   const form = useForm({
     defaultValues: {
@@ -35,6 +37,7 @@ export default function SignUpForm({ checked }) {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [errorMess, setErrorMessage] = useState("");
   const [sucessMess, setSuccessMessage] = useState("");
+  
 
   const changeSeePassword = () => {
     setShowPass((prev) => !prev);
@@ -249,3 +252,4 @@ export default function SignUpForm({ checked }) {
     </Form>
   );
 }
+

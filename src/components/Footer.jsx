@@ -174,7 +174,7 @@ const PrivacyPolicyModal = ({ onClose }) => (
         this Policy <br />This Privacy Policy may be updated periodically. Changes
         will be made with the intention of strengthening user privacy. Continued
         use of the platform after updates indicates acceptance of the revised
-        policy. <br /><br />9. Contact Support <br />inquiries can be directed through the
+        policy. <br /><br />9. Contact Support brinquiries can be directed through the
         appropriate section of the platform interface. Due to the nature of the
         system, traditional support channels such as email or phone are not
         provided. Users are encouraged to consult available resources and
@@ -297,7 +297,7 @@ const Footer = () => {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 w-full">
             {/* Left - Copyright */}
             <p className=" text-[#1860d9] text-sm lg:text-base">
-              © 2025 MintQlick. All rights reserved.
+              © 2025 NodalCircle. All rights reserved.
             </p>
 
             {/* Right - Social Icons */}
