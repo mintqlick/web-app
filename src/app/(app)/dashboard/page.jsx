@@ -444,7 +444,7 @@ export default function MainPage() {
   // }, [userId]);
 
   // check if user has entry in referral table
-  
+
   useEffect(() => {
     const handleReferralInsert = async () => {
       const supabase = createClient();
@@ -491,7 +491,9 @@ export default function MainPage() {
               {/* Contribution ID */}
               <h3 className="text-sm font-medium">
                 Contribution ID:{" "}
-                <span className="font-bold">{userId || "N/A"}</span>
+                <span className="font-bold">
+                  {userId ? userId.split("-")[0] : "N/A"}
+                </span>
               </h3>
 
               {/* Buttons (side-by-side on sm+, stacked on mobile) */}
@@ -523,7 +525,6 @@ export default function MainPage() {
               cmtData={commitmentsArr.find(
                 (item) => item.status === "completed"
               )}
-             
             />
           )}
 

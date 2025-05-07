@@ -41,7 +41,7 @@ export default function Callback() {
         return
       }
 
-      router.push('/')
+      router.push('/dashboard')
     }
 
     if (codeVerifier) {

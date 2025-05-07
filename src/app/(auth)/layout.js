@@ -3,8 +3,8 @@ import LogoImage from "@/assets/Property 1=Variant2.png";
 import Link from "next/link";
 
 export const metadata = {
-  title: "MintQlick Authenticate",
-  description: "This is the MintQlick Authentication Page",
+  title: "NodaCircle Authenticate",
+  description: "This is the NodaCircle Authentication Page",
 };
 
 export default function RootLayout({ children }) {

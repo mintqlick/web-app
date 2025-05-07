@@ -181,7 +181,7 @@ const TermsAndConditionsModal = ({ onClose }) => (
         Financial Claims or Guarantees <br /> NodalCircle is not intended as an income
         opportunity or investment program. The platform does not guarantee
         profits, returns, or earnings of any kind. Use of phrases such as
-        'earnings', 'profits', 'interest', or 'returns' in relation to this
+        &rsquo;earnings&rsquo;, &rsquo;profits&rsquo;, &rsquo;interest&rsquo;, or &rsquo;returns&rsquo; in relation to this
         platform by users or affiliates is strictly prohibited and not endorsed
         by NodalCircle. Participation should be understood as a cyclical
         contribution model between consenting individuals. <br /> <br />10. Limitation of

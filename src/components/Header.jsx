@@ -92,27 +92,27 @@ export default function Header() {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div
-          className="lg:hidden fixed top-[125px] right-4 w-1/2 h-[300px] px-6 bg-white pb-6 space-y-4 rounded-2xl shadow-md z-50"
+          className="lg:hidden fixed flex flex-col top-[125px] right-4 w-1/2 h-[300px] px-6 bg-white pb-6 space-y-4 rounded-2xl shadow-md z-50"
           style={{ animation: "fadeIn 0.3s ease" }}
         >
           <Link
             href="#"
-            className="block text-gray-700 text-base hover:text-blue-600 transition duration-200"
+            className="block  text-gray-700 text-base hover:text-blue-600 transition duration-200"
           >
             About
           </Link>
-          <button
-            onClick={() => router.push("/sign-in")}
-            className="w-full border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200"
+          <Link
+            href={"/sign- in"}
+            className="w-full text-center border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200"
           >
             Login
-          </button>
-          <button
-            onClick={() => router.push("/sign-up")}
-            className="w-full bg-[#1860d9] text-white rounded-full py-2 text-sm hover:bg-[#164cb5] transition duration-200"
+          </Link>
+          <Link
+            href={"/sign-up"}
+            className="w-full text-center bg-[#1860d9] text-white rounded-full py-2 text-sm hover:bg-[#164cb5] transition duration-200"
           >
             Open Account
-          </button>
+          </Link>
         </div>
       )}
     </header>
