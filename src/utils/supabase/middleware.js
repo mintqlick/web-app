@@ -31,17 +31,22 @@ export async function updateSession(request) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const pathname = request.nextUrl.pathname
+  let pathname = request.nextUrl.pathname
+
+  // Normalize pathname by removing trailing slash except for root
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    pathname = pathname.slice(0, -1)
+  }
 
   const publicRoutes = ['/', '/sign-in', '/sign-up']
 
-  if (!user && !publicRoutes.some(path => pathname.startsWith(path))) {
+  if (!user && !publicRoutes.includes(pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/sign-in'
     return NextResponse.redirect(url)
   }
 
-  if (user && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
+  if (user && (pathname === '/sign-in' || pathname === '/sign-up')) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
