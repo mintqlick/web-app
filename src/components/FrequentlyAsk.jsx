@@ -19,9 +19,9 @@ const FrequentlyAsk = () => {
   const faqs = [
     {
       value: "item-1",
-      question: "How does MintQlick work?",
+      question: "How does NodalCircle work?",
       answer:
-        "MintQlick operates as a structured peer-to-peer community, where members contribute directly to each other. You participate in cycles and receive structured support in return.",
+        "NodalCircle operates as a structured peer-to-peer community, where members contribute directly to each other. You participate in cycles and receive structured support in return.",
     },
     {
       value: "item-2",
@@ -61,9 +61,9 @@ const FrequentlyAsk = () => {
     },
     {
       value: "item-8",
-      question: "How does MintQlick stay stable over time?",
+      question: "How does NodalCircle stay stable over time?",
       answer:
-        "MintQlick is built on structure with timed cycles, recommitment requirements, and paced onboarding helping maintain long-term sustainability.",
+        "NodalCircle is built on structure with timed cycles, recommitment requirements, and paced onboarding helping maintain long-term sustainability.",
     },
   ]
 

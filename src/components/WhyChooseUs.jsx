@@ -5,7 +5,7 @@ const WhyChooseUs = () => {
   return (
     <div className="w-full h-auto max-w-7xl bg-white overflow-hidden mt-[128px] mx-auto px-4">
       <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-gray-800 text-center mb-8">
-        Why choose <span className="text-[#1860d9]">MintQlick</span>
+        Why choose <span className="text-[#1860d9]">NodalCircle?</span>
       </h2>
 
       {/* Section 1 */}
@@ -20,7 +20,7 @@ const WhyChooseUs = () => {
             keeping the system running efficiently for all users.
           </p>
           <Image
-            src="/images/edd.png"
+            src="/images/membership.jpg"
             alt="Membership"
             width={550}
             height={500}
@@ -38,7 +38,7 @@ const WhyChooseUs = () => {
             you with any questions or issues.
           </p>
           <Image
-            src="/images/support.jpg"
+            src="/images/support1.jpg"
             alt="Support"
             width={550}
             height={500}
@@ -63,7 +63,7 @@ const WhyChooseUs = () => {
           {/* Right - Image */}
           <div className="w-full lg:w-1/2 flex justify-center">
             <Image
-              src="/images/guaranteed_payout.jpg"
+              src="/images/guanranteed.jpg"
               alt="Guaranteed Payout"
               width={550}
               height={500} // Reduced image height

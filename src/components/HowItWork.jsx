@@ -5,7 +5,7 @@ const HowItWork = () => {
   return (
     <div className="w-full h-auto max-w-7xl bg-white overflow-hidden mt-[128px] mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl md:text-4xl lg:text-6xl font-bold text-gray-800 text-center mb-8">
-        How <span className="text-[#1860d9]">MintQlick</span> Operates?
+        How <span className="text-[#1860d9]">NodalCircle</span> Operates?
       </h2>
       <div className="flex flex-col lg:flex-row w-full h-full gap-6">
         {/* Left - Image Section */}
