@@ -102,7 +102,7 @@ export default function Header() {
             About
           </Link>
           <Link
-            href={"/sign- in"}
+            href={"/sign-in"}
             className="w-full text-center border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200"
           >
             Login
