@@ -9,7 +9,7 @@ const HeroSection = () => {
         {/* Left - Image Section */}
         <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-6">
           <Image
-            src="/images/heroImage.svg"
+            src="/images/hero.png"
             alt="Hero"
             width={550}
             height={500}
