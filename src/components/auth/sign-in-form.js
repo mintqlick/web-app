@@ -74,7 +74,7 @@ export default function AuthComponent() {
       if (error.message) {
         if (error.message === "NEXT_REDIRECT") {
           setErrorMessage("");
-          setSuccessMess("successfully authentocated");
+          setSuccessMess("successfully authenticated");
           return;
         }
         setSuccessMess("");
