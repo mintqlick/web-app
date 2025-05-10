@@ -40,27 +40,7 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-x-2">
-            <Link
-              href="#"
-              className="flex items-center space-x-1 text-gray-700 hover:text-black"
-            >
-              <span>About</span>
-              <ChevronDown className="w-4 h-4" />
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center space-x-1 text-gray-700 hover:text-black"
-            >
-              <span>Investments</span>
-              <ChevronDown className="w-4 h-4" />
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center space-x-1 text-gray-700 hover:text-black"
-            >
-              <span>Support</span>
-              <ChevronDown className="w-4 h-4" />
-            </Link>
+            
             <button
               onClick={() => router.push("/sign-in")}
               className="px-4 py-2 text-[10px] w-[100px] h-[30px] border border-gray-800 rounded-full hover:bg-gray-100 transition"
