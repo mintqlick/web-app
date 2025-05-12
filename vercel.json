@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/cron/expire/route.js": {
+    "functions/expire.js": {
       "schedule": "0 0 * * *"
     }
   }
