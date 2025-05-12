@@ -38,7 +38,7 @@ export async function updateSession(request) {
     pathname = pathname.slice(0, -1)
   }
 
-  const publicRoutes = ["/", "/sign-in", "/sign-up","/recover"];
+  const publicRoutes = ["/", "/sign-in", "/sign-up","/recover","/api/cron/expire];
 
   if (!user && !publicRoutes.includes(pathname)) {
     const url = request.nextUrl.clone()
