@@ -9,7 +9,7 @@ const ReferrerPage = () => {
   const NEXT_PUBLIC_APP_URL =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://mintqlick.vercel.app";
+      : "https://www.nodalcircles.com";
 
   const [refCode, setRefCode] = useState("");
   const [totalReferrals, setTotalReferrals] = useState(null);
@@ -82,16 +82,16 @@ const ReferrerPage = () => {
         >
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
-              <p className="text-xl text-gray-900">Referral code:</p>
+              <p className="text-[13px] md:text-xl text-gray-900">Referral code:</p>
               <button
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(`${refCode}`);
                   alert("Referral code copied!");
                 }}
-                className="flex items-center gap-2 bg-[#1860d9] px-4 py-2 rounded-2xl text-white hover:bg-[#154db1] transition-all duration-200"
+                className="flex items-center gap-2 bg-[#1860d9] px-3 md:px-4 py-2 rounded-2xl text-white hover:bg-[#154db1] transition-all duration-200 text-[9px] md:text-[14px]"
               >
-                <Copy size={18} />
+                <Copy className="h-[10px] w-[10px] md:h-5 md:w-5" />
                 <span>{refCode ? refCode : <Spinner size={20} />}</span>
               </button>
             </div>
@@ -102,7 +102,7 @@ const ReferrerPage = () => {
                 placeholder="https://example.com/referral-link"
                 value={`${NEXT_PUBLIC_APP_URL}/sign-up?ref=${refCode}`}
                 disabled
-                className="bg-white w-full border border-gray-300 text-gray-500 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9] transition-all duration-200"
+                className="bg-white w-full border border-gray-300 text-gray-500 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9] transition-all duration-200 text-[8px] md:text-[14px]"
               />
               <button
                 type="button"
@@ -114,8 +114,8 @@ const ReferrerPage = () => {
                 }}
                 className="absolute top-1/2 -translate-y-1/2 right-4 text-[#1860d9] flex items-center gap-1 hover:text-[#0f3d92] transition-colors duration-200"
               >
-                <Copy size={18} />
-                <span className="text-sm">Copy Link</span>
+                <Copy className="h-[10px] w-[10px] md:h-5 md:w-5" />
+                <span className="text-[9px] md:text-sm">Copy Link</span>
               </button>
             </div>
           </div>
@@ -149,7 +149,7 @@ const ReferrerPage = () => {
         >
           <div className="flex flex-col items-center justify-center gap-6 text-center">
             <div className="flex items-center gap-4">
-              <p className="text-xl text-gray-900">Referral Point:</p>
+              <p className="text-sm md:text-xl text-gray-900">Referral Point:</p>
               <button className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl text-black border border-gray-300 hover:bg-gray-100 transition">
                 {totalReferrals === null ? (
                   <Spinner size={30} />

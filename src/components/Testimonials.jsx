@@ -24,8 +24,8 @@ const Testimonials = () => {
 
           {/* Text Section */}
           <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
-            <h3 className="text-2xl md:text-3xl font-semibold text-black">
-              Received my first payment in 7 days
+            <h3 className="text-xl md:text-2xl font-semibold text-black">
+              Received my first contribution payout in 7 days
             </h3>
             <p className="mt-4 text-base md:text-lg text-gray-600 max-w-xl">
             “I joined with a simple contribution, and in 7 days, the community supported me back. The system works!”

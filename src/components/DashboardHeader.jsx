@@ -57,7 +57,7 @@ export default function DashboardHeader() {
             alt="Logo"
             width={1080}
             height={1090}
-            className="-ml-[5rem] sm:-ml-[3rem] md:ml-0 w-[150px] md:w-[250px] md:h-[200px] lg:w-[200px] lg:h-[200px] object-contain"
+            className="-ml-[2rem] sm:-ml-[3rem] md:-ml-10 w-[150px] md:w-[250px] md:h-[200px] lg:w-[200px] lg:h-[200px] object-contain"
           />
         </div>
 

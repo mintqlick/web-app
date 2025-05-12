@@ -41,7 +41,7 @@ const HeroSection = () => {
             </div>
 
             {/* Images and Text Section */}
-            <div className="flex flex-row mt-8 items-start gap-2 sm:gap-4 flex-wrap">
+            <div className=" hidden flex-row mt-8 items-start gap-2 sm:gap-4 flex-wrap">
               {/* Images Section */}
               <div className="flex w-auto">
                 <Image
@@ -68,7 +68,7 @@ const HeroSection = () => {
               </div>
 
               {/* Text Section */}
-              <div className="flex-1 min-w-0">
+              <div className="hidden flex-1 min-w-0">
                 <h2 className="text-sm sm:text-xl md:text-3xl text-black flex items-center">
                   <RiArrowUpSFill className="mr-1 sm:mr-2" /> 15 Million+
                 </h2>
