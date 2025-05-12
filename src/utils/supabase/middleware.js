@@ -26,7 +26,6 @@ export async function updateSession(request) {
       },
     }
   );
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
