@@ -1,7 +1,7 @@
 
 {
   "crons": [{
-    "path": "/functions/expire.js",
+    "path": "/api/cron/expire/route.js",
     "schedule": "0 10 * * *"
   }]
 }
