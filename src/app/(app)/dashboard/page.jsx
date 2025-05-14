@@ -130,29 +130,7 @@ export default function MainPage() {
       setShowCommitmentBox(false); // Hide the commitment box after successful commit
     }
 
-     // 💰 Step 2: Check if the user was referred
-  const { data: referralData, error: referralError } = await supabase
-  .from("referrals")
-  .select("referred_by")
-  .eq("user_id", userId)
-  .single();
-
-if (referralData?.referred_by) {
-  const referrerId = referralData.referred_by;
-  const bonusAmount = parseFloat((numAmount * 0.05).toFixed(2)); // 5% bonus
-
-  // 💵 Step 3: Update referrer's balance
-  const { error: bonusError } = await supabase.rpc("increment_balance", {
-    user_id_param: referrerId,
-    amount: bonusAmount,
-  });
-
-  if (bonusError) {
-    console.error("Failed to reward referrer:", bonusError.message);
-  } else {
-    console.log(`Referrer rewarded with $${bonusAmount}`);
-  }
-}
+     
 
     setLoading(false);
   };
