@@ -80,14 +80,14 @@ const ReferrerPage = () => {
         }),
       });
 
-      if (res.ok) {
-        const result = await fetch("/api/merge", {
-          method: "GET",
-          "Content-Type": "application/json",
-        });
-        if (result.ok) {
-        }
-      }
+      // if (res.ok) {
+      //   const result = await fetch("/api/merge", {
+      //     method: "GET",
+      //     "Content-Type": "application/json",
+      //   });
+      //   if (result.ok) {
+      //   }
+      // }
     } catch (error) {}
     
     const { error: resetError } = await supabase.rpc("reset_balance", {

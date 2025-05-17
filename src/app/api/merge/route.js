@@ -4,27 +4,33 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const supabase = createClient();
-  const { data: givers } = await supabase
+
+  const { data: givers, error: giversError } = await supabase
     .from("merge_givers")
     .select("*")
-    // .eq("confirmed", true)
     .gt("amount_remaining", 0)
-    .neq("status","completed")
-    .order("created_at");
+    .order("created_at", { ascending: true });
 
+  if (giversError) {
+    return NextResponse.json({ success: false, message: giversError.message }, { status: 500 });
+  }
 
-  const { data: receivers } = await supabase
+  const { data: receivers, error: receiversError } = await supabase
     .from("merge_receivers")
     .select("*")
     .gt("amount_remaining", 0)
-    .order("created_at");
+    .order("created_at", { ascending: true });
+
+  if (receiversError) {
+    return NextResponse.json({ success: false, message: receiversError.message }, { status: 500 });
+  }
 
   for (const receiver of receivers) {
     let receiverNeed = receiver.amount_remaining;
 
     for (const giver of givers) {
-      if (receiverNeed <= 0) break;
       if (giver.amount_remaining <= 0) continue;
+      if (receiverNeed <= 0) break;
 
       const matchAmount = Math.min(receiverNeed, giver.amount_remaining);
 
@@ -43,24 +49,43 @@ export async function GET() {
         }
       
 
+      const newGiverAmount = giver.amount_remaining - matchAmount;
+      const newReceiverAmount = receiver.amount_remaining - matchAmount;
+
       await supabase
         .from("merge_givers")
         .update({
-          amount_remaining: giver.amount_remaining - matchAmount,
-          status: "pending",
+          amount_remaining: newGiverAmount,
+          status: newGiverAmount === 0 ? "matched" : "pending",
         })
         .eq("id", giver.id);
 
       await supabase
         .from("merge_receivers")
         .update({
-          amount_remaining: receiver.amount_remaining - matchAmount,
-          status: "pending",
+          amount_remaining: newReceiverAmount,
+          status: newReceiverAmount === 0 ? "matched" : "pending",
         })
         .eq("id", receiver.id);
 
+      // Send notifications to giver and receiver about the match
+      await supabase.from("notifications").insert([
+        {
+          user_id: giver.user_id,
+          message: `You have been matched to a receiver for ₦${matchAmount}.`,
+          is_read: false,
+          created_at: new Date().toISOString(),
+        },
+        {
+          user_id: receiver.user_id,
+          message: `You have been matched to a giver for ₦${matchAmount}.`,
+          is_read: false,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
       receiverNeed -= matchAmount;
-      giver.amount_remaining -= matchAmount;
+      giver.amount_remaining = newGiverAmount; // update for loop condition
     }
   }
 
