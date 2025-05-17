@@ -44,6 +44,20 @@ export async function GET() {
 
         if (matchError) throw new Error("Failed to insert match: " + matchError.message);
 
+      const { data: mergeData, error: mergeError } = await supabase
+        .from("merge_matches")
+        .insert({
+          giver_id: giver.id,
+          receiver_id: receiver.id,
+          matched_amount: matchAmount,
+          matched_at:new Date(Date.now())
+        });
+        if(mergeError){
+          console.log("Error merging", mergeError)
+          break;
+        }
+      
+
         const newGiverAmount = giver.amount_remaining - matchAmount;
         const newReceiverAmount = receiverNeed - matchAmount;
 
