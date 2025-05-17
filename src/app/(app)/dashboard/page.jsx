@@ -42,6 +42,7 @@ export default function MainPage() {
   const [orderId, setOrderId] = useState(null);
   const [openRcv, setOpenRcv] = useState(false);
   const [withdrawLoading, setWithDrawLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const handleShowReceiverModal = (url) => {
     setScreenshotUrl(url);
@@ -268,7 +269,6 @@ export default function MainPage() {
         .from("merge_givers")
         .select("*")
         .eq("user_id", userId)
-        .or("status.eq.waiting,status.eq.pending");
 
       if (data) {
         setCommitmentArr(data);
@@ -286,7 +286,7 @@ export default function MainPage() {
   useEffect(() => {
     const check_receiver = async () => {
       const supabase = createClient();
-
+        console.log("userId", userId);
       try {
         const { data, error: receiverErr } = await supabase
           .from("merge_receivers")
@@ -300,10 +300,16 @@ export default function MainPage() {
 
         if (data) {
           setCanWithdraw(true);
+          console.log("reciever data:", data);
+          
         } else {
           setCanWithdraw(false); // In case there's no data
         }
+
+       
       } catch (error) {}
+
+       
     };
 
     if (userId) {
@@ -324,6 +330,7 @@ export default function MainPage() {
           .from("merge_givers")
           .select("*")
           .eq("user_id", userId)
+          .eq("status", "pending", "waiting")
           .single();
 
         if (gvr_error) {
@@ -396,6 +403,30 @@ export default function MainPage() {
       handler();
     }
   }, [userId]);
+
+  useEffect(() => {
+    const handler = async () => {
+      try {
+        const supabase = createClient();
+        const { data: rcr, error: rcr_error } = await supabase
+          .from("merge_givers")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("status", "completed")
+          .Single();
+
+        if (rcr_error) {
+          alert("error");
+        } else {
+          setIsCompleted(true);
+        }
+
+        setRcvDetail(rcr);
+      } catch (err) {
+        console.error("Error fetching receiver data:", err);
+      }
+     }
+  });
 
   // useEffect(() => {
   //   const handler = async () => {

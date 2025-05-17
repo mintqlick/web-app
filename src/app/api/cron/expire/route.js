@@ -76,6 +76,61 @@ export async function GET(request) {
       });
     }
 
+    // ✅ MATCHING LOGIC (Option 1: partial merging allowed)
+    const { data: receivers } = await supabase
+      .from("merge_receivers")
+      .select("*")
+      .eq("status", "ready")
+      .gt("amount_remaining", 0)
+      .order("created_at");
+
+    const { data: givers } = await supabase
+      .from("merge_givers")
+      .select("*")
+      .eq("status", "ready")
+      .gt("amount_remaining", 0)
+      .order("created_at");
+
+    for (const receiver of receivers || []) {
+      let receiverNeed = receiver.amount_remaining;
+
+      for (const giver of givers || []) {
+        if (receiverNeed <= 0) break;
+        if (giver.amount_remaining <= 0) continue;
+
+        const matchAmount = Math.min(receiverNeed, giver.amount_remaining);
+
+        await supabase.from("merge_matches").insert({
+          giver_id: giver.id,
+          receiver_id: receiver.id,
+          matched_amount: matchAmount,
+        });
+
+        // Update giver
+        const newGiverAmt = giver.amount_remaining - matchAmount;
+        await supabase
+          .from("merge_givers")
+          .update({
+            amount_remaining: newGiverAmt,
+            status: newGiverAmt === 0 ? "matched" : "pending",
+          })
+          .eq("id", giver.id);
+        giver.amount_remaining = newGiverAmt;
+
+        // Update receiver
+        receiverNeed -= matchAmount;
+      }
+
+      const newReceiverAmt = receiver.amount_remaining - (receiver.amount_remaining - receiverNeed);
+      await supabase
+        .from("merge_receivers")
+        .update({
+          amount_remaining: newReceiverAmt,
+          status: newReceiverAmt === 0 ? "matched" : "pending",
+        })
+        .eq("id", receiver.id);
+    }
+
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

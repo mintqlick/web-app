@@ -59,8 +59,8 @@ export default function ActiveCommitment({
         </p>
 
         <button
-          onClick={() => onWithdraw(30)}
-        //   disabled={!isEligible}
+          onClick={() => onWithdraw()}
+          disabled={!isEligible}
           className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
         >
           {!loading ? "Withdraw" : "Withdrawing"}
