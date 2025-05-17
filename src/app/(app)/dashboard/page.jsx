@@ -130,11 +130,8 @@ export default function MainPage() {
       setShowCommitmentBox(false); // Hide the commitment box after successful commit
     }
 
-     
-
     setLoading(false);
   };
-
 
   const handleCancelCommitment = async (id) => {
     const supabase = createClient();
@@ -211,12 +208,21 @@ export default function MainPage() {
 
   const withDraw = async (amt) => {
     setWithDrawLoading(true);
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("merge_givers")
+      .select("original_amount")
+      .eq("user_id", userId)
+      .eq("status", "completed")
+      .single();
+      
     try {
       const res = await fetch("/api/join-receiver", {
         method: "POST",
         body: JSON.stringify({
           user_id: userId,
-          amount: amt, // amount to withdraw
+          amount: data.original_amount*1.45, // amount to withdraw
         }),
       });
 
@@ -228,7 +234,9 @@ export default function MainPage() {
         if (result.ok) {
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log("error");
+    }
     setWithDrawLoading(false);
   };
 
@@ -267,8 +275,7 @@ export default function MainPage() {
       const { data, error } = await supabase
         .from("merge_givers")
         .select("*")
-        .eq("user_id", userId)
-        .or("status.eq.waiting,status.eq.pending");
+        .eq("user_id", userId);
 
       if (data) {
         setCommitmentArr(data);

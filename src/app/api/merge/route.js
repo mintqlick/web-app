@@ -9,7 +9,9 @@ export async function GET() {
     .select("*")
     // .eq("confirmed", true)
     .gt("amount_remaining", 0)
+    .neq("status","completed")
     .order("created_at");
+
 
   const { data: receivers } = await supabase
     .from("merge_receivers")
@@ -26,11 +28,20 @@ export async function GET() {
 
       const matchAmount = Math.min(receiverNeed, giver.amount_remaining);
 
-      await supabase.from("merge_matches").insert({
-        giver_id: giver.id,
-        receiver_id: receiver.id,
-        matched_amount: matchAmount,
-      });
+
+      const { data: mergeData, error: mergeError } = await supabase
+        .from("merge_matches")
+        .insert({
+          giver_id: giver.id,
+          receiver_id: receiver.id,
+          matched_amount: matchAmount,
+          matched_at:new Date(Date.now())
+        });
+        if(mergeError){
+          console.log("Error merging", mergeError)
+          break;
+        }
+      
 
       await supabase
         .from("merge_givers")
