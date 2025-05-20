@@ -3,7 +3,7 @@
 import { PlusCircle } from "lucide-react";
 import React from "react";
 
-export default function ActiveCommitment({
+export default function Recommitment({
   onWithdraw,
   loading,
   countdown,
@@ -11,7 +11,6 @@ export default function ActiveCommitment({
   cmtData,
   recommitProcess,
 }) {
-  console.log(cmtData,"cmt data")
   const now = new Date();
   const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
     ? new Date(cmtData.eligible_as_receiver)
@@ -37,7 +36,7 @@ export default function ActiveCommitment({
   return (
     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">
       <h4 className="text-base text-blue-600 font-semibold mb-1">
-        Active Commitment
+       Recommitment made for: <span className="text-[#878E99]">{cmtData?.id.split("-")[0]}</span>
       </h4>
       <div className="flex flex-col gap-2 text-sm mb-4">
         <p>
@@ -63,21 +62,7 @@ export default function ActiveCommitment({
           </p>
         )}
 
-        {isEligible ? (
-          <button
-            onClick={() => onWithdraw()}
-            className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
-          >
-            {!loading ? "Withdraw" : "Withdrawing"}
-          </button>
-        ) : (
-          <button
-            onClick={recommitProcess}
-            className="w-[15rem] flex justify-center items-center rounded-4xl border-dashed border-2 py-4 border-[#98AAC8] text-[#05132B] font-semibold gap-2 cursor-pointer "
-          >
-            <PlusCircle /> Recommitment
-          </button>
-        )}
+        
       </div>
     </div>
   );

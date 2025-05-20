@@ -16,6 +16,8 @@ import CommitmentSuccessfull from "@/components/commitment-successful";
 import ReceiverConfirmationModal from "@/components/ReceiverConfirmationModal";
 import CommitmentSuccessfullCard from "@/components/received-card";
 import ActiveCommitment from "@/components/active-commitment";
+import Recommitment from "@/components/recommitment";
+import { toast } from "react-toastify";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -93,10 +95,23 @@ export default function MainPage() {
   };
 
   const handleCommit = async () => {
+    if (!canCommit) {
+      toast.warning("resolve all commitment to continue");
+      return;
+    }
+    if (commitmentsArr.length > 0) {
+      const smallest = Math.min(
+        ...commitmentsArr.map((el) => el.amount_remaining)
+      );
+      if (amount < smallest) {
+        return toast.warning("You can't commit lower than " + smallest+" USDT");
+      }
+    }
+
     const supabase = createClient();
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount < 10 || numAmount > 1000) {
-      setMessage("Please enter an amount between 10 and 1000 USDT.");
+      toast.warning("Please enter an amount between 10 and 1000 USDT.");
       return;
     }
 
@@ -217,13 +232,13 @@ export default function MainPage() {
       .eq("user_id", userId)
       .eq("status", "completed")
       .single();
-      
+
     try {
       const res = await fetch("/api/join-receiver", {
         method: "POST",
         body: JSON.stringify({
           user_id: userId,
-          amount: data.original_amount*1.45, // amount to withdraw
+          amount: data.original_amount * 1.45, // amount to withdraw
         }),
       });
 
@@ -276,11 +291,11 @@ export default function MainPage() {
       const { data, error } = await supabase
         .from("merge_givers")
         .select("*")
-        .eq("user_id", userId)
+        .eq("user_id", userId);
 
       if (data) {
         setCommitmentArr(data);
-        if (data.length < 1) {
+        if (data.length < 2) {
           setCanCommit(true);
         } else {
           setCanCommit(false);
@@ -294,7 +309,7 @@ export default function MainPage() {
   useEffect(() => {
     const check_receiver = async () => {
       const supabase = createClient();
-        console.log("userId", userId);
+      console.log("userId", userId);
       try {
         const { data, error: receiverErr } = await supabase
           .from("merge_receivers")
@@ -309,15 +324,10 @@ export default function MainPage() {
         if (data) {
           setCanWithdraw(true);
           console.log("reciever data:", data);
-          
         } else {
           setCanWithdraw(false); // In case there's no data
         }
-
-       
       } catch (error) {}
-
-       
     };
 
     if (userId) {
@@ -433,7 +443,7 @@ export default function MainPage() {
       } catch (err) {
         console.error("Error fetching receiver data:", err);
       }
-     }
+    };
   });
 
   // useEffect(() => {
@@ -555,22 +565,6 @@ export default function MainPage() {
             </div>
           </div>
 
-          {/* Active commitment */}
-          {commitmentsArr.some((item) => item.status === "completed") && (
-            <ActiveCommitment
-              loading={withdrawLoading}
-              onWithdraw={withDraw}
-              amount={
-                commitmentsArr.find((item) => item.status === "completed")
-                  ?.original_amount
-              }
-              countdown={7 * 24 * 3600}
-              cmtData={commitmentsArr.find(
-                (item) => item.status === "completed"
-              )}
-            />
-          )}
-
           {showCommitmentBox && (
             <>
               <CommitmentBox
@@ -595,7 +589,46 @@ export default function MainPage() {
               handleViewReceiverDetails={handleViewReceiverDetails}
             />
           )}
-          {commitmentsArr &&
+
+          {/* Active commitment */}
+
+          {/* {commitmentsArr.some((item) => item.status === "completed") && ( */}
+          {console.log(commitmentsArr, "commitment Array")}
+          {commitmentsArr.length > 0 && (
+            <ActiveCommitment
+              loading={withdrawLoading}
+              onWithdraw={withDraw}
+              // amount={
+              //   commitmentsArr.find((item) => item.status === "completed")
+              //     ?.original_amount
+              // }
+              amount={commitmentsArr[0].original_amount}
+              countdown={7 * 24 * 3600}
+              recommitProcess={toggleCommitmentBox}
+              // cmtData={commitmentsArr.find(
+              //   (item) => item.status === "completed"
+              // )}
+              cmtData={commitmentsArr[0]}
+            />
+          )}
+
+          {/* this is for recommitment */}
+          {commitmentsArr.length > 1 &&
+            commitmentsArr
+              .slice(1)
+              .map((el) => (
+                <Recommitment
+                  key={el.id}
+                  loading={withdrawLoading}
+                  onWithdraw={withDraw}
+                  amount={el.original_amount}
+                  countdown={7 * 24 * 3600}
+                  recommitProcess={toggleCommitmentBox}
+                  cmtData={el}
+                />
+              ))}
+
+          {/* {commitmentsArr &&
             commitmentsArr.map((el) => {
               const cmtdetail = {
                 amount: el.original_amount,
@@ -629,7 +662,44 @@ export default function MainPage() {
                   confirmed={el.confirmed}
                 />
               );
-            })}
+            })} */}
+          {commitmentsArr &&
+            commitmentsArr.length > 0 &&
+            (() => {
+              const el = commitmentsArr[0]; // get the first element
+              const cmtdetail = {
+                amount: el.original_amount,
+                orderId: el.id,
+                id: userId,
+              };
+              const targetDate = new Date(el.expires_at);
+              const now = new Date();
+              const diffMs = targetDate - now;
+              let timeLeft;
+              if (diffMs > 0) {
+                const totalSeconds = Math.floor(diffMs / 1000);
+                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                timeLeft = `${hours}h ${minutes}m ${seconds}s`;
+              }
+
+              return (
+                <NewCommitmentDetails
+                  key={el.id}
+                  newCommitment={cmtdetail}
+                  isMerged={isMerged}
+                  receiverId={receiverId}
+                  userId={userId}
+                  countdown={timeLeft}
+                  handleCancelCommitment={() => handleCancelCommitment(el.id)}
+                  handleViewReceiverDetails={handleViewReceiverDetails}
+                  handleConfirmPayment={handleConfirmPayment}
+                  status={el.status}
+                  confirmed={el.confirmed}
+                />
+              );
+            })()}
 
           <ReceiverDetailsModal
             showModal={showModal}

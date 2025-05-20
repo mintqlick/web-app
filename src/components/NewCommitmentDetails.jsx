@@ -25,6 +25,9 @@ export default function NewCommitmentDetails({
         confirmed ? "hidden" : "block"
       }`}
     >
+      <div className="w-[10rem] rounded-4xl bg-[#B12018] flex justify-center items-center py-3 mb-5 text-white font-semibold "> 
+        Status: Not Paid
+      </div>
       <div className="bg-white p-3 md:p-4 rounded-2xl text-sm mb-4 flex flex-col md:flex-row items-start gap-4">
         {/* Icon Section */}
         <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] flex items-center justify-center bg-white rounded-2xl border-2 border-gray-400">
