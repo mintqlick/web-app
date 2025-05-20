@@ -73,7 +73,7 @@ export default function ActiveCommitment({
         ) : (
           <button
             onClick={recommitProcess}
-            className="w-[15rem] flex justify-center items-center rounded-4xl border-dashed border-2 py-4 border-[#98AAC8] text-[#05132B] font-semibold gap-2 cursor-pointer "
+            className=" w-[30%] 2xl:w-[15rem] flex justify-center items-center rounded-4xl border-dashed border-2 py-3 2xl:py-4 border-[#98AAC8] text-[#05132B] font-semibold gap-2 cursor-pointer "
           >
             <PlusCircle /> Recommitment
           </button>
