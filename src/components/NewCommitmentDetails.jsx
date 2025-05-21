@@ -25,7 +25,7 @@ export default function NewCommitmentDetails({
         confirmed ? "hidden" : "block"
       }`}
     >
-      <div className="w-[10rem] rounded-4xl bg-[#B12018] flex justify-center items-center py-3 mb-5 text-white font-semibold "> 
+      <div className="w-[8rem] text-[10px] lg:text-[14px] lg:w-[10rem] rounded-4xl bg-[#B12018] flex justify-center items-center py-3 mb-5 text-white font-semibold "> 
         Status: Not Paid
       </div>
       <div className="bg-white p-3 md:p-4 rounded-2xl text-sm mb-4 flex flex-col md:flex-row items-start gap-4">

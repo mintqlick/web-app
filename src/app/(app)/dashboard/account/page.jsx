@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Copy, Plus } from "lucide-react"; // ensure this is imported
 import { createClient } from "@/utils/supabase/client";
+import { toast } from "react-toastify";
 
 const AccountPage = () => {
   const [formData, setFormData] = useState({
@@ -26,6 +27,7 @@ const AccountPage = () => {
   const [success, setSuccess] = useState("");
   const [userData, setUserData] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [addressCount, setAddressCount] = useState(1);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -94,6 +96,7 @@ const AccountPage = () => {
         if (account?.network && account?.address) {
           const networks = account.network.split(",");
           const addresses = account.address.split(",");
+          setAddressCount(addresses.length);
           for (
             let i = 0;
             i < Math.max(networks.length, addresses.length);
@@ -180,6 +183,17 @@ const AccountPage = () => {
       setLoading(true);
       const supabase = createClient();
 
+      const { data, error } = await supabase
+        .from("account")
+        .select("updated")
+        .eq("user_id", userId)
+        .single();
+
+      if (data && data.updated) {
+        toast.warning("not allowed");
+        return;
+      }
+
       const { error: userError } = await supabase.from("users").upsert(
         {
           id: userId, // ✅ FIXED HERE
@@ -199,6 +213,7 @@ const AccountPage = () => {
       const { error: accountError } = await supabase.from("account").upsert(
         {
           user_id: userId,
+          updated: true,
           network: formData.wallets.map((w) => w.network).join(","), // join networks array to string
           address: formData.wallets.map((w) => w.address).join(","), // join addresses array to string
           exchange: formData.exchange || null,
@@ -464,6 +479,12 @@ const AccountPage = () => {
                 type="button"
                 className="bg-[#1860d9] text-white rounded-full p-2 hover:bg-blue-700"
                 onClick={() => {
+                  setAddressCount((prev) => prev + 1);
+                  if (addressCount > 2) {
+                    toast.warning("maximum of 3 addresses");
+                    return;
+                  }
+                  console.log(addressCount);
                   setFormData((prev) => ({
                     ...prev,
                     wallets: [...prev.wallets, { network: "", address: "" }],
