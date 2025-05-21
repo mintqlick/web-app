@@ -44,7 +44,7 @@ export async function GET() {
 
         if (matchError) throw new Error("Failed to insert match: " + matchError.message);
 
-        console.log("")
+        
       const { data: mergeData, error: mergeError } = await supabase
         .from("merge_matches")
         .insert({
