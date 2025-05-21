@@ -226,7 +226,7 @@ const AccountPage = () => {
 
       setSuccess("User updated successfully!");
     } catch (err) {
-      console.error(err);
+      
       setError("Failed to update user.");
     } finally {
       setLoading(false);
@@ -484,7 +484,6 @@ const AccountPage = () => {
                     toast.warning("maximum of 3 addresses");
                     return;
                   }
-                  console.log(addressCount);
                   setFormData((prev) => ({
                     ...prev,
                     wallets: [...prev.wallets, { network: "", address: "" }],
