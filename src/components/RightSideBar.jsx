@@ -11,22 +11,20 @@ const RightSideBar = () => {
     const excution = async () => {
       const { data: historyData, error: historyError } = await supabase
         .from("merge_receivers")
-        .select("*").eq("status","completed");
+        .select("*")
+        .eq("status", "completed");
       if (historyError) {
-        console.log(historyError, "error");
         return;
       }
 
       setHistory(historyData);
 
       setLoading(false);
-      console.log(historyData, "history here");
     };
 
     excution();
   }, []);
 
-  console.log(History)
   return (
     <>
       {/* Right Sidebar - visible only on desktop */}
@@ -54,8 +52,8 @@ const RightSideBar = () => {
             </tr>
           </thead>
           <tbody>
-            {(Array.isArray(History) ? History : []).map((el) => (
-              <tr>
+            {(Array.isArray(History) ? History : []).map((el, i) => (
+              <tr key={i}>
                 <td className="py-2 px-2">#{el?.id.split("-")[1]}</td>
                 <td className="py-2 px-2">${el.amount}</td>
                 <td className="py-2 px-2">

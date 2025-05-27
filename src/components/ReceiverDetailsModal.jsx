@@ -7,6 +7,11 @@ const ReceiverDetailsModal = ({
   receive_data,
 }) => {
   if (!showModal) return null;
+  console.log(
+    "Receiver Details:",
+    receive_data?.network,
+    receive_data?.address
+  );
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -32,9 +37,11 @@ const ReceiverDetailsModal = ({
             <p className="text-gray-800 font-semibold">{receive_data.phone}</p>
           </div>
           <div>
-            <p className="text-gray-500 text-sm">Bank Account:</p>
+            <p className="text-gray-500 text-sm">Bank Account(s):</p>
             <p className="text-gray-800 font-semibold">
-              {receive_data.address} ({receive_data.network})
+              {receive_data?.network.map((item) => (
+                <p>{item.address}  {item.network}</p>
+              ))}
             </p>
           </div>
           <div>

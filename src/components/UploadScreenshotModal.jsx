@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
 
 const UploadScreenshotModal = ({
   show,
@@ -17,6 +16,8 @@ const UploadScreenshotModal = ({
   onConfirm,
   userId,
   upload,
+  matchedData,
+  uploadLoading,
 }) => {
   const [screenshot, setScreenshot] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -48,20 +49,14 @@ const UploadScreenshotModal = ({
 
     const formData = new FormData();
     formData.append("screenshot", screenshot);
+    formData.append("match_id", matchedData.id); // Include match_id here
     formData.append("giver_id", userId); // Include giver_id here
 
     // Upload screenshot and confirm payment logic here...
 
     setIsLoading(false);
 
-    const response = await upload(formData);
-    alert("uploaded");
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("merge_givers")
-      .update({ confirmed: true }) // Use object here
-      .eq("user_id", userId);
-    console.log(error, "page 65");
+    await upload(formData);
 
     onConfirm();
   };
@@ -107,7 +102,7 @@ const UploadScreenshotModal = ({
           </DialogClose>
           <Button
             onClick={screenshot ? handleSubmit : handleButtonClick}
-            disabled={isLoading}
+            disabled={uploadLoading || isLoading}
           >
             {screenshot ? "Upload Screenshot" : "Choose File"}
           </Button>

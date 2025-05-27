@@ -5,6 +5,7 @@ export default function ReceiverConfirmationModal({
   onClose,
   screenshotUrl,
   userId,
+  loading,
   onConfirm,
 }) {
   if (!show) return null;
@@ -32,6 +33,7 @@ export default function ReceiverConfirmationModal({
           </button>
           <button
             onClick={onConfirm}
+            disabled={!screenshotUrl|loading}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
             Confirm Received

@@ -9,8 +9,7 @@ export default function CommitmentSuccessfull({
   giver_id,
   clicked,
 }) {
-  console.log(giver_id, "giver_id");
-
+  
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -59,6 +58,7 @@ export default function CommitmentSuccessfull({
       </div>
       {/* Buttons statement */}
       <button
+      disabled
         className="mt-4 w-full bg-green-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 md:py-2 rounded-md cursor-pointer"
         onClick={clicked}
       >
