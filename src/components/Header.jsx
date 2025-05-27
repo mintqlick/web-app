@@ -75,12 +75,7 @@ export default function Header() {
           className="lg:hidden fixed flex flex-col top-[125px] right-4 w-1/2 h-[300px] px-6 bg-white pb-6 space-y-4 rounded-2xl shadow-md z-50"
           style={{ animation: "fadeIn 0.3s ease" }}
         >
-          <Link
-            href="#"
-            className="block  text-gray-700 text-base hover:text-blue-600 transition duration-200"
-          >
-            About
-          </Link>
+          
           <Link
             href={"/sign-in"}
             className="w-full text-center border border-gray-800 rounded-full py-2 text-sm hover:bg-gray-100 transition duration-200"
