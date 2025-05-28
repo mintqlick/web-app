@@ -49,6 +49,8 @@ export async function POST(req) {
       .update({
         status: "completed",
         eligible_time: new Date(Date.now()),
+        eligible_as_receiver: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        received:false
       })
       .eq("id", giver_id);
 
