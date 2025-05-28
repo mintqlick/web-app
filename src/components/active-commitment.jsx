@@ -1,38 +1,46 @@
 "use client";
 
 import { PlusCircle } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
+import { set } from "zod";
 
 export default function ActiveCommitment({
   onWithdraw,
   loading,
-  countdown,
+  // countdown,
   amount,
   cmtData,
   recommitProcess,
+  isEligible = false,
 }) {
-  console.log(cmtData,"cmt data")
+  const [countdown, setCountdown] = React.useState(500 * 1000);
+  const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
   const now = new Date();
-  const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
-    ? new Date(cmtData.eligible_as_receiver)
-    : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
 
-  const diffMs = eligibleAsReceiverDate - now;
-  let timeLeft;
-  if (diffMs > 0) {
-    const totalSeconds = Math.floor(diffMs / 1000);
-    const days = Math.floor(totalSeconds / (3600 * 24));
-    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    timeLeft = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  } else {
-    timeLeft = "0d 0h 0m 0s"; // already eligible
-  }
+  useEffect(() => {
+    const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
+      ? new Date(cmtData.eligible_as_receiver)
+      : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
 
-  const isEligible =
-    cmtData?.eligible_as_receiver &&
-    new Date(cmtData.eligible_as_receiver) <= new Date();
+    const diffMs = eligibleAsReceiverDate - now;
+    setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
+
+    setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
+  }, [countdown]);
+
+
+
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   return (
     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">
@@ -59,7 +67,7 @@ export default function ActiveCommitment({
         {isEligible && (
           <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
             Time left to receive payment:
-            {timeLeft}
+            {eligibleTime}
           </p>
         )}
 
@@ -75,7 +83,8 @@ export default function ActiveCommitment({
             onClick={recommitProcess}
             className=" w-[9rem] text-[10px] lg:text-[15px] lg:w-[15rem] flex justify-center items-center rounded-4xl border-dashed border-2 py-2 lg:py-3 border-[#98AAC8] text-[#05132B] font-semibold cursor-pointer "
           >
-            <PlusCircle className="w-[2rem] h-[1rem] lg:h-[1.2rem]"/> Recommitment
+            <PlusCircle className="w-[2rem] h-[1rem] lg:h-[1.2rem]" />{" "}
+            Recommitment
           </button>
         )}
       </div>

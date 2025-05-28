@@ -46,11 +46,12 @@ export default function MainPage() {
   const [openRcv, setOpenRcv] = useState(false);
   const [withdrawLoading, setWithDrawLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [matchedData, setMatchedData] = useState(null);
+  const [matchedData, setMatchedData] = useState([]);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [receiverArr, setReceiverArr] = useState([]); // To hold receiver data
   const [confirmReceiverLoading, setConfirmReceiverLoading] = useState(false);
-
+  const [currentMatched, setCurrentMatched] = useState(null);
+  const [withDrawCommitment, setWithDrawCommitment] = useState(null);
 
   const handleShowReceiverModal = (url) => {
     setScreenshotUrl(url);
@@ -171,7 +172,7 @@ export default function MainPage() {
     // Later, you will write the real cancel logic here (like deleting the record from database)
   };
 
-  const receiverDetailHelper = async () => {
+  const receiverDetailHelper = async (el) => {
     const supabase = createClient();
 
     const {
@@ -180,7 +181,7 @@ export default function MainPage() {
     } = await supabase
       .from("merge_matches")
       .select("*")
-      .eq("giver_id", commitmentsArr[0]?.id)
+      .eq("id", el?.id)
       .single();
 
     setReceiverId(receiver_id);
@@ -219,8 +220,8 @@ export default function MainPage() {
     });
   };
 
-  const handleViewReceiverDetails = async () => {
-    await receiverDetailHelper();
+  const handleViewReceiverDetails = async (el) => {
+    await receiverDetailHelper(el);
     setShowModal(true);
   };
 
@@ -245,22 +246,22 @@ export default function MainPage() {
   };
 
   const withDraw = async (amt) => {
+    if (!canWithdraw) {
+      toast.warning("You are not eligible to withdraw at this time.");
+      return;
+    }
     setWithDrawLoading(true);
     const supabase = createClient();
 
-    const { data, error } = await supabase
-      .from("merge_givers")
-      .select("original_amount")
-      .eq("user_id", userId)
-      .eq("status", "completed")
-      .single();
+    console.log(withDrawCommitment, "withDrawCommitment in withdraw");
 
     try {
       const res = await fetch("/api/join-receiver", {
         method: "POST",
         body: JSON.stringify({
           user_id: userId,
-          amount: data.original_amount * 1.45, // amount to withdraw
+          id: withDrawCommitment.id, // the id of the commitment to withdraw
+          amount: withDrawCommitment.original_amount * 1.45, // amount to withdraw
         }),
       });
 
@@ -276,25 +277,27 @@ export default function MainPage() {
     setWithDrawLoading(false);
   };
 
-  const handleConfirmPayment = () => {
+  const handleConfirmPayment = (el) => {
     setPay(true);
+    setCurrentMatched(el);
   };
 
-  const confirmHandler = async () => {                            
+  const confirmHandler = async (rcv_detailVal) => {
+    console.log(rcv_detailVal, receiverId, "rcv_detailVal in confirm handler");
     setConfirmReceiverLoading(true);
     const response = await fetch("/api/confirm-receiver", {
       method: "POST",
       body: JSON.stringify({
-        receiver_id: userId,
-        giver_id: rcv_detail.user_id,
+        receiver_id: receiverId,
+        giver_id: rcv_detailVal.giver_id,
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
       toast.error(errorData.error || "Failed to confirm receiver");
-      return;
       setConfirmReceiverLoading(false);
+      return;
     }
     const result = await response.json();
 
@@ -321,7 +324,10 @@ export default function MainPage() {
       const { data, error } = await supabase
         .from("merge_givers")
         .select("*")
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .eq("status", "waiting");
+
+      console.log("commitment data", data);
 
       if (data) {
         setCommitmentArr(data);
@@ -345,9 +351,11 @@ export default function MainPage() {
           .from("merge_receivers")
           .select("*")
           .eq("user_id", userId)
+
           .single();
 
         if (receiverErr) {
+          console.log("Error fetching receiver data:", receiverErr);
           return; // Early return if there's an error fetching data
         }
         const { data: result, error: matcherr } = await supabase
@@ -358,6 +366,7 @@ export default function MainPage() {
         if (matcherr) {
           return;
         }
+        console.log("receiver data", result);
 
         setReceiverArr(result);
 
@@ -419,7 +428,8 @@ export default function MainPage() {
           .from("merge_receivers")
           .select("*")
           .eq("user_id", userId)
-          .eq("status", "pending")
+          .eq("confirmed", true)
+          .neq("status", "completed")
           .single();
 
         // Log any error
@@ -427,7 +437,7 @@ export default function MainPage() {
 
         // Uncomment this if needed
         const {
-          data: { giver_id, image_url },
+          data: { receiver_id, giver_id, image_url },
           error: receiver_error,
         } = await supabase
           .from("merge_matches")
@@ -439,6 +449,9 @@ export default function MainPage() {
           alert("error", rcr_error.message);
           return;
         }
+
+        setScreenshotUrl(image_url);
+        setReceiverId(receiver_id);
 
         if (!giver_id) {
           setRcvDetail(rcr);
@@ -487,27 +500,104 @@ export default function MainPage() {
 
   // fetch from merge_matches where the giver_id is the first commitment in commitmentsArr
   useEffect(() => {
-    const fetchMergeMatches = async () => {
-      if (commitmentsArr.length > 0) {
-        const supabase = createClient();
-        const firstCommitment = commitmentsArr[0];
+    // const fetchMergeMatches = async () => {
+    //   if (commitmentsArr.length > 0) {
+    //     const supabase = createClient();
+    //     const firstCommitment = commitmentsArr[0];
 
-        const { data, error } = await supabase
+    //     const { data, error } = await supabase
+    //       .from("merge_matches")
+    //       .select("*")
+    //       .eq("giver_id", firstCommitment.id)
+    //       .neq("status", "completed")
+    //       .single();
+
+    //     if (data) {
+    //       setMatchedData(data);
+    //     } else if (error) {
+    //       console.error("Error fetching merge matches:", error);
+    //     }
+    //   }
+    // };
+
+    const fetchMergeMatches = async () => {
+      const supabase = createClient();
+
+      // Step 1: Get all confirmed and not completed givers for the user
+      const { data: givers, error: giverError } = await supabase
+        .from("merge_givers")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("confirmed", true)
+        .neq("status", "completed");
+
+      if (!givers || givers.length === 0) {
+        console.log("No eligible givers found.");
+        return;
+      }
+      if (giverError) {
+        console.error("Error fetching merge_givers:", giverError);
+        return;
+      }
+
+      // Step 2: Fetch merge_matches for each giver
+      const matchPromises = givers.map(async (giver) => {
+        const { data: match, error: matchError } = await supabase
           .from("merge_matches")
           .select("*")
-          .eq("giver_id", firstCommitment.id)
+          .eq("giver_id", giver.id)
           .single();
 
-        if (data) {
-          setMatchedData(data);
-        } else if (error) {
-          console.error("Error fetching merge matches:", error);
+        if (matchError) {
+          console.warn(`No match found for giver ID ${giver.id}`);
+          return null;
         }
-      }
+        if (!match) {
+          console.warn(`No match found for giver ID ${giver.id}`);
+          return null;
+        }
+
+        return match;
+      });
+
+      // Step 3: Wait for all matches to resolve
+      const allMatches = await Promise.all(matchPromises);
+      const validMatches = allMatches.filter(Boolean);
+
+      setMatchedData(validMatches);
+      // Optionally set state: setMatchedData(validMatches)
     };
 
     fetchMergeMatches();
-  }, [commitmentsArr]);
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      // fetch data from merge_giver where the userId is userId and status is completed and condition is received
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("merge_givers")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("status", "completed")
+        .eq("received", false);
+
+      if (!data || data.length === 0) {
+        setCanWithdraw(false);
+        setWithDrawCommitment(null);
+        return;
+      }
+
+      if (error) {
+        console.error("Error fetching merge_givers12:", error);
+      }
+
+      setCanWithdraw(data.length > 1);
+      setWithDrawCommitment(data.length > 1 ? data[0] : null);
+    };
+
+    fetchDetail();
+  }, [userId]);
 
   return (
     <div className="flex w-full h-full">
@@ -569,7 +659,7 @@ export default function MainPage() {
           {/* Active commitment */}
 
           {/* {commitmentsArr.some((item) => item.status === "completed") && ( */}
-          {commitmentsArr.length > 0 && (
+          {!withDrawCommitment && commitmentsArr.length > 0 && (
             <ActiveCommitment
               loading={withdrawLoading}
               onWithdraw={withDraw}
@@ -584,6 +674,18 @@ export default function MainPage() {
               //   (item) => item.status === "completed"
               // )}
               cmtData={commitmentsArr[0]}
+            />
+          )}
+
+          {withDrawCommitment && (
+            <ActiveCommitment
+              loading={withdrawLoading}
+              onWithdraw={withDraw}
+              amount={withDrawCommitment.original_amount}
+              countdown={7 * 24 * 3600}
+              recommitProcess={toggleCommitmentBox}
+              isEligible={true}
+              cmtData={withDrawCommitment}
             />
           )}
 
@@ -676,19 +778,29 @@ export default function MainPage() {
                 />
               );
             })()}
-          {matchedData && (
-            <MatchedCommitment
-              newCommitment={{
-                amount: matchedData.matched_amount,
-                orderId: matchedData.id,
-              }}
-              receiverId={matchedData.receiverId}
-              handleViewReceiverDetails={handleViewReceiverDetails}
-              handleConfirmPayment={handleConfirmPayment}
-              status={matchedData.status}
-              confirmed={matchedData.confirmed}
-            />
-          )}
+          {matchedData.map((el) => {
+            const cmtdetail = {
+              amount: el.matched_amount,
+              orderId: el.id,
+              id: userId,
+            };
+
+            return (
+              <>
+                <MatchedCommitment
+                  key={el.id}
+                  newCommitment={cmtdetail}
+                  receiverId={receiverId}
+                  handleViewReceiverDetails={() =>
+                    handleViewReceiverDetails(el)
+                  }
+                  handleConfirmPayment={() => handleConfirmPayment(el)}
+                  confirmed={el.confirmed}
+                  status={el.status}
+                />
+              </>
+            );
+          })}
 
           <ReceiverDetailsModal
             showModal={showModal}
@@ -702,7 +814,7 @@ export default function MainPage() {
             onClose={() => setPay(false)}
             userId={userId}
             upload={upload}
-            matchedData={matchedData}
+            matchedData={currentMatched}
             uploadLoading={uploadLoading}
             onConfirm={() => setPay(false)}
           />
@@ -723,15 +835,15 @@ export default function MainPage() {
           {openRcv && (
             <ReceiverConfirmationModal
               show={openRcv}
-              screenshotUrl={rcv_detail.image_url}
-              userId={rcv_detail.user_id}
-              onConfirm={confirmHandler}
+              screenshotUrl={screenshotUrl}
+              giver_id={rcv_detail}
+              onConfirm={() => confirmHandler(rcv_detail)}
               onClose={() => setOpenRcv(false)}
               loading={confirmReceiverLoading}
             />
           )}
 
-          {!(receiverArr.length > 0) && rcv_detail && (
+          {!receiverArr && rcv_detail && (
             <CommitmentSuccessfullCard
               giver_id={rcv_detail?.user_id}
               clicked={() => setOpenRcv(true)}
@@ -740,7 +852,6 @@ export default function MainPage() {
                 orderId: rcv_detail.id,
               }}
               receiver_data={rcv_detail}
-              
             />
           )}
 
