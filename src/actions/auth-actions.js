@@ -109,7 +109,7 @@ export const SignUpAction = async (data, strength, checked, ref) => {
       console.log(insertReferralError);
       return { message: insertReferralError.message, error: true };
     }
-    
+
     return { message: "User created successfully", error: false };
   } catch (error) {
     return { message: error.message ? error.message : error, error: true };
@@ -127,8 +127,21 @@ export const signInAction = async (email, password) => {
     email,
     password,
   });
+  console.log(data, error);
   if (error) {
     return { message: error.message, error: true };
+  }
+
+  const { data: signData, error: signError } = await supabase
+    .from("users")
+    .select("blocked")
+    .eq("email", email)
+    .single();
+
+  if (signData.blocked) {
+    if (error) {
+      return { message: "Account blocked", error: true };
+    }
   }
   revalidatePath("/dashboard", "layout");
   redirect("/dashboard");

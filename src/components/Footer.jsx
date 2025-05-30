@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const TermsAndConditionsModal = ({ onClose }) => (
   <div className="fixed inset-0 bg-gray-300 bg-opacity-50 flex justify-center items-center z-50">
@@ -318,22 +319,25 @@ const Footer = () => {
             {/* Right - Social Icons */}
             <div className="flex gap-4">
               {[
-                { src: "/images/instagram.svg", alt: "Instagram" },
-                { src: "/images/Facebook.svg", alt: "Facebook" },
-                { src: "/images/Twitter.svg", alt: "Twitter" },
-                { src: "/images/Linkedin.svg", alt: "LinkedIn" },
+                {
+                  src: "/images/telegram.png",
+                  alt: "LinkedIn",
+                  link: "https://t.me/nodalcircles",
+                },
               ].map((icon, index) => (
                 <div
                   key={index}
                   className="bg-[#1860d9] h-[50px] w-[50px] rounded-full flex justify-center items-center"
                 >
-                  <Image
-                    src={icon.src}
-                    alt={icon.alt}
-                    width={24}
-                    height={24}
-                    className="object-contain"
-                  />
+                  <Link href={icon.link}>
+                    <Image
+                      src={icon.src}
+                      alt={icon.alt}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
+                  </Link>
                 </div>
               ))}
             </div>
