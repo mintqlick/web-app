@@ -11,7 +11,6 @@ export default function CommitmentSuccessfull({
   receiver_data,
 }) {
 
-  
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -30,7 +29,7 @@ export default function CommitmentSuccessfull({
           <>
             <h4 className="text-sm md:text-base font-bold mb-2 text-gray-800">
               {giver_id
-                ? `You've been sent ${receiver_data.original_amount} USD`
+                ? `You've been sent USD`
                 : `${receiver_data.original_amount} be sent to you soon stay tuned`}
             </h4>
             {newCommitment.amount && giver_id ? (
@@ -57,9 +56,10 @@ export default function CommitmentSuccessfull({
           </>
         </div>
       </div>
+      {/* {console.log(receiver_data?.original_amount)} */}
       {/* Buttons statement */}
       <button
-        disabled={!receiver_data?.original_amount}
+        // disabled={!receiver_data?.original_amount}
         type="button"
         className="mt-4 w-full bg-green-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 md:py-2 rounded-md cursor-pointer"
         onClick={clicked}

@@ -15,6 +15,7 @@ export default function ReceiverConfirmationModal({
     screenshotUrl;
   }
 
+  console.log(screenshotUrl)
   const [userId, setUserId] = useState(giver_id.user_id);
   useEffect(() => {
     // fetch user based on giver_id.giver_id  if giver_id.user_id is not null from supabase merge_givers table

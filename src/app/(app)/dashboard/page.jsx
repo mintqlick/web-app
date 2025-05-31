@@ -459,12 +459,15 @@ export default function MainPage() {
           .from("merge_matches")
           .select("*")
           .eq("receiver_id", rcr?.id)
+          .neq("status", "completed")
           .single();
+        console.log("Here");
 
         if (receiver_error) {
           alert("error", rcr_error.message);
           return;
         }
+        console.log(receiver_id, giver_id, "Adempola");
 
         setScreenshotUrl(image_url);
         setReceiverId(receiver_id);
