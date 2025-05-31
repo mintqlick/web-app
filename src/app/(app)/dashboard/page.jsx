@@ -761,13 +761,13 @@ export default function MainPage() {
               // }
               amount={activeCommitment[0].original_amount}
               countdown={
-                activeCommitment[1].eligible_as_receiver
+                activeCommitment[1]?.eligible_as_receiver
                   ? activeCommitment[1]?.eligible_as_receiver
                   : 0
               }
               recommitProcess={toggleCommitmentBox}
               eligible={
-                activeCommitment[1].eligible_time
+                activeCommitment[1]?.eligible_time
                   ? new Date(activeCommitment[1]?.eligible_time)
                   : 0
               }
