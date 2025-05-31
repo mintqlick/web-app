@@ -12,7 +12,7 @@ export default function ActiveCommitment({
   amount,
   cmtData,
   recommitProcess,
-  isEligible = true,
+  
 }) {
   const [countdown, setCountdown] = React.useState(500 * 1000);
   const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
@@ -80,14 +80,14 @@ export default function ActiveCommitment({
           {formatDate(cmtData?.eligible_time) || null}
         </p>
 
-        {isEligible && (
+        
           <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
             Time left to receive payment:
             {eligibleTime}
           </p>
-        )}
+        
 
-        {isEligible ? (
+        {canWithdraw ? (
           <button
             onClick={withdraw}
             className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
