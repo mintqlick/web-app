@@ -3,18 +3,17 @@
 import { PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { set } from "zod";
 
 export default function ActiveCommitment({
   onWithdraw,
   loading,
-  // countdown,
+  countdown: cdown,
   amount,
   cmtData,
   recommitProcess,
-  
+  eligible,
 }) {
-  const [countdown, setCountdown] = React.useState(500 * 1000);
+  const [countdown, setCountdown] = React.useState(cdown);
   const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
   const now = new Date();
   const [canWithdraw, setCanWithdraw] = useState(false);
@@ -30,7 +29,6 @@ export default function ActiveCommitment({
     if (diffMs === 0) {
       setCanWithdraw(true);
     }
-
 
     setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
 
@@ -48,6 +46,7 @@ export default function ActiveCommitment({
     }
     return () => clearInterval(timer);
   }, [countdown]);
+
 
   const withdraw = () => {
     if (canWithdraw) {
@@ -73,19 +72,17 @@ export default function ActiveCommitment({
         </p>
         <p>
           <span className="font-semibold">Withdraw time/date: </span>
-          {formatDate(cmtData?.eligible_as_receiver) || null}
+          {formatDate(cdown) || "N/A"}
         </p>
         <p>
           <span className="font-semibold">Cycle Start Date/Time: </span>
-          {formatDate(cmtData?.eligible_time) || null}
+          {formatDate(eligible) || "N/A"}
         </p>
 
-        
-          <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
+        {/* <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
             Time left to receive payment:
             {eligibleTime}
-          </p>
-        
+          </p> */}
 
         {canWithdraw ? (
           <button
@@ -117,6 +114,7 @@ function formatCountdown(seconds) {
 }
 
 const formatDate = (rawDate) => {
+  
   let formatted = "N/A";
 
   if (rawDate) {

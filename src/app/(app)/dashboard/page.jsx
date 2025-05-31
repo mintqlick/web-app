@@ -760,8 +760,17 @@ export default function MainPage() {
               //     ?.original_amount
               // }
               amount={activeCommitment[0].original_amount}
-              countdown={7 * 24 * 3600}
+              countdown={
+                activeCommitment[1].eligible_as_receiver
+                  ? activeCommitment[1]?.eligible_as_receiver
+                  : 0
+              }
               recommitProcess={toggleCommitmentBox}
+              eligible={
+                activeCommitment[1].eligible_time
+                  ? new Date(activeCommitment[1]?.eligible_time)
+                  : 0
+              }
               // cmtData={commitmentsArr.find(
               //   (item) => item.status === "completed"
               // )}
@@ -794,7 +803,7 @@ export default function MainPage() {
                   countdown={7 * 24 * 3600}
                   recommitProcess={toggleCommitmentBox}
                   cmtData={el}
-                />                                                                                  
+                />
               ))}
 
           {commitmentsArr &&

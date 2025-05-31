@@ -36,11 +36,13 @@ export default function Recommitment({
   return (
     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">
       <h4 className="text-base text-blue-600 font-semibold mb-1">
-       Recommitment made for: <span className="text-[#878E99]">{cmtData?.id.split("-")[0]}</span>
+        Recommitment made for:{" "}
+        <span className="text-[#878E99]">{cmtData?.id.split("-")[0]}</span>
       </h4>
       <div className="flex flex-col gap-2 text-sm mb-4">
         <p>
-          <span className="font-semibold">Amount contributed:</span> {amount} USDT
+          <span className="font-semibold">Amount contributed:</span> {amount}{" "}
+          USDT
         </p>
         <p>
           <span className="font-semibold">Amount to be received:</span>{" "}
@@ -48,11 +50,11 @@ export default function Recommitment({
         </p>
         <p>
           <span className="font-semibold">Withdraw time/date: </span>
-          {formatDate(cmtData?.eligible_as_receiver) || null}
+          {"N/A"}
         </p>
         <p>
           <span className="font-semibold">Cycle Start Date/Time: </span>
-          {formatDate(cmtData?.eligible_time) || null}
+          {"N/A"}
         </p>
 
         {isEligible && (
@@ -61,8 +63,6 @@ export default function Recommitment({
             {timeLeft}
           </p>
         )}
-
-        
       </div>
     </div>
   );
