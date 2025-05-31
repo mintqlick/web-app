@@ -388,7 +388,7 @@ export default function MainPage() {
 
       if (data) {
         setCommitmentArr(data);
-        if (data.length < 2) {
+        if (data.length < 1) {
           setCanCommit(true);
         } else {
           setCanCommit(false);

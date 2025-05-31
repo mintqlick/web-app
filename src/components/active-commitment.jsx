@@ -12,7 +12,7 @@ export default function ActiveCommitment({
   amount,
   cmtData,
   recommitProcess,
-  isEligible = false,
+  isEligible = true,
 }) {
   const [countdown, setCountdown] = React.useState(500 * 1000);
   const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
@@ -25,9 +25,12 @@ export default function ActiveCommitment({
       : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
 
     const diffMs =
-      eligibleAsReceiverDate - now < 0
-        ? setCanWithdraw(true)
-        : eligibleAsReceiverDate - now;
+      eligibleAsReceiverDate - now <= 0 ? 0 : eligibleAsReceiverDate - now;
+
+    if (diffMs === 0) {
+      setCanWithdraw(true);
+    }
+
 
     setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
 
