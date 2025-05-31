@@ -794,7 +794,7 @@ export default function MainPage() {
                   countdown={7 * 24 * 3600}
                   recommitProcess={toggleCommitmentBox}
                   cmtData={el}
-                />
+                />                                                                                  
               ))}
 
           {commitmentsArr &&

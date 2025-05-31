@@ -1,7 +1,8 @@
 "use client";
 
 import { PlusCircle } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { set } from "zod";
 
 export default function ActiveCommitment({
@@ -10,20 +11,24 @@ export default function ActiveCommitment({
   // countdown,
   amount,
   cmtData,
-  // recommitProcess: clicker,
+  recommitProcess,
   isEligible = false,
 }) {
   const [countdown, setCountdown] = React.useState(500 * 1000);
   const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
   const now = new Date();
-
+  const [canWithdraw, setCanWithdraw] = useState(false);
 
   useEffect(() => {
     const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
       ? new Date(cmtData.eligible_as_receiver)
       : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
 
-    const diffMs = eligibleAsReceiverDate - now;
+    const diffMs =
+      eligibleAsReceiverDate - now < 0
+        ? setCanWithdraw(true)
+        : eligibleAsReceiverDate - now;
+
     setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
 
     setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
@@ -41,9 +46,12 @@ export default function ActiveCommitment({
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const recommitProcess = () => {
-    console.log(eligibleTime, "eligible time");
-    // clicker();
+  const withdraw = () => {
+    if (canWithdraw) {
+      onWithdraw();
+    } else {
+      toast.warning("wait till your time is up");
+    }
   };
 
   return (
@@ -53,7 +61,8 @@ export default function ActiveCommitment({
       </h4>
       <div className="flex flex-col gap-2 text-sm mb-4">
         <p>
-          <span className="font-semibold">Amount Contributed:</span> {amount} USDT
+          <span className="font-semibold">Amount Contributed:</span> {amount}{" "}
+          USDT
         </p>
         <p>
           <span className="font-semibold">Amount to be received:</span>{" "}
@@ -77,7 +86,7 @@ export default function ActiveCommitment({
 
         {isEligible ? (
           <button
-            onClick={() => onWithdraw()}
+            onClick={withdraw}
             className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
           >
             {!loading ? "Withdraw" : "Withdrawing"}
