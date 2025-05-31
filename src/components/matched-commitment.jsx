@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MdOutlineCreditScore } from "react-icons/md";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "react-toastify";
 
 export default function MatchedCommitment({
   newCommitment,
@@ -10,8 +12,51 @@ export default function MatchedCommitment({
   handleViewReceiverDetails,
   handleConfirmPayment,
   confirmed,
-  status
+  status,
 }) {
+  const [countdown, setCountdown] = React.useState(500 * 1000);
+  const [eligibleTime, setEligibleTime] = React.useState("0h 0m 0s");
+  const now = new Date();
+
+  useEffect(() => {
+    const eligibleAsReceiverDate = newCommitment?.expires_in
+      ? new Date(newCommitment?.expires_in)
+      : new Date(now.getTime() + 24 * 60 * 60 * 1000); // Default to 7 days ahead
+
+    const diffMs = eligibleAsReceiverDate - now;
+    setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
+
+    setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
+  }, [countdown]);
+
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  const completed = async () => {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("merge_matches")
+      .update({ giver_checked: true })
+      .eq("id", newCommitment.orderId);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+    toast.success("confirmed");
+    window.location.reload();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -48,21 +93,57 @@ export default function MatchedCommitment({
         </div>
       </div>
 
+      <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
+        Time left to make payment:
+        {eligibleTime}
+      </p>
+
       {/* Buttons */}
-      <>
+      {status === "completed" ? (
         <button
-          className="w-full bg-white text-gray-800 font-semibold border border-gray-400 px-3 md:px-4 py-2 md:py-3 rounded-lg mb-4 hover:bg-gray-100 transition text-sm md:text-base"
-          onClick={handleViewReceiverDetails}
+          className="w-full bg-blue-600 cursor-pointer text-white font-semibold px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-blue-700 transition text-sm md:text-base"
+          onClick={completed}
         >
-          View Receiver Details
+          Completed
         </button>
-        <button
-          className="w-full bg-blue-600 text-white font-semibold px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-blue-700 transition text-sm md:text-base"
-          onClick={handleConfirmPayment}
-        >
-          Confirm Payment
-        </button>
-      </>
+      ) : (
+        <>
+          <button
+            className="w-full bg-white cursor-pointer text-gray-800 font-semibold border border-gray-400 px-3 md:px-4 py-2 md:py-3 rounded-lg mb-4 hover:bg-gray-100 transition text-sm md:text-base"
+            onClick={handleViewReceiverDetails}
+          >
+            View Receiver Details
+          </button>
+          <button
+            className="w-full bg-blue-600 cursor-pointer text-white font-semibold px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-blue-700 transition text-sm md:text-base"
+            onClick={handleConfirmPayment}
+          >
+            Confirm Payment
+          </button>
+        </>
+      )}
     </motion.div>
   );
 }
+
+function formatCountdown(seconds) {
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  return ` ${hours}h ${minutes}m ${secs}s`;
+}
+
+const formatDate = (rawDate) => {
+  let formatted = "N/A";
+
+  if (rawDate) {
+    const date = new Date(rawDate);
+    formatted = `${
+      date.getMonth() + 1
+    }/${date.getDate()}/${date.getFullYear()} at ${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  }
+  return formatted; // "5/5/2025 at 00:56" or "N/A"
+};

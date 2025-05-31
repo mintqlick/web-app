@@ -18,7 +18,7 @@ const DashboardLayout = ({children}) => {
         {/* Sidebar and main content */}
       <div className="flex">
         <Sidebar />
-        <main className="main-content mt-[90px] flex-1 p-6 bg-white">
+        <main className="main-content w-full mt-[90px] flex-1 lg:p-6 bg-white">
           {children}
         </main>
       </div>

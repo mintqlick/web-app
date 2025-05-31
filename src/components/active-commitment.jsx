@@ -10,12 +10,13 @@ export default function ActiveCommitment({
   // countdown,
   amount,
   cmtData,
-  recommitProcess,
+  // recommitProcess: clicker,
   isEligible = false,
 }) {
   const [countdown, setCountdown] = React.useState(500 * 1000);
   const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
   const now = new Date();
+
 
   useEffect(() => {
     const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
@@ -28,8 +29,6 @@ export default function ActiveCommitment({
     setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
   }, [countdown]);
 
-
-
   useEffect(() => {
     let timer;
     if (countdown > 0) {
@@ -41,6 +40,11 @@ export default function ActiveCommitment({
     }
     return () => clearInterval(timer);
   }, [countdown]);
+
+  const recommitProcess = () => {
+    console.log(eligibleTime, "eligible time");
+    // clicker();
+  };
 
   return (
     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">

@@ -52,6 +52,8 @@ export default function MainPage() {
   const [confirmReceiverLoading, setConfirmReceiverLoading] = useState(false);
   const [currentMatched, setCurrentMatched] = useState(null);
   const [withDrawCommitment, setWithDrawCommitment] = useState(null);
+  const [blocked, setBlocked] = useState(false);
+  const [activeCommitment, setActiveCommitment] = useState([]);
 
   const handleShowReceiverModal = (url) => {
     setScreenshotUrl(url);
@@ -63,40 +65,6 @@ export default function MainPage() {
     ? (parseFloat(amount) + parseFloat(profit)).toFixed(2)
     : "0.00";
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-
-      if (error) {
-      } else {
-        setUserId(user?.id);
-        const { data: userData, error: userDataError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", user?.id)
-          .single();
-        if (userDataError) {
-        } else {
-          const { data: accountData, error: accountError } = await supabase
-            .from("account")
-            .select("*")
-            .eq("user_id", user?.id)
-            .limit(1)
-            .single();
-          if (accountError) {
-          } else {
-            setUserData({ ...userData, account: accountData });
-          }
-        }
-      }
-    };
-    fetchUserData();
-  }, []);
-
   const toggleCommitmentBox = () => {
     setShowCommitmentBox(!showCommitmentBox);
   };
@@ -104,6 +72,12 @@ export default function MainPage() {
   const handleCommit = async () => {
     if (!canCommit) {
       toast.warning("resolve all commitment to continue");
+      return;
+    }
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
       return;
     }
     if (commitmentsArr.length > 0) {
@@ -159,6 +133,12 @@ export default function MainPage() {
   };
 
   const handleCancelCommitment = async (id) => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     const supabase = createClient();
 
     const { error: deleteErr } = await supabase
@@ -173,6 +153,12 @@ export default function MainPage() {
   };
 
   const receiverDetailHelper = async (el) => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     const supabase = createClient();
 
     const {
@@ -221,15 +207,33 @@ export default function MainPage() {
   };
 
   const handleViewReceiverDetails = async (el) => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     await receiverDetailHelper(el);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     setShowModal(false);
   };
 
   const upload = async (formdata) => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     setUploadLoading(true);
     const res = await fetch("/api/upload-file", {
       method: "POST",
@@ -246,6 +250,12 @@ export default function MainPage() {
   };
 
   const withDraw = async (amt) => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     if (!canWithdraw) {
       toast.warning("You are not eligible to withdraw at this time.");
       return;
@@ -278,12 +288,23 @@ export default function MainPage() {
   };
 
   const handleConfirmPayment = (el) => {
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     setPay(true);
     setCurrentMatched(el);
   };
 
   const confirmHandler = async (rcv_detailVal) => {
-    console.log(rcv_detailVal, receiverId, "rcv_detailVal in confirm handler");
+    if (blocked) {
+      toast.warning(
+        "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
+      );
+      return;
+    }
     setConfirmReceiverLoading(true);
     const response = await fetch("/api/confirm-receiver", {
       method: "POST",
@@ -305,17 +326,53 @@ export default function MainPage() {
     setOpenRcv(false);
     setConfirmReceiverLoading(false);
   };
-  // useEffect(() => {
-  //   let timer;
-  //   if (countdown > 0) {
-  //     timer = setInterval(() => {
-  //       setCountdown((prev) => prev - 1);
-  //     }, 1000);
-  //   } else {
-  //     clearInterval(timer);
-  //   }
-  //   return () => clearInterval(timer);
-  // }, [countdown]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error) {
+      } else {
+        setUserId(user?.id);
+        const { data: userData, error: userDataError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user?.id)
+          .single();
+        if (userDataError) {
+        } else {
+          setBlocked(userData?.blocked);
+          console.log(userData, "user Data");
+          const { data: accountData, error: accountError } = await supabase
+            .from("account")
+            .select("*")
+            .eq("user_id", user?.id)
+            .limit(1)
+            .single();
+          if (accountError) {
+          } else {
+            setUserData({ ...userData, account: accountData });
+          }
+        }
+      }
+    };
+    fetchUserData();
+  }, []);
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   useEffect(() => {
     const fetchCommitment = async () => {
@@ -326,8 +383,6 @@ export default function MainPage() {
         .select("*")
         .eq("user_id", userId)
         .eq("status", "waiting");
-
-      console.log("commitment data", data);
 
       if (data) {
         setCommitmentArr(data);
@@ -340,47 +395,6 @@ export default function MainPage() {
     };
 
     fetchCommitment();
-  }, [userId]);
-
-  useEffect(() => {
-    const check_receiver = async () => {
-      const supabase = createClient();
-
-      try {
-        const { data, error: receiverErr } = await supabase
-          .from("merge_receivers")
-          .select("*")
-          .eq("user_id", userId)
-
-          .single();
-
-        if (receiverErr) {
-          console.log("Error fetching receiver data:", receiverErr);
-          return; // Early return if there's an error fetching data
-        }
-        const { data: result, error: matcherr } = await supabase
-          .from("merge_matches")
-          .select("*")
-          .eq("receiver_id", data.id)
-          .eq("status", "pending");
-        if (matcherr) {
-          return;
-        }
-        console.log("receiver data", result);
-
-        setReceiverArr(result);
-
-        if (data) {
-          setCanWithdraw(true);
-        } else {
-          setCanWithdraw(false); // In case there's no data
-        }
-      } catch (error) {}
-    };
-
-    if (userId) {
-      check_receiver(); // Only call if userId is available
-    }
   }, [userId]);
 
   // useEffect(() => {
@@ -546,6 +560,7 @@ export default function MainPage() {
           .from("merge_matches")
           .select("*")
           .eq("giver_id", giver.id)
+          .eq("giver_checked", false)
           .single();
 
         if (matchError) {
@@ -599,8 +614,80 @@ export default function MainPage() {
     fetchDetail();
   }, [userId]);
 
+  useEffect(() => {
+    const excutioner = async () => {
+      const supabase = createClient();
+      const { data: giver_data, error: giver_error } = await supabase
+        .from("merge_givers")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("received", false)
+        .eq("status", "completed")
+        .eq("matched", true);
+
+      console.log(giver_error, "giver error");
+      setActiveCommitment(giver_data);
+      console.log(giver_data, "giver recommitment data");
+    };
+    if (userId) {
+      excutioner();
+    }
+  }, [userId]);
+
+  // fetch receiver matches
+  useEffect(() => {
+    const check_receiver = async () => {
+      const supabase = createClient();
+
+      try {
+        const { data, error: receiverErr } = await supabase
+          .from("merge_receivers")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("status", "pending")
+          .eq("confirmed", true)
+          .eq("matched", true)
+          .single();
+
+        // console.log(userId, error, data, "running");
+
+        // const res = data.find((el) => el.status === "pending");
+        // console.log(res);
+
+        if (receiverErr) {
+          console.log("Error fetching receiver data:", receiverErr);
+          return; // Early return if there's an error fetching data
+        }
+
+        const { data: result, error: matcherr } = await supabase
+          .from("merge_matches")
+          .select("*")
+          .eq("receiver_id", data.id)
+          .eq("status", "pending");
+        if (matcherr) {
+          console.log(matcherr, ",err");
+          return;
+        }
+
+        setReceiverArr(result);
+
+        if (data) {
+          setCanWithdraw(true);
+        } else {
+          setCanWithdraw(false); // In case there's no data
+        }
+      } catch (error) {}
+    };
+
+    if (userId) {
+      check_receiver();
+      // alert(userId)
+    }
+    // Only call if userId is available
+  }, [userId]);
+
   return (
-    <div className="flex w-full h-full">
+    <div className="flex w-full h-full ">
       {/* Center Content */}
       <div className="flex-1 p-4 overflow-y-auto">
         {/* Top Card */}
@@ -659,7 +746,7 @@ export default function MainPage() {
           {/* Active commitment */}
 
           {/* {commitmentsArr.some((item) => item.status === "completed") && ( */}
-          {!withDrawCommitment && commitmentsArr.length > 0 && (
+          {!withDrawCommitment && activeCommitment.length > 0 && (
             <ActiveCommitment
               loading={withdrawLoading}
               onWithdraw={withDraw}
@@ -667,13 +754,13 @@ export default function MainPage() {
               //   commitmentsArr.find((item) => item.status === "completed")
               //     ?.original_amount
               // }
-              amount={commitmentsArr[0].original_amount}
+              amount={activeCommitment[0].original_amount}
               countdown={7 * 24 * 3600}
               recommitProcess={toggleCommitmentBox}
               // cmtData={commitmentsArr.find(
               //   (item) => item.status === "completed"
               // )}
-              cmtData={commitmentsArr[0]}
+              cmtData={activeCommitment[0]}
             />
           )}
 
@@ -690,8 +777,8 @@ export default function MainPage() {
           )}
 
           {/* this is for recommitment */}
-          {commitmentsArr.length > 1 &&
-            commitmentsArr
+          {activeCommitment.length > 1 &&
+            activeCommitment
               .slice(1)
               .map((el) => (
                 <Recommitment
@@ -705,7 +792,7 @@ export default function MainPage() {
                 />
               ))}
 
-          {/* {commitmentsArr &&
+          {commitmentsArr &&
             commitmentsArr.map((el) => {
               const cmtdetail = {
                 amount: el.original_amount,
@@ -739,7 +826,7 @@ export default function MainPage() {
                   confirmed={el.confirmed}
                 />
               );
-            })} */}
+            })}
           {!matchedData &&
             commitmentsArr &&
             commitmentsArr.length > 0 &&
@@ -783,6 +870,7 @@ export default function MainPage() {
               amount: el.matched_amount,
               orderId: el.id,
               id: userId,
+              expires_in: el.expires_in,
             };
 
             return (

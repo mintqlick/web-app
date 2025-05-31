@@ -30,25 +30,32 @@ export async function updateSession(request) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let pathname = request.nextUrl.pathname
+
+  let pathname = request.nextUrl.pathname;
 
   // Normalize pathname by removing trailing slash except for root
-  if (pathname.length > 1 && pathname.endsWith('/')) {
-    pathname = pathname.slice(0, -1)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    pathname = pathname.slice(0, -1);
   }
 
-  const publicRoutes = ["/", "/sign-in", "/sign-up","/recover","/api/cron/expire"];
+  const publicRoutes = [
+    "/",
+    "/sign-in",
+    "/sign-up",
+    "/recover",
+    "/api/cron/expire",
+  ];
 
   if (!user && !publicRoutes.includes(pathname)) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/sign-in'
-    return NextResponse.redirect(url)
+    const url = request.nextUrl.clone();
+    url.pathname = "/sign-in";
+    return NextResponse.redirect(url);
   }
 
-  if (user && (pathname === '/sign-in' || pathname === '/sign-up')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
-    return NextResponse.redirect(url)
+  if (user && (pathname === "/sign-in" || pathname === "/sign-up")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;
