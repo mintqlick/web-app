@@ -40,7 +40,7 @@ export default function Recommitment({
       </h4>
       <div className="flex flex-col gap-2 text-sm mb-4">
         <p>
-          <span className="font-semibold">Amount committed:</span> {amount} USDT
+          <span className="font-semibold">Amount contributed:</span> {amount} USDT
         </p>
         <p>
           <span className="font-semibold">Amount to be received:</span>{" "}

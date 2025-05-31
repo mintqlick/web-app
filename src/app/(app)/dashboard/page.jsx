@@ -19,6 +19,8 @@ import ActiveCommitment from "@/components/active-commitment";
 import Recommitment from "@/components/recommitment";
 import { toast } from "react-toastify";
 import MatchedCommitment from "@/components/matched-commitment";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -712,7 +714,7 @@ export default function MainPage() {
                   <div className="bg-white p-1 rounded-full">
                     <Plus className="w-4 h-4 text-blue-600" />
                   </div>
-                  <span>Add Commitment</span>
+                  <span>Add Contribution:</span>
                 </button>
               </div>
             </div>
@@ -966,6 +968,31 @@ export default function MainPage() {
       </div>
 
       <RightSideBar />
+
+      <div className="flex gap-4 fixed bottom-5 right-5">
+        {[
+          {
+            src: "/images/telegram.png",
+            alt: "LinkedIn",
+            link: "https://t.me/nodalcircles",
+          },
+        ].map((icon, index) => (
+          <div
+            key={index}
+            className="bg-[#1860d9] h-[50px] w-[50px] rounded-full flex justify-center items-center"
+          >
+            <Link href={icon.link}>
+              <Image
+                src={icon.src}
+                alt={icon.alt}
+                width={24}
+                height={24}
+                className="object-contain"
+              />
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

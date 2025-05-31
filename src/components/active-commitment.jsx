@@ -49,11 +49,11 @@ export default function ActiveCommitment({
   return (
     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">
       <h4 className="text-base text-blue-600 font-semibold mb-1">
-        Active Commitment
+        Active Contribution
       </h4>
       <div className="flex flex-col gap-2 text-sm mb-4">
         <p>
-          <span className="font-semibold">Amount committed:</span> {amount} USDT
+          <span className="font-semibold">Amount Contributed:</span> {amount} USDT
         </p>
         <p>
           <span className="font-semibold">Amount to be received:</span>{" "}
@@ -88,7 +88,7 @@ export default function ActiveCommitment({
             className=" w-[9rem] text-[10px] lg:text-[15px] lg:w-[15rem] flex justify-center items-center rounded-4xl border-dashed border-2 py-2 lg:py-3 border-[#98AAC8] text-[#05132B] font-semibold cursor-pointer "
           >
             <PlusCircle className="w-[2rem] h-[1rem] lg:h-[1.2rem]" />{" "}
-            Recommitment
+            Recontribute
           </button>
         )}
       </div>
