@@ -47,7 +47,6 @@ export default function ActiveCommitment({
     return () => clearInterval(timer);
   }, [countdown]);
 
-
   const withdraw = () => {
     if (canWithdraw) {
       onWithdraw();
@@ -84,7 +83,7 @@ export default function ActiveCommitment({
             {eligibleTime}
           </p> */}
 
-        {canWithdraw ? (
+        {canWithdraw && cdown ? (
           <button
             onClick={withdraw}
             className="bg-green-600 text-white text-sm w-full px-4 py-2 rounded-md disabled:bg-green-300 disabled:cursor-not-allowed hover:bg-green-400 transition duration-200"
@@ -114,7 +113,6 @@ function formatCountdown(seconds) {
 }
 
 const formatDate = (rawDate) => {
-  
   let formatted = "N/A";
 
   if (rawDate) {
