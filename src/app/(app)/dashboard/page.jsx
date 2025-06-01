@@ -1010,7 +1010,7 @@ export default function MainPage() {
             />
           )}
           {/* {console.log(receiverArr, rcv_detail)} */}
-          {unMatchedReceiver && (
+          {/* {unMatchedReceiver && (
             <CommitmentSuccessfullCard
               giver_id={null}
               clicked={() => {}}
@@ -1020,7 +1020,7 @@ export default function MainPage() {
               }}
               receiver_data={rcv_detail}
             />
-          )}
+          )} */}
 
           {receiverArr.length > 0 &&
             receiverArr.map((el, i) => {

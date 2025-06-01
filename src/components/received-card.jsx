@@ -65,8 +65,8 @@ export default function CommitmentSuccessfull({
           <>
             <h4 className="text-sm md:text-base font-bold mb-2 text-gray-800">
               {giver_id
-                ? `You've been sent USD`
-                : `${newCommitment.amount}USDT will be sent to you soon stay tuned`}
+                ? `You've been merged`
+                : `${newCommitment.amount} USDT will be sent to you soon stay tuned`}
             </h4>
             {newCommitment.amount && giver_id ? (
               <p className="text-base md:text-lg font-bold text-gray-700 mb-2">

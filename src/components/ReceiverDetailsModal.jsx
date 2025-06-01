@@ -1,6 +1,12 @@
 // ReceiverDetailsModal.js
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy } from "lucide-react";
 import React, { useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const ReceiverDetailsModal = ({
   showModal,
@@ -9,6 +15,12 @@ const ReceiverDetailsModal = ({
 }) => {
   if (!showModal) return null;
   const [show, setShow] = useState(false);
+
+  const clicked = (val) => {
+    navigator.clipboard.write(val).then(() => {
+      toast.success("Copied to clipboard!");
+    });
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -63,16 +75,24 @@ const ReceiverDetailsModal = ({
             )}
           </div>
           {show && (
-            <div className="w-full">
-              <ul className="text-gray-800 font-semibold w-full">
-                {receive_data?.network.map((item) => (
-                  <li className="flex w-full justify-between">
-                    <p>{item.address}</p>
-                    <p>{item.network}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <Accordion type="single" collapsible className="w-full">
+              {receive_data?.network.map((item, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger className="flex justify-between text-left">
+                    <span className="font-medium">{item.network}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="flex justify-between items-center">
+                    <p className="break-all text-sm lg:text-lg">
+                      {item.address}
+                    </p>
+                    <Copy
+                      className="ml-2 w-4 h-4 cursor-pointer"
+                      onClick={() => clicked(item.address)}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           )}
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">Amount to Pay:</p>
