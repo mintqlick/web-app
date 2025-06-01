@@ -53,7 +53,7 @@ const ReceiverDetailsModal = ({
           </div>
 
           <div className="lg:flex w-full justify-between">
-            <p className="text-gray-500 text-sm">Amount to pays:</p>
+            <p className="text-gray-500 text-sm">Amount to pay:</p>
             <p className="text-gray-800 font-semibold">
               {receive_data?.amount}
             </p>
