@@ -210,6 +210,7 @@ export default function MainPage() {
       orderId: id,
       telegram,
       uid: AccData.uid,
+      exchange: AccData.exchange,
     });
   };
 

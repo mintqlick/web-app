@@ -105,8 +105,12 @@ const ReceiverDetailsModal = ({
             <p className="text-blue-600 font-bold">@{receive_data?.telegram}</p>
           </div>
           <div className="lg:flex w-full justify-between">
+            <p className="text-gray-500 text-sm">Exchange</p>
+            <p className="text-blue-600 font-bold">{receive_data?.exchange}</p>
+          </div>
+          <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">UUID</p>
-            <p className="text-blue-600 font-bold">@{receive_data?.uid}</p>
+            <p className="text-blue-600 font-bold">{receive_data?.uid}</p>
           </div>
         </div>
       </div>
