@@ -58,7 +58,7 @@ const ReceiverDetailsModal = ({
               {receive_data?.amount}
             </p>
           </div>
-          <div className="lg:flex w-full justify-between">
+          <div className="flex w-full justify-between">
             <p className="text-gray-500 text-sm flex">Wallet network:</p>
             {show ? (
               <ChevronDown
@@ -94,12 +94,6 @@ const ReceiverDetailsModal = ({
               ))}
             </Accordion>
           )}
-          <div className="lg:flex w-full justify-between">
-            <p className="text-gray-500 text-sm">Amount to Pay:</p>
-            <p className="text-blue-600 font-bold">
-              {receive_data?.amount} USDT
-            </p>
-          </div>
 
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">Phone Number</p>
