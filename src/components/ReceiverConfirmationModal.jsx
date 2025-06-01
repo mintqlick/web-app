@@ -6,7 +6,7 @@ export default function ReceiverConfirmationModal({
   show,
   onClose,
   screenshotUrl,
-  giver_id,
+  matchedItem,
   loading,
   onConfirm,
 }) {
@@ -15,8 +15,8 @@ export default function ReceiverConfirmationModal({
     screenshotUrl;
   }
 
-  console.log(screenshotUrl)
-  const [userId, setUserId] = useState(giver_id.user_id);
+  console.log(screenshotUrl);
+  const [userId, setUserId] = useState(null);
   useEffect(() => {
     // fetch user based on giver_id.giver_id  if giver_id.user_id is not null from supabase merge_givers table
     const fetchGiverData = async () => {
@@ -27,7 +27,7 @@ export default function ReceiverConfirmationModal({
       } = await supabase
         .from("merge_givers")
         .select("*")
-        .eq("id", giver_id.giver_id)
+        .eq("id", matchedItem.giver_id)
         .single();
 
       setUserId(user_id);
@@ -35,18 +35,22 @@ export default function ReceiverConfirmationModal({
     if (!userId) {
       fetchGiverData();
     }
-  },[]);
+  }, []);
+  console.log(matchedItem.image_url);
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-xl font-bold mb-4">Confirm Receipt</h2>
         <p className="mb-2 flex gap-4">User ID: {userId}</p>
-        {screenshotUrl && (
+        {matchedItem?.image_url ? (
           <img
-            src={screenshotUrl}
+            src={matchedItem?.image_url}
             alt="Proof of Payment"
             className="mb-4 rounded max-h-64 object-contain"
           />
+        ) : (
+          ""
         )}
         <div className="flex justify-end gap-3">
           <button
@@ -55,6 +59,7 @@ export default function ReceiverConfirmationModal({
           >
             Cancel
           </button>
+
           <button
             onClick={onConfirm}
             disabled={loading}

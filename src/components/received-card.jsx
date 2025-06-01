@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MdOutlineCreditScore } from "react-icons/md";
 
@@ -9,8 +9,44 @@ export default function CommitmentSuccessfull({
   giver_id,
   clicked,
   receiver_data,
+  fetchSenderDetail,
+  matchedItem,
+  status,
 }) {
+  const [countdown, setCountdown] = React.useState(24 * 60 * 60 * 1000);
+  const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
+  const now = new Date();
+  const [canWithdraw, setCanWithdraw] = useState(false);
+  console.log(status);
 
+  useEffect(() => {
+    const eligibleAsReceiverDate = matchedItem?.expires_in
+      ? new Date(matchedItem?.expires_in)
+      : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
+
+    const diffMs =
+      eligibleAsReceiverDate - now <= 0 ? 0 : eligibleAsReceiverDate - now;
+
+    if (diffMs === 0) {
+      setCanWithdraw(true);
+    }
+
+    setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
+
+    setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
+  }, [countdown]);
+
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -30,14 +66,14 @@ export default function CommitmentSuccessfull({
             <h4 className="text-sm md:text-base font-bold mb-2 text-gray-800">
               {giver_id
                 ? `You've been sent USD`
-                : `${receiver_data.original_amount} be sent to you soon stay tuned`}
+                : `${newCommitment.amount}USDT will be sent to you soon stay tuned`}
             </h4>
             {newCommitment.amount && giver_id ? (
               <p className="text-base md:text-lg font-bold text-gray-700 mb-2">
                 <span className="text-blue-600">
                   {newCommitment.amount} USDT
                 </span>
-                <span className="text-blue-800"> {giver_id}</span>
+                <span className="text-blue-800"> by #{giver_id}</span>
               </p>
             ) : (
               ""
@@ -58,14 +94,35 @@ export default function CommitmentSuccessfull({
       </div>
       {/* {console.log(receiver_data?.original_amount)} */}
       {/* Buttons statement */}
-      <button
-        // disabled={!receiver_data?.original_amount}
-        type="button"
-        className="mt-4 w-full bg-green-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 md:py-2 rounded-md cursor-pointer"
-        onClick={clicked}
-      >
-        Confirm
-      </button>
+
+      {giver_id && (
+        <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
+          Time left to confirm payment:
+          {eligibleTime}
+        </p>
+      )}
+
+      {giver_id && (
+        <>
+          <button
+            onClick={fetchSenderDetail}
+            // disabled={loading}
+            className="mt-4 w-full bg-blue-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 md:py-2 rounded-md cursor-pointer"
+          >
+            View Sender Detail
+          </button>
+
+          <button
+            // disabled={!receiver_data?.original_amount}
+            type="button"
+            className="mt-4 w-full bg-green-500 disabled:bg-green-300 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 md:py-2 rounded-md cursor-pointer disabled:cursor-not-allowed"
+            onClick={clicked}
+            disabled={status === "waiting"}
+          >
+            Confirm
+          </button>
+        </>
+      )}
     </motion.div>
   );
 }

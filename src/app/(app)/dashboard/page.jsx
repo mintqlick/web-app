@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import MatchedCommitment from "@/components/matched-commitment";
 import Link from "next/link";
 import Image from "next/image";
+import SenderModal from "@/components/sender-detail";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -44,10 +45,8 @@ export default function MainPage() {
   const [receive_data, set_receiver_data] = useState(null);
   const [pay, setPay] = useState(false);
   const [rcv_detail, setRcvDetail] = useState(null); // set all needed equiement of reciever i.e giver and receiver for receiver use only
-  const [orderId, setOrderId] = useState(null);
   const [openRcv, setOpenRcv] = useState(false);
   const [withdrawLoading, setWithDrawLoading] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
   const [matchedData, setMatchedData] = useState([]);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [receiverArr, setReceiverArr] = useState([]); // To hold receiver data
@@ -56,6 +55,9 @@ export default function MainPage() {
   const [withDrawCommitment, setWithDrawCommitment] = useState(null);
   const [blocked, setBlocked] = useState(false);
   const [activeCommitment, setActiveCommitment] = useState([]);
+  const [mergedUser, setMergedUser] = useState(null);
+  const [showMergedUser, setShowMergedUser] = useState(false);
+  const [unMatchedReceiver, setUnMatched] = useState(null);
 
   const handleShowReceiverModal = (url) => {
     setScreenshotUrl(url);
@@ -164,7 +166,7 @@ export default function MainPage() {
     const supabase = createClient();
 
     const {
-      data: { receiver_id, matched_amount },
+      data: { receiver_id, matched_amount, id },
       error: giver_error,
     } = await supabase
       .from("merge_matches")
@@ -191,7 +193,7 @@ export default function MainPage() {
       .eq("user_id", receive_data.user_id)
       .single();
 
-    const { name, phone } = profile_data;
+    const { name, phone, telegram } = profile_data;
     const { network, address } = AccData;
     const networks = network.split(",");
     const addressArr = address.split(",");
@@ -205,6 +207,8 @@ export default function MainPage() {
       phone,
       network: networkAddressMap,
       amount: matched_amount,
+      orderId: id,
+      telegram,
     });
   };
 
@@ -307,12 +311,13 @@ export default function MainPage() {
       );
       return;
     }
+    console.log(rcv_detailVal);
     setConfirmReceiverLoading(true);
     const response = await fetch("/api/confirm-receiver", {
       method: "POST",
       body: JSON.stringify({
-        receiver_id: receiverId,
-        giver_id: rcv_detailVal.giver_id,
+        receiver_id: rcv_detailVal?.receiver_id,
+        giver_id: rcv_detailVal?.giver_id,
       }),
     });
 
@@ -327,6 +332,26 @@ export default function MainPage() {
     toast.success("Receiver confirmed successfully!");
     setOpenRcv(false);
     setConfirmReceiverLoading(false);
+  };
+
+  const fetchSenderDetail = async (el) => {
+    const supabase = createClient();
+    const {
+      data: { user_id },
+      error,
+    } = await supabase
+      .from("merge_givers")
+      .select("*")
+      .eq("id", el.giver_id)
+      .single();
+    const { data: user, error: userErr } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user_id)
+      .single();
+
+    setMergedUser({ ...user, amount: el.matched_amount, orderId: el.id });
+    setShowMergedUser(true);
   };
 
   useEffect(() => {
@@ -649,9 +674,9 @@ export default function MainPage() {
           .from("merge_receivers")
           .select("*")
           .eq("user_id", userId)
-          .eq("status", "pending")
+          .neq("status", "completed")
           .eq("confirmed", true)
-          .eq("matched", true)
+          .eq("touched", true)
           .single();
 
         // console.log(userId, error, data, "running");
@@ -668,11 +693,12 @@ export default function MainPage() {
           .from("merge_matches")
           .select("*")
           .eq("receiver_id", data.id)
-          .eq("status", "pending");
+          .neq("status", "completed");
         if (matcherr) {
           console.log(matcherr, ",err");
           return;
         }
+        console.log(result, "result here");
 
         setReceiverArr(result);
 
@@ -681,6 +707,39 @@ export default function MainPage() {
         } else {
           setCanWithdraw(false); // In case there's no data
         }
+      } catch (error) {}
+    };
+
+    if (userId) {
+      check_receiver();
+      // alert(userId)
+    }
+    // Only call if userId is available
+  }, [userId]);
+
+  useEffect(() => {
+    const check_receiver = async () => {
+      const supabase = createClient();
+
+      try {
+        const { data, error: receiverErr } = await supabase
+          .from("merge_receivers")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("status", "waiting")
+          .single();
+
+        // console.log(userId, error, data, "running");
+
+        // const res = data.find((el) => el.status === "pending");
+        // console.log(res);
+        if (receiverErr) {
+          console.log("error occured", receiverErr);
+          return;
+        }
+        setUnMatched(data);
+
+        console.log(data, receiverErr, "here");
       } catch (error) {}
     };
 
@@ -921,6 +980,12 @@ export default function MainPage() {
             onConfirm={() => setPay(false)}
           />
 
+          <SenderModal
+            showModal={showMergedUser}
+            handleCloseModal={() => setShowMergedUser((prev) => false)}
+            receive_data={mergedUser}
+          />
+
           {/* {commitmentsArr[0]?.confirmed && (
             <CommitmentSuccessfull
               countdown={commitmentsArr[0]?.eligible_as_receiver || ""}
@@ -938,20 +1003,20 @@ export default function MainPage() {
             <ReceiverConfirmationModal
               show={openRcv}
               screenshotUrl={screenshotUrl}
-              giver_id={rcv_detail}
+              matchedItem={rcv_detail}
               onConfirm={() => confirmHandler(rcv_detail)}
               onClose={() => setOpenRcv(false)}
               loading={confirmReceiverLoading}
             />
           )}
-
-          {!receiverArr && rcv_detail && (
+          {/* {console.log(receiverArr, rcv_detail)} */}
+          {unMatchedReceiver && (
             <CommitmentSuccessfullCard
-              giver_id={rcv_detail?.user_id}
-              clicked={() => setOpenRcv(true)}
+              giver_id={null}
+              clicked={() => {}}
               newCommitment={{
-                amount: rcv_detail.amount,
-                orderId: rcv_detail.id,
+                amount: unMatchedReceiver.amount_remaining,
+                orderId: unMatchedReceiver.id,
               }}
               receiver_data={rcv_detail}
             />
@@ -959,6 +1024,7 @@ export default function MainPage() {
 
           {receiverArr.length > 0 &&
             receiverArr.map((el, i) => {
+              console.log(el, "el");
               return (
                 <CommitmentSuccessfullCard
                   giver_id={el.giver_id}
@@ -972,7 +1038,10 @@ export default function MainPage() {
                     amount: el.matched_amount,
                     orderId: el.id,
                   }}
+                  matchedItem={el}
                   receiver_data={rcv_detail}
+                  fetchSenderDetail={() => fetchSenderDetail(el)}
+                  status={el.status}
                 />
               );
             })}

@@ -50,7 +50,7 @@ export async function POST(req) {
         status: "completed",
         eligible_time: new Date(Date.now()),
         eligible_as_receiver: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        received:false
+        received: false,
       })
       .eq("id", giver_id);
 
@@ -76,8 +76,24 @@ export async function POST(req) {
       { status: 500 }
     );
   }
+  const { data: remaining_receiver, error: remaining_error } = await supabase
+    .from("merge_matches")
+    .select("*")
+    .eq("receiver_id", receiver_id);
 
-  if (receiver.amount_remaining === 0 && receiver.matched) {
+  if (remaining_error) {
+    console.error("Error fetching receiver data:", remaining_error);
+    return NextResponse.json(
+      { error: "Failed to fetch receiver data" },
+      { status: 500 }
+    );
+  }
+
+  if (
+    receiver.amount_remaining === 0 &&
+    receiver.matched &&
+    remaining_receiver.length === 0
+  ) {
     // update the receiver status to completed and eligible_time to current time
     const { error: updateReceiverError } = await supabase
       .from("merge_receivers")
