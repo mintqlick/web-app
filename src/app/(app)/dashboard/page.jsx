@@ -209,6 +209,7 @@ export default function MainPage() {
       amount: matched_amount,
       orderId: id,
       telegram,
+      uid: AccData.uid,
     });
   };
 

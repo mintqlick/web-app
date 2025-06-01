@@ -97,14 +97,16 @@ const ReceiverDetailsModal = ({
 
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">Phone Number</p>
-            <p className="text-blue-600 font-bold">
-              {receive_data?.phone}49456
-            </p>
+            <p className="text-blue-600 font-bold">{receive_data?.phone}</p>
           </div>
 
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">Telegram ID</p>
             <p className="text-blue-600 font-bold">@{receive_data?.telegram}</p>
+          </div>
+          <div className="lg:flex w-full justify-between">
+            <p className="text-gray-500 text-sm">UUID</p>
+            <p className="text-blue-600 font-bold">@{receive_data?.uid}</p>
           </div>
         </div>
       </div>
