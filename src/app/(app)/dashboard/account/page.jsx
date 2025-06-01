@@ -511,7 +511,7 @@ const AccountPage = () => {
                       <option value="TRC-20">TRC-20</option>
                       <option value="TON">TON</option>
                       <option value="APTOS">APTOS</option>
-                      <option value="BEP 20">BEP20</option>
+                      <option value="BEP 20">BEP 20</option>
                     </select>
                   </div>
                   <div className="flex flex-col w-full lg:w-[58%] relative mb-4">
