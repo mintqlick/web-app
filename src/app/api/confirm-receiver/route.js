@@ -118,14 +118,35 @@ export async function POST(req) {
     .single();
 
   if (referralData?.referred_by) {
-    const referrerId = referralData.referred_by;
-    const bonusAmount = parseFloat((receiver.amount * 0.05).toFixed(2)); // 5% bonus
+    // search for the referal and get the balance
 
-    // 💵 Step 3: Update referrer's balance
-    const { error: bonusError } = await supabase.rpc("increment_balance", {
-      user_id_param: referrerId,
-      amount: bonusAmount,
-    });
+    const {
+      data: { balance },
+      error: referralError,
+    } = await supabase
+      .from("referrals")
+      .select("balance")
+      .eq("user_id", referralData.referred_by)
+      .single();
+
+    if (referralError) {
+      console.error("Error fetching referral balance:", referralError.message);
+      return;
+    }
+
+    const referrerId = referralData.referred_by;
+    const bonusAmount =
+      (balance ?? 0) + parseFloat((receiver.amount * 0.05).toFixed(2)); // 5% bonus
+
+    const { error: bonusError } = await supabase
+      .from("referrals")
+      .update({ balance: bonusAmount })
+      .eq("user_id", referrerId);
+
+    if (bonusError) {
+      console.error("Error updating bonus balance:", bonusError.message);
+      return;
+    }
 
     if (bonusError) {
       console.error("Failed to reward referrer:", bonusError.message);

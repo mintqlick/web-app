@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { RiArrowUpSFill } from "react-icons/ri";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -32,12 +33,18 @@ const HeroSection = () => {
             </p>
 
             <div className="flex flex-row gap-4 mt-8">
-              <button className="px-4 py-2 w-[150px] h-[50px] text-[16px] bg-[#1860d9] text-white rounded-full">
+              <Link
+                href={"/sign-up"}
+                className="px-4 py-2 w-[150px] h-[50px] text-[16px] bg-[#1860d9] text-white rounded-full flex items-center justify-center"
+              >
                 Open Account
-              </button>
-              <button className="px-4 py-2 w-[150px] h-[50px] text-[16px] border border-gray-800 rounded-full hover:bg-gray-100">
+              </Link>
+              <Link
+                href={"/sign-in"}
+                className="px-4 py-2 w-[150px] h-[50px] text-[16px] border border-gray-800 rounded-full hover:bg-gray-100 flex items-center justify-center"
+              >
                 Login
-              </button>
+              </Link>
             </div>
 
             {/* Images and Text Section */}

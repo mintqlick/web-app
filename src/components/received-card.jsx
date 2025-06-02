@@ -122,7 +122,7 @@ export default function CommitmentSuccessfull({
             onClick={clicked}
             disabled={status === "waiting"}
           >
-            I&apos; received
+            I&apos;ve received
           </button>
         </>
       )}
