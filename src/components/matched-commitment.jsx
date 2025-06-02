@@ -118,7 +118,7 @@ export default function MatchedCommitment({
             className="w-full bg-blue-600 cursor-pointer text-white font-semibold px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-blue-700 transition text-sm md:text-base"
             onClick={handleConfirmPayment}
           >
-            Confirm Payment
+            I&apos;s paid
           </button>
         </>
       )}

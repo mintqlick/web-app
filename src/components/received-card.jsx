@@ -73,7 +73,10 @@ export default function CommitmentSuccessfull({
                 <span className="text-blue-600">
                   {newCommitment.amount} USDT
                 </span>
-                <span className="text-blue-800"> by #{giver_id.split("-")[0]}</span>
+                <span className="text-blue-800">
+                  {" "}
+                  by #{giver_id.split("-")[0]}
+                </span>
               </p>
             ) : (
               ""
@@ -119,7 +122,7 @@ export default function CommitmentSuccessfull({
             onClick={clicked}
             disabled={status === "waiting"}
           >
-            Confirm
+            I&apos; received
           </button>
         </>
       )}

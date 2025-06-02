@@ -1081,7 +1081,7 @@ export default function MainPage() {
 
       <RightSideBar />
 
-      <div className="flex gap-4 fixed bottom-5 right-5">
+      {/* <div className="flex gap-4 fixed bottom-5 right-5">
         {[
           {
             src: "/images/telegram.png",
@@ -1104,7 +1104,7 @@ export default function MainPage() {
             </Link>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
