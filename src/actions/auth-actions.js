@@ -138,11 +138,11 @@ export const signInAction = async (email, password) => {
     .eq("email", email)
     .single();
 
-  if (signData.blocked) {
-    if (error) {
-      return { message: "Account blocked", error: true };
-    }
-  }
+  // if (signData.blocked) {
+  //   if (error) {
+  //     return { message: "Account blocked", error: true };
+  //   }
+  // }
   revalidatePath("/dashboard", "layout");
   redirect("/dashboard");
 };

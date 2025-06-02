@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { toast } from "react-toastify";
 
 const ReceiverDetailsModal = ({
   showModal,
@@ -17,9 +18,15 @@ const ReceiverDetailsModal = ({
   const [show, setShow] = useState(false);
 
   const clicked = (val) => {
-    navigator.clipboard.write(val).then(() => {
-      toast.success("Copied to clipboard!");
-    });
+    navigator.clipboard
+      .writeText(val)
+      .then(() => {
+        toast.success("Copied to clipboard!");
+      })
+      .catch((err) => {
+        toast.error("Failed to copy!");
+        console.error("Clipboard copy failed:", err);
+      });
   };
 
   return (
@@ -40,7 +47,7 @@ const ReceiverDetailsModal = ({
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">Contribution Id:</p>
             <p className="text-gray-800 font-semibold">
-              {"NC" + receive_data?.contribution_id.split("-")[0]}
+              {"NC-" + receive_data?.contribution_id.split("-")[0]}
             </p>
           </div>
           <div className="lg:flex w-full justify-between">

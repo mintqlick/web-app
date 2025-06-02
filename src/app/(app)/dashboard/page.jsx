@@ -216,6 +216,7 @@ export default function MainPage() {
       network: net.trim(),
       address: addressArr[index] ? addressArr[index].trim() : "",
     }));
+    console.log(receiver_id);
     set_receiver_data({
       name,
       phone,
@@ -225,7 +226,7 @@ export default function MainPage() {
       telegram,
       uid: AccData.uid,
       exchange: AccData.exchange,
-      contribution_id: receive_data?.user_id,
+      contribution_id: receiver_id,
     });
   };
 
@@ -960,7 +961,7 @@ export default function MainPage() {
                 <MatchedCommitment
                   key={el.id}
                   newCommitment={cmtdetail}
-                  receiverId={receiverId}
+                  receiverId={el.receiver_id}
                   handleViewReceiverDetails={() =>
                     handleViewReceiverDetails(el)
                   }
