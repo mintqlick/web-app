@@ -74,6 +74,8 @@ export default function MainPage() {
   };
 
   const handleCommit = async () => {
+    const supabase = createClient();
+
     if (!canCommit) {
       toast.warning("resolve all commitment to continue");
       return;
@@ -84,21 +86,33 @@ export default function MainPage() {
       );
       return;
     }
-    if (commitmentsArr.length > 0) {
-      const smallest = Math.min(
-        ...commitmentsArr.map((el) => el.amount_remaining)
-      );
-      if (amount < smallest) {
+    const { data: cmt, error: cmt_errs } = await supabase
+      .from("merge_givers")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (cmt_errs) {
+      console.error("Error fetching merge_givers:", cmt_errs);
+      return;
+    }
+
+    if (cmt && cmt.length > 0) {
+      // Find the item with the smallest original_amount
+      const smallest = cmt.reduce((minItem, currentItem) => {
+        return currentItem.original_amount < minItem.original_amount
+          ? currentItem
+          : minItem;
+      });
+      if (amount < smallest.original_amount) {
         return toast.warning(
-          "You can't commit lower than " + smallest + " USDT"
+          "You can't commit lower than " + smallest.original_amount + " USDT"
         );
       }
     }
 
-    const supabase = createClient();
     const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount < 10 || numAmount > 1000) {
-      toast.warning("Please enter an amount between 10 and 1000 USDT.");
+    if (isNaN(numAmount) || numAmount < 10 || numAmount > 5000) {
+      toast.warning("Please enter an amount between 10 and 5000 USDT.");
       return;
     }
 
@@ -415,7 +429,7 @@ export default function MainPage() {
 
       if (data) {
         setCommitmentArr(data);
-        if (data.length < 1) {
+        if (data.length < 2) {
           setCanCommit(true);
         } else {
           setCanCommit(false);
@@ -764,7 +778,7 @@ export default function MainPage() {
               <h3 className="text-sm font-medium">
                 Contribution ID:{" "}
                 <span className="font-bold">
-                  {userId ? userId.split("-")[0] : "N/A"}
+                  {userId ? "NC-" + userId.split("-")[0] : "N/A"}
                 </span>
               </h3>
 
@@ -821,17 +835,9 @@ export default function MainPage() {
               //     ?.original_amount
               // }
               amount={activeCommitment[0].original_amount}
-              countdown={
-                activeCommitment[1]?.eligible_as_receiver
-                  ? activeCommitment[1]?.eligible_as_receiver
-                  : 0
-              }
+              countdown={activeCommitment[1]?.eligible_as_receiver}
               recommitProcess={toggleCommitmentBox}
-              eligible={
-                activeCommitment[1]?.eligible_time
-                  ? new Date(activeCommitment[1]?.eligible_time)
-                  : 0
-              }
+              eligible={activeCommitment[1]?.eligible_time}
               // cmtData={commitmentsArr.find(
               //   (item) => item.status === "completed"
               // )}

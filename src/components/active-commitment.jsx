@@ -71,11 +71,11 @@ export default function ActiveCommitment({
         </p>
         <p>
           <span className="font-semibold">Withdraw time/date: </span>
-          {formatDate(cdown) || "N/A"}
+          {formatDate(cdown)}
         </p>
         <p>
           <span className="font-semibold">Cycle Start Date/Time: </span>
-          {formatDate(eligible) || "N/A"}
+          {formatDate(eligible)}
         </p>
 
         {/* <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
