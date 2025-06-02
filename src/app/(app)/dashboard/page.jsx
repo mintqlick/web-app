@@ -80,6 +80,11 @@ export default function MainPage() {
       toast.warning("resolve all commitment to continue");
       return;
     }
+    if (activeCommitment.length === 2 || activeCommitment.length > 2) {
+      toast.warning("complete active commitments");
+      setCanCommit(false);
+      return;
+    }
     if (blocked) {
       toast.warning(
         "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
@@ -431,10 +436,24 @@ export default function MainPage() {
 
       if (data) {
         setCommitmentArr(data);
-        if (data.length < 2) {
-          setCanCommit(true);
+
+        const totalCommitments = data.length + activeCommitment.length;
+
+
+        if (
+          (totalCommitments >= 2) ||
+          (data.length === 1 && activeCommitment.length === 1)
+        ) {
+          setCanCommit(false); // Too many commitments or one in each group
         } else {
-          setCanCommit(false);
+          setCanCommit(true); // Safe to commit
+        }
+      } else {
+        // No new data, just check active commitments
+        if (activeCommitment.length >= 2) {
+          setCanCommit(false); // Too many active
+        } else {
+          setCanCommit(true); // Safe to commit
         }
       }
     };
@@ -852,10 +871,12 @@ export default function MainPage() {
               loading={withdrawLoading}
               onWithdraw={withDraw}
               amount={withDrawCommitment.original_amount}
-              countdown={7 * 24 * 3600}
+              // countdown={7 * 24 * 3600}
               recommitProcess={toggleCommitmentBox}
-              isEligible={true}
+              // isEligible={true}
               cmtData={withDrawCommitment}
+              eligible={activeCommitment[1]?.eligible_time || 0}
+              countdown={activeCommitment[1]?.eligible_as_receiver || 0}
             />
           )}
 

@@ -13,39 +13,60 @@ export default function ActiveCommitment({
   recommitProcess,
   eligible,
 }) {
-  const [countdown, setCountdown] = React.useState(cdown);
-  const [eligibleTime, setEligibleTime] = React.useState("0d 0h 0m 0s");
-  const now = new Date();
+  // const [countdown, setCountdown] = useState(cdown);
+  // const [eligibleTime, setEligibleTime] = useState(Date.now());
   const [canWithdraw, setCanWithdraw] = useState(false);
+  // const [date, setDate] = useState(cdown);
 
   useEffect(() => {
-    const eligibleAsReceiverDate = cmtData?.eligible_as_receiver
-      ? new Date(cmtData.eligible_as_receiver)
+    const now = new Date(); // moved here to get fresh time on each run
+
+    console.log(cdown, "Cdown");
+
+    let eligibleAsReceiverDate = cdown
+      ? new Date(cdown)
       : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
+
+    if (isNaN(eligibleAsReceiverDate.getTime())) {
+      eligibleAsReceiverDate = new Date(
+        now.getTime() + 7 * 24 * 60 * 60 * 1000
+      );
+    }
 
     const diffMs =
       eligibleAsReceiverDate - now <= 0 ? 0 : eligibleAsReceiverDate - now;
+
+    console.log(diffMs);
 
     if (diffMs === 0) {
       setCanWithdraw(true);
     }
 
-    setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
+    const seconds = Math.floor(diffMs / 1000);
+    // setCountdown(seconds);
+    // setEligibleTime(formatDate(seconds));
+  }, [cmtData]); // Only recalculate when cmtData changes
 
-    setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
-  }, [countdown]);
+  // useEffect(() => {
+  //   let timer;
+  //   if (countdown > 0) {
+  //     timer = setInterval(() => {
+  //       setCountdown((prev) => prev - 1);
+  //     }, 1000);
+  //   } else {
+  //     clearInterval(timer);
+  //   }
+  //   return () => clearInterval(timer);
+  // }, [countdown]);
 
-  useEffect(() => {
-    let timer;
-    if (countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    } else {
-      clearInterval(timer);
-    }
-    return () => clearInterval(timer);
-  }, [countdown]);
+  // useEffect(() => {
+  //   console.log(cdown,eligible)
+  //   if (cdown > 1) {
+  //     setEligibleTime(new Date(Date.now() + cdown));
+  //   } else {
+  //     setCanWithdraw(true);
+  //   }
+  // }, [cdown]);
 
   const withdraw = () => {
     if (canWithdraw) {
@@ -117,12 +138,14 @@ const formatDate = (rawDate) => {
 
   if (rawDate) {
     const date = new Date(rawDate);
-    formatted = `${
-      date.getMonth() + 1
-    }/${date.getDate()}/${date.getFullYear()} at ${date
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    if (!isNaN(date.getTime())) {
+      formatted = `${
+        date.getMonth() + 1
+      }/${date.getDate()}/${date.getFullYear()} at ${date
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    }
   }
-  return formatted; // "5/5/2025 at 00:56" or "N/A"
+  return formatted;
 };

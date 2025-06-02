@@ -36,7 +36,7 @@ export default function Recommitment({
   return (
     <div className="bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4">
       <h4 className="text-base text-blue-600 font-semibold mb-1">
-        Recommitment made for:{" "}
+        Recontribution made for:{" "}
         <span className="text-[#878E99]">{cmtData?.id.split("-")[0]}</span>
       </h4>
       <div className="flex flex-col gap-2 text-sm mb-4">
@@ -57,12 +57,12 @@ export default function Recommitment({
           {"N/A"}
         </p>
 
-        {isEligible && (
+        {/* {isEligible && (
           <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
             Time left to receive payment:
             {timeLeft}
           </p>
-        )}
+        )} */}
       </div>
     </div>
   );

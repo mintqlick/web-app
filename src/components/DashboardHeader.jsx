@@ -5,6 +5,7 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import Notification from "./Notification";
+import Link from "next/link";
 
 export default function DashboardHeader() {
   const [userData, setUserData] = useState(null);
@@ -64,7 +65,28 @@ export default function DashboardHeader() {
         {/* Right Side (Notification + User) */}
         <div className="flex items-center gap-4 md:gap-6">
           {/* Notification Bell */}
-          <Notification />
+          {[
+            {
+              src: "/images/telegram.png",
+              alt: "LinkedIn",
+              link: "https://t.me/nodalcircles",
+            },
+          ].map((icon, index) => (
+            <div
+              key={index}
+              className="bg-[white] h-[50px] w-[50px] rounded-full flex justify-center items-center"
+            >
+              <Link href={icon.link}>
+                <Image
+                  src={icon.src}
+                  alt={icon.alt}
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </Link>
+            </div>
+          ))}
           {/* <div className="relative bg-white p-2 rounded-full shadow-md">
             <Bell  className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
             <span className="absolute top-0 right-0 bg-red-500 text-white text-[9px] md:text-[10px] w-4 h-4 rounded-full flex items-center justify-center">

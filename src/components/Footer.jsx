@@ -222,7 +222,7 @@ const Footer = () => {
     <div className="w-full h-auto max-w-7xl overflow-hidden mt-[128px] mx-auto px-4">
       {/* Heading */}
       <h2 className="text-3xl lg:text-6xl font-bold text-gray-800 text-center mb-8">
-        Invest Smart. <span className="text-[#1860d9]">Achieve More.</span>
+        Contribute Smart. <span className="text-[#1860d9]">Achieve More.</span>
       </h2>
 
       {/* Background Container */}
