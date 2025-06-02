@@ -226,7 +226,6 @@ const AccountPage = () => {
 
       setSuccess("User updated successfully!");
     } catch (err) {
-      
       setError("Failed to update user.");
     } finally {
       setLoading(false);
@@ -269,7 +268,8 @@ const AccountPage = () => {
                   {userData?.name || "Loading..."}
                 </h2>
                 <p className="text-sm text-gray-600">
-                  Contribution ID: {userData?.id || "N/A"}
+                  Contribution ID:{" "}
+                  {userData?.id ? "NC-" + userData?.id.split("-")[0] : "N/A"}
                 </p>
               </div>
             </div>
