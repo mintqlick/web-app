@@ -39,7 +39,9 @@ const ReceiverDetailsModal = ({
         <div className="space-y-3">
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">Contribution Id:</p>
-            <p className="text-gray-800 font-semibold">#123444r34</p>
+            <p className="text-gray-800 font-semibold">
+              {"NC" + receive_data?.contribution_id.split("-")[0]}
+            </p>
           </div>
           <div className="lg:flex w-full justify-between">
             <p className="text-gray-500 text-sm">User Name:</p>

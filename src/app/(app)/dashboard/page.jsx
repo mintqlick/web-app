@@ -225,6 +225,7 @@ export default function MainPage() {
       telegram,
       uid: AccData.uid,
       exchange: AccData.exchange,
+      contribution_id: receive_data?.user_id,
     });
   };
 

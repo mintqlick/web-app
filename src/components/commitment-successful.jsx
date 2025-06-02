@@ -32,7 +32,7 @@ export default function CommitmentSuccessfull({
             </h4>
             <p className="text-base md:text-lg font-bold text-gray-700 mb-2">
               <span className="text-blue-600">{newCommitment.amount} USDT </span>
-              <span className="text-blue-800">to {receiverId}</span>
+              <span className="text-blue-800">to NC-{receiverId.split("-")[0]}</span>
             </p>
           </>
           <>

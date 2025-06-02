@@ -73,7 +73,7 @@ export default function CommitmentSuccessfull({
                 <span className="text-blue-600">
                   {newCommitment.amount} USDT
                 </span>
-                <span className="text-blue-800"> by #{giver_id}</span>
+                <span className="text-blue-800"> by #{giver_id.split("-")[0]}</span>
               </p>
             ) : (
               ""

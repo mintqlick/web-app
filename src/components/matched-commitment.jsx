@@ -83,7 +83,7 @@ export default function MatchedCommitment({
           <p className="text-base md:text-lg font-bold text-gray-700 mb-2">
             <span className="text-blue-600">{newCommitment.amount} USDT</span>{" "}
             <span className="text-blue-800">
-              to Contribution ID: {receiverId}
+              to Contribution ID: NC-{receiverId.split("-")[0]}
             </span>
           </p>
 
