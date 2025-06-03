@@ -341,7 +341,7 @@ export default function MainPage() {
       body: JSON.stringify({
         receiver_id: rcv_detailVal?.receiver_id,
         giver_id: rcv_detailVal?.giver_id,
-        order_id:rcv_detailVal?.id
+        order_id: rcv_detailVal?.id,
       }),
     });
 
@@ -440,9 +440,8 @@ export default function MainPage() {
 
         const totalCommitments = data.length + activeCommitment.length;
 
-
         if (
-          (totalCommitments >= 2) ||
+          totalCommitments >= 2 ||
           (data.length === 1 && activeCommitment.length === 1)
         ) {
           setCanCommit(false); // Too many commitments or one in each group
@@ -524,7 +523,7 @@ export default function MainPage() {
           .eq("receiver_id", rcr?.id)
           .neq("status", "completed")
           .single();
-        console.log("Here");
+        console.log(receiverId, "Here");
 
         if (receiver_error) {
           alert("error", rcr_error.message);
@@ -708,37 +707,78 @@ export default function MainPage() {
       const supabase = createClient();
 
       try {
-        const { data, error: receiverErr } = await supabase
+        // const { data, error: receiverErr } = await supabase
+        //   .from("merge_receivers")
+        //   .select("*")
+        //   .eq("user_id", userId)
+        //   .neq("status", "completed")
+        //   .eq("confirmed", true)
+        //   .eq("touched", true)
+        //   // .single();
+
+        // console.log(data, userId);
+
+        // // console.log(userId, error, data, "running");
+
+        // // const res = data.find((el) => el.status === "pending");
+        // // console.log(res);
+
+        // if (receiverErr) {
+        //   console.log("Error fetching receiver data:", receiverErr);
+        //   return; // Early return if there's an error fetching data
+        // }
+
+        // const { data: result, error: matcherr } = await supabase
+        //   .from("merge_matches")
+        //   .select("*")
+        //   .eq("receiver_id", data.id)
+        //   .neq("status", "completed");
+        // if (matcherr) {
+        //   console.log(matcherr, ",err");
+        //   return;
+        // }
+        // console.log(result, "result here");
+
+        // setReceiverArr(result);
+
+        const { data: receivers, error: receiverErr } = await supabase
           .from("merge_receivers")
           .select("*")
           .eq("user_id", userId)
           .neq("status", "completed")
           .eq("confirmed", true)
-          .eq("touched", true)
-          .single();
-
-        // console.log(userId, error, data, "running");
-
-        // const res = data.find((el) => el.status === "pending");
-        // console.log(res);
+          .eq("touched", true);
 
         if (receiverErr) {
           console.log("Error fetching receiver data:", receiverErr);
-          return; // Early return if there's an error fetching data
-        }
-
-        const { data: result, error: matcherr } = await supabase
-          .from("merge_matches")
-          .select("*")
-          .eq("receiver_id", data.id)
-          .neq("status", "completed");
-        if (matcherr) {
-          console.log(matcherr, ",err");
           return;
         }
-        console.log(result, "result here");
 
-        setReceiverArr(result);
+        console.log(receivers, "receivers");
+
+        const allMatches = [];
+
+        for (const receiver of receivers) {
+          const { data: matches, error: matchErr } = await supabase
+            .from("merge_matches")
+            .select("*")
+            .eq("receiver_id", receiver.id)
+            .neq("status", "completed");
+
+          if (matchErr) {
+            console.log(
+              `Error fetching matches for receiver ${receiver.id}:`,
+              matchErr
+            );
+            continue; // Skip this receiver and continue
+          }
+
+          allMatches.push(...matches); // Flatten results into one array
+        }
+
+        console.log(allMatches, "all matches here");
+
+        setReceiverArr(allMatches); // Set once after all are gathered
 
         if (data) {
           setCanWithdraw(true);
@@ -787,6 +827,10 @@ export default function MainPage() {
     }
     // Only call if userId is available
   }, [userId]);
+
+  {
+    console.log(activeCommitment, commitmentsArr, matchedData);
+  }
 
   return (
     <div className="flex w-full h-full ">
