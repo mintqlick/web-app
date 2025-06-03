@@ -98,9 +98,14 @@ export default function CommitmentSuccessfull({
       {/* {console.log(receiver_data?.original_amount)} */}
       {/* Buttons statement */}
 
-      {giver_id && (
+      {giver_id ? (
         <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
           Time left to confirm payment:
+          {eligibleTime}
+        </p>
+      ) : (
+        <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
+          Time left to get merged:
           {eligibleTime}
         </p>
       )}

@@ -109,6 +109,14 @@ export const SignUpAction = async (data, strength, checked, ref) => {
       console.log(insertReferralError);
       return { message: insertReferralError.message, error: true };
     }
+    const { data: updateData, error: updateErr } = await supabase
+      .from("users")
+      .update({ user_id: signupData.user.id.split("-")[0] })
+      .eq("id", signupData.user.id);
+    if (updateErr) {
+      console.log(updateErr.message);
+      return { message: updateErr.message, error: true };
+    }
 
     return { message: "User created successfully", error: false };
   } catch (error) {

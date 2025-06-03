@@ -754,7 +754,7 @@ export default function MainPage() {
           return;
         }
 
-        console.log(receivers, "receivers");
+        // console.log(receivers, "receivers");
 
         const allMatches = [];
 
@@ -805,7 +805,10 @@ export default function MainPage() {
           .select("*")
           .eq("user_id", userId)
           .eq("status", "waiting")
-          .single();
+          .eq("touched", "false");
+        // .single();
+
+        console.log(data, "Ademola123");
 
         // console.log(userId, error, data, "running");
 
@@ -1085,18 +1088,21 @@ export default function MainPage() {
               loading={confirmReceiverLoading}
             />
           )}
-          {/* {console.log(receiverArr, rcv_detail)} */}
-          {/* {unMatchedReceiver && (
-            <CommitmentSuccessfullCard
-              giver_id={null}
-              clicked={() => {}}
-              newCommitment={{
-                amount: unMatchedReceiver.amount_remaining,
-                orderId: unMatchedReceiver.id,
-              }}
-              receiver_data={rcv_detail}
-            />
-          )} */}
+          {console.log(unMatchedReceiver, "un matched")}
+          {unMatchedReceiver &&
+            unMatchedReceiver.map((el) => (
+              <CommitmentSuccessfullCard
+                giver_id={null}
+                clicked={() => {}}
+                newCommitment={{
+                  amount: el.amount_remaining,
+                  orderId: el.id,
+                }}
+                countdown={el.expires_at}
+                receiver_data={rcv_detail}
+                matchedItem={{ expires_in: el.expires_at }}
+              />
+            ))}
 
           {receiverArr.length > 0 &&
             receiverArr.map((el, i) => {
