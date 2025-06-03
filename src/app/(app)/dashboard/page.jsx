@@ -341,6 +341,7 @@ export default function MainPage() {
       body: JSON.stringify({
         receiver_id: rcv_detailVal?.receiver_id,
         giver_id: rcv_detailVal?.giver_id,
+        order_id:rcv_detailVal?.id
       }),
     });
 

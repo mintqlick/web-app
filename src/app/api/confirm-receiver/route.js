@@ -4,36 +4,35 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const supabase = createClient();
-  const { receiver_id, giver_id } = await req.json();
+  const { receiver_id, giver_id, order_id } = await req.json();
 
-  // if (!receiver_id || !giver_id) {
-  //   return NextResponse.json(
-  //     { error: "Missing receiver_id or giver_id" },
-  //     { status: 400 }
-  //   );
-  // }
-  // // Step 1: Mark the match as completed
-  // const { data: match, error: matchErr } = await supabase
-  //   .from("merge_matches")
-  //   .update({ status: "completed" })
-  //   .eq("giver_id", giver_id)
-  //   .eq("receiver_id", receiver_id)
-  //   .select()
-  //   .single();
+  if (!receiver_id || !giver_id || !order_id) {
+    return NextResponse.json(
+      { error: "Missing receiver_id or giver_id or order_id" },
+      { status: 400 }
+    );
+  }
+  // Step 1: Mark the match as completed
+  const { data: match, error: matchErr } = await supabase
+    .from("merge_matches")
+    .update({ status: "completed" })
+    .eq("giver_id", giver_id)
+    .eq("receiver_id", receiver_id)
+    .eq("id", order_id)
+    .single();
 
-  // if (matchErr) {
-  //   console.error("Error fetching match data:", matchErr);
-  //   return NextResponse.json(
-  //     { error: "Failed to fetch match data" },
-  //     { status: 500 }
-  //   );
-  // }
+  if (matchErr) {
+    console.error("Error fetching match data:", matchErr);
+    return NextResponse.json(
+      { error: "Failed to fetch match data" },
+      { status: 500 }
+    );
+  }
 
   const { data: giver, error: giverErr } = await supabase
     .from("merge_givers")
     .select("*")
     .eq("id", giver_id)
-    .select()
     .single();
   if (giverErr) {
     return NextResponse.json(
@@ -41,7 +40,6 @@ export async function POST(req) {
       { status: 500 }
     );
   }
-  console.log(giver.user_id);
 
   if (giver.amount_remaining === 0 && giver.matched) {
     //update the giver status to completed and eligible_time to current time
@@ -80,7 +78,10 @@ export async function POST(req) {
   const { data: remaining_receiver, error: remaining_error } = await supabase
     .from("merge_matches")
     .select("*")
-    .eq("receiver_id", receiver_id);
+    .eq("receiver_id", receiver_id)
+    .eq("giver_id", giver_id)
+    .eq("id", order_id)
+    .single();
 
   if (remaining_error) {
     console.error("Error fetching receiver data:", remaining_error);
@@ -136,12 +137,14 @@ export async function POST(req) {
     }
 
     const referrerId = referralData.referred_by;
-    const bonusAmount =
-      (balance ?? 0) + parseFloat((receiver.amount * 0.05).toFixed(2)); // 5% bonus
+    console.log(remaining_receiver);
+    const bonusAmount = parseFloat(
+      (+remaining_receiver.matched_amount * 0.05).toFixed(2)
+    ); // 5% bonus
 
     const { error: bonusError } = await supabase
       .from("referrals")
-      .update({ balance: bonusAmount })
+      .update({ balance: balance + bonusAmount })
       .eq("user_id", referrerId);
 
     if (bonusError) {
