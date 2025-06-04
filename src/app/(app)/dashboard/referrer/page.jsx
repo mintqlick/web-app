@@ -63,46 +63,11 @@ const ReferrerPage = () => {
     execute();
   }, []);
 
-  const clicked = async () => {
-    const supabase = createClient();
-    if (balance < 10) {
-      toast.warning("Can't withdraw amount yet");
-      return;
-    }
+  const ValueTester = async () => {
+    const result = await fetch("/api/cleaner");
+    const values = await result.json();
 
-    setWithDrawLoading(true);
-    try {
-      const res = await fetch("/api/join-receiver", {
-        method: "POST",
-        body: JSON.stringify({
-          user_id: userId,
-          amount: balance, // amount to withdraw
-        }),
-      });
-
-      // if (res.ok) {
-      //   const result = await fetch("/api/merge", {
-      //     method: "GET",
-      //     "Content-Type": "application/json",
-      //   });
-      //   if (result.ok) {
-      //   }
-      // }
-    } catch (error) {}
-    
-    const { error: resetError } = await supabase.rpc("reset_balance", {
-      user_id_param: userId, // Replace with the referrer's ID
-    });
-
-    if (resetError) {
-      console.error("❌ Failed to reset balance:", resetError.message);
-    }
-
-    setBalance(0)
-    setWithDrawLoading(false);
-
-    toast.success("success");
-    
+    console.log(values);
   };
 
   return (

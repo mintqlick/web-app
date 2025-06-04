@@ -24,9 +24,14 @@ export default function MatchedCommitment({
       : new Date(now.getTime() + 24 * 60 * 60 * 1000); // Default to 7 days ahead
 
     const diffMs = eligibleAsReceiverDate - now;
+
     setCountdown(Math.floor(diffMs / 1000)); // Convert milliseconds to seconds
 
     setEligibleTime(formatCountdown(Math.floor(diffMs / 1000))); // Convert milliseconds to seconds for countdown display
+
+    if (diffMs < 0) {
+      setEligibleTime("0h 0m 0s");
+    }
   }, [countdown]);
 
   useEffect(() => {
