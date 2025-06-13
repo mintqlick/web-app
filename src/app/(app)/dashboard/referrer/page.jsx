@@ -1,6 +1,7 @@
 "use client";
 import Spinner from "@/components/auth/spinner";
 import Box from "@/components/Box/Box";
+import Referral from "@/components/referral";
 import { createClient } from "@/utils/supabase/client";
 import { Copy } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -17,6 +18,10 @@ const ReferrerPage = () => {
   const [balance, setBalance] = useState(0);
   const [userId, setUserId] = useState(null);
   const [withdrawLoading, setWithDrawLoading] = useState(false);
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const execute = async () => {
@@ -104,6 +109,63 @@ const ReferrerPage = () => {
     toast.success("success");
   };
 
+  useEffect(() => {
+    const fetchReferralsWithUsers = async () => {
+      const supabase = createClient();
+
+      setLoading(true);
+      setError(null);
+
+      // Step 1: Get referrals where referred_by = id
+      const { data: referrals, error: referralError } = await supabase
+        .from("referrals")
+        .select("*")
+        .eq("referred_by", userId);
+
+      if (referralError) {
+        console.error("Error fetching referrals:", referralError);
+        setError(referralError);
+        setLoading(false);
+        return;
+      }
+
+      if (!referrals || referrals.length === 0) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Extract all user IDs (e.g., from `user_id` field)
+      const userIds = referrals.map((ref) => ref.user_id).filter(Boolean);
+
+      // Step 3: Fetch all users in a single .in() query
+      const { data: users, error: usersError } = await supabase
+        .from("users") // or "auth.users" if using admin
+        .select("*")
+        .in("id", userIds);
+
+      if (usersError) {
+        console.error("Error fetching users:", usersError);
+        setError(usersError);
+        setLoading(false);
+        return;
+      }
+
+      // Step 4: Merge users with referrals
+      const merged = referrals.map((ref) => ({
+        ...ref,
+        user: users.find((u) => u.id === ref.user_id) || null,
+      }));
+
+      setData(merged);
+      setLoading(false);
+    };
+
+    if (userId) fetchReferralsWithUsers();
+  }, [userId]);
+
+  console.log(data);
+
   return (
     <div className="flex flex-col items-center justify-center w-full px-4 sm:px-6 md:px-8 lg:px-0 animate-fadeIn">
       <div className="w-full  space-y-5">
@@ -190,6 +252,13 @@ const ReferrerPage = () => {
             )}
           </div>
         </Box>
+
+        {loading && (
+          <div className="h-[20rem] w-full flex items-center justify-center">
+            <Spinner size={40} />
+          </div>
+        )}
+        {!loading && data.map((item) => <Referral item={item} key={item.id} />)}
 
         {/* Referral Points Box */}
         <Box

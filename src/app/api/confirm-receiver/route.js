@@ -142,6 +142,8 @@ export async function POST(req) {
       (+remaining_receiver.matched_amount * 0.05).toFixed(2)
     ); // 5% bonus
 
+    console.log(bonusAmount)
+
     const { error: bonusError } = await supabase
       .from("referrals")
       .update({ balance: balance + bonusAmount })
