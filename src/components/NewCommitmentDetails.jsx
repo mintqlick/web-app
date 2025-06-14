@@ -15,6 +15,7 @@ export default function NewCommitmentDetails({
   handleCancelCommitment,
   status,
   confirmed,
+  matched=false
 }) {
   return (
     <motion.div
@@ -22,7 +23,7 @@ export default function NewCommitmentDetails({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className={`bg-[#EDF2FC] p-4 rounded-lg shadow-md border mt-4 ${
-        confirmed ? "hidden" : "block"
+        confirmed&&matched ? "hidden" : "block"
       }`}
     >
       <div className="w-[8rem] text-[10px] lg:text-[14px] lg:w-[10rem] rounded-4xl bg-[#B12018] flex justify-center items-center py-3 mb-5 text-white font-semibold ">
@@ -57,7 +58,7 @@ export default function NewCommitmentDetails({
               </h4>
               <p className="text-base md:text-lg font-bold text-gray-700 mb-2">
                 <span className="text-blue-600">
-                  {newCommitment.amount} USDT
+                  {newCommitment.amount_remaining} USDT
                 </span>{" "}
                 <span className="text-black">to Contribution ID: {userId}</span>
                 <p className="text-xs md:text-sm font-bold text-gray-500 mb-2">
@@ -80,8 +81,10 @@ export default function NewCommitmentDetails({
 
       {status !== "pending" && (
         <p className="text-2xl md:text-4xl text-gray-900 mb-4 text-center">
-          Time left:{" "}
-          {typeof countdown === "string"
+          Time left: {console.log(countdown, "countdown")}
+          {!countdown
+            ? formatCountdown(0)
+            : typeof countdown === "string"
             ? countdown
             : formatCountdown(countdown)}
         </p>

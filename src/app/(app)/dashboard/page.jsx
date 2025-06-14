@@ -310,7 +310,7 @@ export default function MainPage() {
         setWithDrawLoading(false);
         setCanWithdraw(false);
         setRcvDetail(null);
-        router.refresh();
+        window.location.reload();
       }
     } catch (error) {}
     setWithDrawLoading(false);
@@ -963,10 +963,15 @@ export default function MainPage() {
                 timeLeft = `${hours}h ${minutes}m ${seconds}s`;
               }
 
+              console.log(el);
+
               return (
                 <NewCommitmentDetails
                   key={el.id}
-                  newCommitment={cmtdetail}
+                  newCommitment={{
+                    ...cmtdetail,
+                    amount_remaining: el.amount_remaining,
+                  }}
                   isMerged={isMerged}
                   receiverId={receiverId}
                   userId={userId}
@@ -976,9 +981,11 @@ export default function MainPage() {
                   handleConfirmPayment={handleConfirmPayment}
                   status={el.status}
                   confirmed={el.confirmed}
+                  matched={el.matched}
                 />
               );
             })}
+
           {!matchedData &&
             commitmentsArr &&
             commitmentsArr.length > 0 &&
