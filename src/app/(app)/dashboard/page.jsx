@@ -923,8 +923,8 @@ export default function MainPage() {
               recommitProcess={toggleCommitmentBox}
               // isEligible={true}
               cmtData={withDrawCommitment}
-              eligible={activeCommitment[1]?.eligible_time || 0}
-              countdown={activeCommitment[1]?.eligible_as_receiver || 0}
+              eligible={activeCommitment[1]?.eligible_time}
+              countdown={activeCommitment[1]?.eligible_as_receiver}
             />
           )}
 

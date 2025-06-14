@@ -21,8 +21,6 @@ export default function ActiveCommitment({
   useEffect(() => {
     const now = new Date(); // moved here to get fresh time on each run
 
-    console.log(cdown, "Cdown");
-
     let eligibleAsReceiverDate = cdown
       ? new Date(cdown)
       : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days ahead
@@ -46,6 +44,32 @@ export default function ActiveCommitment({
     // setCountdown(seconds);
     // setEligibleTime(formatDate(seconds));
   }, [cmtData]); // Only recalculate when cmtData changes
+
+  useEffect(() => {
+    if (!cdown) return;
+
+    const now = new Date();
+    let eligibleDate = new Date(cdown);
+
+    // If invalid, fallback to 7 days ahead
+    if (isNaN(eligibleDate.getTime())) {
+      eligibleDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    }
+
+    const diffMs = eligibleDate - now;
+
+    if (diffMs <= 0) {
+      // Already eligible
+      setCanWithdraw(true);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setCanWithdraw(true);
+    }, diffMs); // wait exactly until the eligibility time
+
+    return () => clearTimeout(timeout);
+  }, [cdown]);
 
   // useEffect(() => {
   //   let timer;
