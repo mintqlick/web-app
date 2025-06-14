@@ -42,7 +42,7 @@ const DashboardLayout = ({ children }) => {
     <Box style={{ position: "relative", width: "100vw" }}>
       {/* Notification Banner */}
       {notifications.length > 0 && (
-        <div className="fixed top-[90px] z-50 w-full px-3 md:px-6 space-y-2">
+        <div className="fixed top-[10%] z-80 w-[90%] lg:w-full px-3 md:px-6 space-y-2">
           {notifications.map((note) => (
             <div
               key={note.id}
