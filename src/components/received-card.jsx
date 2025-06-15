@@ -75,7 +75,7 @@ export default function CommitmentSuccessfull({
                 </span>
                 <span className="text-blue-800">
                   {" "}
-                  by #{giver_id.split("-")[0]}
+                  by NC-{giver_id.split("-")[0]}
                 </span>
               </p>
             ) : (

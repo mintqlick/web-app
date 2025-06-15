@@ -42,23 +42,48 @@ export async function POST(req) {
   }
 
   if (giver.amount_remaining === 0 && giver.matched) {
-    //update the giver status to completed and eligible_time to current time
-    const { error: updateGiverError } = await supabase
-      .from("merge_givers")
-      .update({
-        status: "completed",
-        eligible_time: new Date(Date.now()),
-        eligible_as_receiver: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        received: false,
-      })
-      .eq("id", giver_id);
+    // check if there's still anything instance of the giver in matches not completed
+    const { data: matches, error: matchesErr } = await supabase
+      .from("merge_matches")
+      .select("*")
+      .eq("giver_id", giver_id)
+      .neq("status", "completed");
 
-    if (updateGiverError) {
-      console.error("Error updating giver status:", updateGiverError);
-      return NextResponse.json(
-        { error: "Failed to update giver status" },
-        { status: 500 }
-      );
+    if (matches && matches.length > 0) {
+      const { error: updateGiverError } = await supabase
+        .from("merge_givers")
+        .update({
+          eligible_time: new Date(Date.now()),
+          eligible_as_receiver: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          received: false,
+        })
+        .eq("id", giver_id);
+      if (updateGiverError) {
+        console.error("Error updating giver status:", updateGiverError);
+        return NextResponse.json(
+          { error: "Failed to update giver status" },
+          { status: 500 }
+        );
+      }
+    } else {
+      //update the giver status to completed and eligible_time to current time
+      const { error: updateGiverError } = await supabase
+        .from("merge_givers")
+        .update({
+          status: "completed",
+          eligible_time: new Date(Date.now()),
+          eligible_as_receiver: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          received: false,
+        })
+        .eq("id", giver_id);
+
+      if (updateGiverError) {
+        console.error("Error updating giver status:", updateGiverError);
+        return NextResponse.json(
+          { error: "Failed to update giver status" },
+          { status: 500 }
+        );
+      }
     }
   }
 
@@ -137,12 +162,10 @@ export async function POST(req) {
     }
 
     const referrerId = referralData.referred_by;
-    console.log(remaining_receiver);
     const bonusAmount = parseFloat(
       (+remaining_receiver.matched_amount * 0.05).toFixed(2)
     ); // 5% bonus
 
-    console.log(bonusAmount)
 
     const { error: bonusError } = await supabase
       .from("referrals")

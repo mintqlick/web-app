@@ -356,6 +356,7 @@ export default function MainPage() {
     toast.success("Receiver confirmed successfully!");
     setOpenRcv(false);
     setConfirmReceiverLoading(false);
+    window.location.reload();
   };
 
   const fetchSenderDetail = async (el) => {
@@ -612,6 +613,8 @@ export default function MainPage() {
         .eq("confirmed", true)
         .neq("status", "completed");
 
+      console.log(givers, "Givers here");
+
       if (!givers || givers.length === 0) {
         console.log("No eligible givers found.");
         return;
@@ -627,8 +630,8 @@ export default function MainPage() {
           .from("merge_matches")
           .select("*")
           .eq("giver_id", giver.id)
-          .eq("giver_checked", false)
-          .single();
+          .eq("giver_checked", false);
+        // .single();
 
         if (matchError) {
           console.warn(`No match found for giver ID ${giver.id}`);
@@ -644,13 +647,15 @@ export default function MainPage() {
 
       // Step 3: Wait for all matches to resolve
       const allMatches = await Promise.all(matchPromises);
+
       const validMatches = allMatches.filter(Boolean);
 
-      setMatchedData(validMatches);
+      setMatchedData(validMatches.flat());
       // Optionally set state: setMatchedData(validMatches)
     };
-
-    fetchMergeMatches();
+    if (userId) {
+      fetchMergeMatches();
+    }
   }, [userId]);
 
   useEffect(() => {
