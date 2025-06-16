@@ -480,8 +480,8 @@ const AccountPage = () => {
                 className="bg-[#1860d9] text-white rounded-full p-2 hover:bg-blue-700"
                 onClick={() => {
                   setAddressCount((prev) => prev + 1);
-                  if (addressCount > 2) {
-                    toast.warning("maximum of 3 addresses");
+                  if (addressCount > 1) {
+                    toast.warning("maximum of 2 addresses");
                     return;
                   }
                   setFormData((prev) => ({
@@ -508,10 +508,14 @@ const AccountPage = () => {
                       className="bg-white border-gray-300 text-gray-500 border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1860d9]"
                     >
                       <option value="">Select Crypto Network</option>
-                      <option value="TRC-20">TRC-20</option>
-                      <option value="TON">TON</option>
-                      <option value="APTOS">APTOS</option>
-                      <option value="BEP 20">BEP 20</option>
+                      {!(index !== 1) && (
+                        <>
+                          <option value="TON">TON</option>
+
+                          <option value="BEP 20">BEP 20</option>
+                        </>
+                      )}
+                      {!(index === 1) && <option value="APTOS">APTOS</option>}
                     </select>
                   </div>
                   <div className="flex flex-col w-full lg:w-[58%] relative mb-4">
