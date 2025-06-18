@@ -80,7 +80,12 @@ export default function MainPage() {
       toast.warning("resolve all commitment to continue");
       return;
     }
-    if (activeCommitment.length === 2 || activeCommitment.length > 2) {
+    if (
+      activeCommitment.length === 2 ||
+      activeCommitment.length > 2 ||
+      matchedData.length > 2 ||
+      commitmentsArr.length > 2
+    ) {
       toast.warning("complete active commitments");
       setCanCommit(false);
       return;
