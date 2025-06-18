@@ -54,12 +54,8 @@ const DashboardLayout = ({ children }) => {
               >
                 ×
               </button>
-              <p className="font-semibold text-base sm:text-lg">
-                {note.title}
-              </p>
-              <Linkify options={linkifyOptions}>
-                {note.message}
-              </Linkify>
+              <p className="font-semibold text-base sm:text-lg">{note.title}</p>
+              <Linkify options={linkifyOptions}>{note.message}</Linkify>
             </div>
           ))}
         </div>
@@ -69,7 +65,7 @@ const DashboardLayout = ({ children }) => {
       <DashboardHeader />
       <div className="flex">
         <Sidebar />
-        <main className="main-content w-full mt-[90px] flex-1 lg:p-6 bg-white">
+        <main className="main-content w-full mt-[90px] flex-1 mb-[5rem] lg:mb-0  lg:p-6 bg-white">
           {children}
         </main>
       </div>

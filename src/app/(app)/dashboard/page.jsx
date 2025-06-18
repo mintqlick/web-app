@@ -76,16 +76,36 @@ export default function MainPage() {
   const handleCommit = async () => {
     const supabase = createClient();
 
+    console.log(commitmentsArr, "Ademola");
+
+    if (newCommitment) {
+      toast.warning("refresh to continue");
+      setCanCommit(false);
+      return;
+    }
+
     if (!canCommit) {
       toast.warning("resolve all commitment to continue");
       return;
     }
-    if (
-      activeCommitment.length === 2 ||
-      activeCommitment.length > 2 ||
-      matchedData.length > 2 ||
-      commitmentsArr.length > 2
-    ) {
+
+    // if (activeCommitment.length===1&&) {
+    // }
+
+    if (activeCommitment.length === 1 || activeCommitment.length > 1) {
+      if (commitmentsArr.length == 1 || commitmentsArr.length > 1) {
+        toast.warning("complete active commitments");
+        setCanCommit(false);
+        return;
+      }
+    }
+    if (commitmentsArr.length == 2 || commitmentsArr.length > 2) {
+      toast.warning("complete active commitments");
+      setCanCommit(false);
+      return;
+    }
+
+    if (activeCommitment.length === 2 || activeCommitment.length > 2) {
       toast.warning("complete active commitments");
       setCanCommit(false);
       return;
@@ -102,7 +122,6 @@ export default function MainPage() {
       .eq("user_id", userId);
 
     if (cmt_errs) {
-      console.error("Error fetching merge_givers:", cmt_errs);
       return;
     }
 
@@ -226,7 +245,7 @@ export default function MainPage() {
       network: net.trim(),
       address: addressArr[index] ? addressArr[index].trim() : "",
     }));
-    console.log(receiver_id);
+
     set_receiver_data({
       name,
       phone,
@@ -297,8 +316,6 @@ export default function MainPage() {
     setWithDrawLoading(true);
     const supabase = createClient();
 
-    console.log(withDrawCommitment, "withDrawCommitment in withdraw");
-
     try {
       const res = await fetch("/api/join-receiver", {
         method: "POST",
@@ -339,7 +356,7 @@ export default function MainPage() {
       );
       return;
     }
-    console.log(rcv_detailVal);
+
     setConfirmReceiverLoading(true);
     const response = await fetch("/api/confirm-receiver", {
       method: "POST",
@@ -403,7 +420,7 @@ export default function MainPage() {
         if (userDataError) {
         } else {
           setBlocked(userData?.blocked);
-          console.log(userData, "user Data");
+
           const { data: accountData, error: accountError } = await supabase
             .from("account")
             .select("*")
@@ -529,13 +546,11 @@ export default function MainPage() {
           .eq("receiver_id", rcr?.id)
           .neq("status", "completed")
           .single();
-        console.log(receiverId, "Here");
 
         if (receiver_error) {
           alert("error", rcr_error.message);
           return;
         }
-        console.log(receiver_id, giver_id, "Adempola");
 
         setScreenshotUrl(image_url);
         setReceiverId(receiver_id);
@@ -579,7 +594,7 @@ export default function MainPage() {
 
   //       setRcvDetail(rcr);
   //     } catch (err) {
-  //       console.error("Error fetching receiver data:", err);
+
   //     }
   //   };
   //   handler()
@@ -602,7 +617,7 @@ export default function MainPage() {
     //     if (data) {
     //       setMatchedData(data);
     //     } else if (error) {
-    //       console.error("Error fetching merge matches:", error);
+
     //     }
     //   }
     // };
@@ -618,14 +633,10 @@ export default function MainPage() {
         .eq("confirmed", true)
         .neq("status", "completed");
 
-      console.log(givers, "Givers here");
-
       if (!givers || givers.length === 0) {
-        console.log("No eligible givers found.");
         return;
       }
       if (giverError) {
-        console.error("Error fetching merge_givers:", giverError);
         return;
       }
 
@@ -639,11 +650,9 @@ export default function MainPage() {
         // .single();
 
         if (matchError) {
-          console.warn(`No match found for giver ID ${giver.id}`);
           return null;
         }
         if (!match) {
-          console.warn(`No match found for giver ID ${giver.id}`);
           return null;
         }
 
@@ -681,7 +690,6 @@ export default function MainPage() {
       }
 
       if (error) {
-        console.error("Error fetching merge_givers12:", error);
       }
 
       setCanWithdraw(data.length > 1);
@@ -702,9 +710,7 @@ export default function MainPage() {
         .eq("status", "completed")
         .eq("matched", true);
 
-      console.log(giver_error, "giver error");
       setActiveCommitment(giver_data);
-      console.log(giver_data, "giver recommitment data");
     };
     if (userId) {
       excutioner();
@@ -726,15 +732,10 @@ export default function MainPage() {
         //   .eq("touched", true)
         //   // .single();
 
-        // console.log(data, userId);
-
-        // // console.log(userId, error, data, "running");
-
         // // const res = data.find((el) => el.status === "pending");
-        // // console.log(res);
 
         // if (receiverErr) {
-        //   console.log("Error fetching receiver data:", receiverErr);
+
         //   return; // Early return if there's an error fetching data
         // }
 
@@ -744,10 +745,9 @@ export default function MainPage() {
         //   .eq("receiver_id", data.id)
         //   .neq("status", "completed");
         // if (matcherr) {
-        //   console.log(matcherr, ",err");
+
         //   return;
         // }
-        // console.log(result, "result here");
 
         // setReceiverArr(result);
 
@@ -760,11 +760,8 @@ export default function MainPage() {
           .eq("touched", true);
 
         if (receiverErr) {
-          console.log("Error fetching receiver data:", receiverErr);
           return;
         }
-
-        // console.log(receivers, "receivers");
 
         const allMatches = [];
 
@@ -776,17 +773,11 @@ export default function MainPage() {
             .neq("status", "completed");
 
           if (matchErr) {
-            console.log(
-              `Error fetching matches for receiver ${receiver.id}:`,
-              matchErr
-            );
             continue; // Skip this receiver and continue
           }
 
           allMatches.push(...matches); // Flatten results into one array
         }
-
-        console.log(allMatches, "all matches here");
 
         setReceiverArr(allMatches); // Set once after all are gathered
 
@@ -818,19 +809,12 @@ export default function MainPage() {
           .eq("touched", "false");
         // .single();
 
-        console.log(data, "Ademola123");
-
-        // console.log(userId, error, data, "running");
-
         // const res = data.find((el) => el.status === "pending");
-        // console.log(res);
+
         if (receiverErr) {
-          console.log("error occured", receiverErr);
           return;
         }
         setUnMatched(data);
-
-        console.log(data, receiverErr, "here");
       } catch (error) {}
     };
 
@@ -842,7 +826,6 @@ export default function MainPage() {
   }, [userId]);
 
   {
-    console.log(activeCommitment, commitmentsArr, matchedData);
   }
 
   return (
@@ -972,8 +955,6 @@ export default function MainPage() {
                 const seconds = totalSeconds % 60;
                 timeLeft = `${hours}h ${minutes}m ${seconds}s`;
               }
-
-              console.log(el);
 
               return (
                 <NewCommitmentDetails
@@ -1105,7 +1086,7 @@ export default function MainPage() {
               loading={confirmReceiverLoading}
             />
           )}
-          {console.log(unMatchedReceiver, "un matched")}
+
           {unMatchedReceiver &&
             unMatchedReceiver.map((el) => (
               <CommitmentSuccessfullCard
@@ -1123,13 +1104,11 @@ export default function MainPage() {
 
           {receiverArr.length > 0 &&
             receiverArr.map((el, i) => {
-              console.log(el, "el");
               return (
                 <CommitmentSuccessfullCard
                   giver_id={el.giver_id}
                   key={i}
                   clicked={() => {
-                    console.log("clicked", el);
                     setRcvDetail({ ...el, success: true });
                     setOpenRcv(true);
                   }}
