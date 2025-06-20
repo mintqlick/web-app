@@ -76,10 +76,17 @@ export default function MainPage() {
   const handleCommit = async () => {
     const supabase = createClient();
 
-    console.log(commitmentsArr, "Ademola");
+    
+    
+
+    if (commitmentsArr.length === 1) {
+      toast.warning("wait till you get merged!");
+      setCanCommit(false);
+      return;
+    }
 
     if (newCommitment) {
-      toast.warning("refresh to continue");
+      toast.warning("refresh to continue!");
       setCanCommit(false);
       return;
     }
