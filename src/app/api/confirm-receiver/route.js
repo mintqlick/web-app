@@ -136,11 +136,14 @@ export async function POST(req) {
           return;
         }
 
+        
+
         // Step 2: Decide duration based on history
-        const hasPreviousCompleted = previousGives.length > 0;
+        const hasPreviousCompleted = previousGives.length > 1;
         const now = new Date();
         const eligibleAsReceiver = new Date(
-          now.getTime() + (hasPreviousCompleted ? 7 : 3) * 24 * 60 * 60 * 1000
+          now.getTime() +
+            (hasPreviousCompleted ? 7 : 3) * 24 * 60 * 60 * 1000
         );
 
         // Step 3: Update current giver entry
