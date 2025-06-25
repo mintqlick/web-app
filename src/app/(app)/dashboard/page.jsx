@@ -22,6 +22,9 @@ import MatchedCommitment from "@/components/matched-commitment";
 import Link from "next/link";
 import Image from "next/image";
 import SenderModal from "@/components/sender-detail";
+import { useDispatch, useSelector } from "react-redux";
+import SuspendedNotice from "@/components/levi";
+import { setDisabled } from "@/store/slices/status";
 
 export default function MainPage() {
   const [showCommitmentBox, setShowCommitmentBox] = useState(false);
@@ -68,16 +71,19 @@ export default function MainPage() {
   const totalReceive = amount
     ? (parseFloat(amount) + parseFloat(profit)).toFixed(2)
     : "0.00";
+  const disabled = useSelector((item) => item.status.disabled);
+  const dispatch = useDispatch();
 
   const toggleCommitmentBox = () => {
+    if (disabled) {
+      toast.warning("⚠️ You've been disabled, please pay levy to continue");
+      return;
+    }
     setShowCommitmentBox(!showCommitmentBox);
   };
 
   const handleCommit = async () => {
     const supabase = createClient();
-
-    
-    
 
     if (commitmentsArr.length === 1) {
       toast.warning("wait till you get merged!");
@@ -191,6 +197,12 @@ export default function MainPage() {
       toast.warning(
         "⚠️ You've been blocked from giving or receiving due to not completing payment in 24hrs, contact support to resolve this issue"
       );
+      return;
+    }
+    
+
+    if (disabled) {
+      toast.warning("⚠️ You've been disabled, please pay levy to continue");
       return;
     }
     const supabase = createClient();
@@ -408,6 +420,59 @@ export default function MainPage() {
     setShowMergedUser(true);
   };
 
+  const PayLevyHandler = async () => {
+    const supabase = createClient();
+    const { data: cmt, error: cmt_errs } = await supabase
+      .from("merge_givers")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (cmt_errs) {
+      return;
+    }
+
+    const numAmount = 5;
+
+    setLoading(true);
+    setMessage("");
+
+    const { data, error } = await supabase
+      .from("merge_givers")
+      .insert([
+        {
+          user_id: userId,
+          original_amount: numAmount,
+          amount_remaining: numAmount,
+          levy: true,
+        },
+      ])
+      .select()
+      .single(); // <== VERY IMPORTANT: we use `.single()` to get the inserted data immediately
+
+    if (error) {
+      setMessage(`❌ Error: ${error.message}`);
+      return;
+    } else {
+      setMessage(
+        "You'll be assigned to pay a levy of $5.00. Please pay this amount to continue."
+      );
+
+      // Save the new commitment data
+      setNewCommitment({
+        amount: numAmount,
+        orderId: data.id, // This assumes your 'merge_givers' table has 'id' field
+      });
+      setCountdown(24 * 60 * 60); // Reset countdown to 7 days
+      setShowCommitmentBox(false); // Hide the commitment box after successful commit
+    }
+
+    // dispatch(setDisabled(false));
+    setLoading(false);
+    toast.success(
+      "You'll be assigned to pay a levy of $5.00. Please pay this amount to continue."
+    );
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       const supabase = createClient();
@@ -555,7 +620,7 @@ export default function MainPage() {
           .single();
 
         if (receiver_error) {
-          alert("error", rcr_error.message);
+          
           return;
         }
 
@@ -832,9 +897,6 @@ export default function MainPage() {
     // Only call if userId is available
   }, [userId]);
 
-  {
-  }
-
   return (
     <div className="flex w-full h-full ">
       {/* Center Content */}
@@ -866,211 +928,221 @@ export default function MainPage() {
               </div>
             </div>
           </div>
-
-          {showCommitmentBox && (
+          {disabled && <SuspendedNotice payLevy={PayLevyHandler} />}
+          {true && (
             <>
-              <CommitmentBox
-                amount={amount}
-                setAmount={setAmount}
-                onCommit={handleCommit}
-                loading={loading}
-              />
-              <CommitmentNote profit={profit} totalReceive={totalReceive} />
-            </>
-          )}
-          {newCommitment && (
-            <NewCommitmentDetails
-              newCommitment={newCommitment}
-              isMerged={isMerged}
-              receiverId={receiverId}
-              userId={userId}
-              countdown={countdown}
-              handleCancelCommitment={() =>
-                handleCancelCommitment(newCommitment.orderId)
-              }
-              handleViewReceiverDetails={handleViewReceiverDetails}
-            />
-          )}
+              {showCommitmentBox && (
+                <>
+                  <CommitmentBox
+                    amount={amount}
+                    setAmount={setAmount}
+                    onCommit={handleCommit}
+                    loading={loading}
+                  />
+                  <CommitmentNote profit={profit} totalReceive={totalReceive} />
+                </>
+              )}
+              {newCommitment && (
+                <NewCommitmentDetails
+                  newCommitment={newCommitment}
+                  isMerged={isMerged}
+                  receiverId={receiverId}
+                  userId={userId}
+                  countdown={countdown}
+                  handleCancelCommitment={() =>
+                    handleCancelCommitment(newCommitment.orderId)
+                  }
+                  handleViewReceiverDetails={handleViewReceiverDetails}
+                />
+              )}
 
-          {/* Active commitment */}
+              {/* Active commitment */}
 
-          {/* {commitmentsArr.some((item) => item.status === "completed") && ( */}
-          {!withDrawCommitment && activeCommitment.length > 0 && (
-            <ActiveCommitment
-              loading={withdrawLoading}
-              onWithdraw={withDraw}
-              // amount={
-              //   commitmentsArr.find((item) => item.status === "completed")
-              //     ?.original_amount
-              // }
-              amount={activeCommitment[0].original_amount}
-              countdown={activeCommitment[1]?.eligible_as_receiver}
-              recommitProcess={toggleCommitmentBox}
-              eligible={activeCommitment[1]?.eligible_time}
-              // cmtData={commitmentsArr.find(
-              //   (item) => item.status === "completed"
-              // )}
-              cmtData={activeCommitment[0]}
-            />
-          )}
-
-          {withDrawCommitment && (
-            <ActiveCommitment
-              loading={withdrawLoading}
-              onWithdraw={withDraw}
-              amount={withDrawCommitment.original_amount}
-              // countdown={7 * 24 * 3600}
-              recommitProcess={toggleCommitmentBox}
-              // isEligible={true}
-              cmtData={withDrawCommitment}
-              eligible={activeCommitment[1]?.eligible_time}
-              countdown={activeCommitment[1]?.eligible_as_receiver}
-            />
-          )}
-
-          {/* this is for recommitment */}
-          {activeCommitment.length > 1 &&
-            activeCommitment
-              .slice(1)
-              .map((el) => (
-                <Recommitment
-                  key={el.id}
+              {/* {commitmentsArr.some((item) => item.status === "completed") && ( */}
+              {!withDrawCommitment && activeCommitment.length > 0 && (
+                <ActiveCommitment
                   loading={withdrawLoading}
                   onWithdraw={withDraw}
-                  amount={el.original_amount}
-                  countdown={7 * 24 * 3600}
+                  // amount={
+                  //   commitmentsArr.find((item) => item.status === "completed")
+                  //     ?.original_amount
+                  // }
+                  amount={activeCommitment[0].original_amount}
+                  countdown={activeCommitment[1]?.eligible_as_receiver}
                   recommitProcess={toggleCommitmentBox}
-                  cmtData={el}
+                  eligible={activeCommitment[1]?.eligible_time}
+                  // cmtData={commitmentsArr.find(
+                  //   (item) => item.status === "completed"
+                  // )}
+                  cmtData={activeCommitment[0]}
                 />
-              ))}
+              )}
 
-          {commitmentsArr &&
-            commitmentsArr.map((el) => {
-              const cmtdetail = {
-                amount: el.original_amount,
-                orderId: el.id,
-                id: userId,
-              };
-              const targetDate = new Date(el.expires_at);
-              const now = new Date();
-              const diffMs = targetDate - now;
-              let timeLeft;
-              if (diffMs > 0) {
-                const totalSeconds = Math.floor(diffMs / 1000);
-                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                timeLeft = `${hours}h ${minutes}m ${seconds}s`;
-              }
-
-              return (
-                <NewCommitmentDetails
-                  key={el.id}
-                  newCommitment={{
-                    ...cmtdetail,
-                    amount_remaining: el.amount_remaining,
-                  }}
-                  isMerged={isMerged}
-                  receiverId={receiverId}
-                  userId={userId}
-                  countdown={timeLeft}
-                  handleCancelCommitment={() => handleCancelCommitment(el.id)}
-                  handleViewReceiverDetails={handleViewReceiverDetails}
-                  handleConfirmPayment={handleConfirmPayment}
-                  status={el.status}
-                  confirmed={el.confirmed}
-                  matched={el.matched}
+              {withDrawCommitment && (
+                <ActiveCommitment
+                  loading={withdrawLoading}
+                  onWithdraw={withDraw}
+                  amount={withDrawCommitment.original_amount}
+                  // countdown={7 * 24 * 3600}
+                  recommitProcess={toggleCommitmentBox}
+                  // isEligible={true}
+                  cmtData={withDrawCommitment}
+                  eligible={activeCommitment[1]?.eligible_time}
+                  countdown={activeCommitment[1]?.eligible_as_receiver}
                 />
-              );
-            })}
+              )}
 
-          {!matchedData &&
-            commitmentsArr &&
-            commitmentsArr.length > 0 &&
-            (() => {
-              const el = commitmentsArr[0]; // get the first element
-              const cmtdetail = {
-                amount: el.original_amount,
-                orderId: el.id,
-                id: userId,
-              };
-              const targetDate = new Date(el.expires_at);
-              const now = new Date();
-              const diffMs = targetDate - now;
-              let timeLeft;
-              if (diffMs > 0) {
-                const totalSeconds = Math.floor(diffMs / 1000);
-                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-                timeLeft = `${hours}h ${minutes}m ${seconds}s`;
-              }
+              {/* this is for recommitment */}
+              {activeCommitment.length > 1 &&
+                activeCommitment
+                  .slice(1)
+                  .map((el) => (
+                    <Recommitment
+                      key={el.id}
+                      loading={withdrawLoading}
+                      onWithdraw={withDraw}
+                      amount={el.original_amount}
+                      countdown={7 * 24 * 3600}
+                      recommitProcess={toggleCommitmentBox}
+                      cmtData={el}
+                    />
+                  ))}
 
-              return (
-                <NewCommitmentDetails
-                  key={el.id}
-                  newCommitment={cmtdetail}
-                  isMerged={isMerged}
-                  receiverId={receiverId}
-                  userId={userId}
-                  countdown={timeLeft}
-                  handleCancelCommitment={() => handleCancelCommitment(el.id)}
-                  handleViewReceiverDetails={handleViewReceiverDetails}
-                  handleConfirmPayment={handleConfirmPayment}
-                  status={el.status}
-                  confirmed={el.confirmed}
-                />
-              );
-            })()}
-          {matchedData.map((el) => {
-            const cmtdetail = {
-              amount: el.matched_amount,
-              orderId: el.id,
-              id: userId,
-              expires_in: el.expires_in,
-            };
-
-            return (
-              <>
-                <MatchedCommitment
-                  key={el.id}
-                  newCommitment={cmtdetail}
-                  receiverId={el.receiver_id}
-                  handleViewReceiverDetails={() =>
-                    handleViewReceiverDetails(el)
+              {commitmentsArr &&
+                commitmentsArr.map((el) => {
+                  const cmtdetail = {
+                    amount: el.original_amount,
+                    orderId: el.id,
+                    id: userId,
+                  };
+                  const targetDate = new Date(el.expires_at);
+                  const now = new Date();
+                  const diffMs = targetDate - now;
+                  let timeLeft;
+                  if (diffMs > 0) {
+                    const totalSeconds = Math.floor(diffMs / 1000);
+                    const hours = Math.floor(
+                      (totalSeconds % (3600 * 24)) / 3600
+                    );
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+                    timeLeft = `${hours}h ${minutes}m ${seconds}s`;
                   }
-                  handleConfirmPayment={() => handleConfirmPayment(el)}
-                  confirmed={el.confirmed}
-                  status={el.status}
-                />
-              </>
-            );
-          })}
 
-          <ReceiverDetailsModal
-            showModal={showModal}
-            handleCloseModal={handleCloseModal}
-            newCommitment={matchedData}
-            receive_data={receive_data}
-          />
+                  return (
+                    <NewCommitmentDetails
+                      key={el.id}
+                      newCommitment={{
+                        ...cmtdetail,
+                        amount_remaining: el.amount_remaining,
+                      }}
+                      isMerged={isMerged}
+                      receiverId={receiverId}
+                      userId={userId}
+                      countdown={timeLeft}
+                      handleCancelCommitment={() =>
+                        handleCancelCommitment(el.id)
+                      }
+                      handleViewReceiverDetails={handleViewReceiverDetails}
+                      handleConfirmPayment={handleConfirmPayment}
+                      status={el.status}
+                      confirmed={el.confirmed}
+                      matched={el.matched}
+                    />
+                  );
+                })}
 
-          <UploadScreenshotModal
-            show={pay}
-            onClose={() => setPay(false)}
-            userId={userId}
-            upload={upload}
-            matchedData={currentMatched}
-            uploadLoading={uploadLoading}
-            onConfirm={() => setPay(false)}
-          />
+              {!matchedData &&
+                commitmentsArr &&
+                commitmentsArr.length > 0 &&
+                (() => {
+                  const el = commitmentsArr[0]; // get the first element
+                  const cmtdetail = {
+                    amount: el.original_amount,
+                    orderId: el.id,
+                    id: userId,
+                  };
+                  const targetDate = new Date(el.expires_at);
+                  const now = new Date();
+                  const diffMs = targetDate - now;
+                  let timeLeft;
+                  if (diffMs > 0) {
+                    const totalSeconds = Math.floor(diffMs / 1000);
+                    const hours = Math.floor(
+                      (totalSeconds % (3600 * 24)) / 3600
+                    );
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+                    timeLeft = `${hours}h ${minutes}m ${seconds}s`;
+                  }
 
-          <SenderModal
-            showModal={showMergedUser}
-            handleCloseModal={() => setShowMergedUser((prev) => false)}
-            receive_data={mergedUser}
-          />
+                  return (
+                    <NewCommitmentDetails
+                      key={el.id}
+                      newCommitment={cmtdetail}
+                      isMerged={isMerged}
+                      receiverId={receiverId}
+                      userId={userId}
+                      countdown={timeLeft}
+                      handleCancelCommitment={() =>
+                        handleCancelCommitment(el.id)
+                      }
+                      handleViewReceiverDetails={handleViewReceiverDetails}
+                      handleConfirmPayment={handleConfirmPayment}
+                      status={el.status}
+                      confirmed={el.confirmed}
+                    />
+                  );
+                })()}
+              {matchedData.map((el) => {
+                const cmtdetail = {
+                  amount: el.matched_amount,
+                  orderId: el.id,
+                  id: userId,
+                  expires_in: el.expires_in,
+                };
 
-          {/* {commitmentsArr[0]?.confirmed && (
+                return (
+                  <>
+                    <MatchedCommitment
+                      key={el.id}
+                      newCommitment={cmtdetail}
+                      receiverId={el.receiver_id}
+                      handleViewReceiverDetails={() =>
+                        handleViewReceiverDetails(el)
+                      }
+                      handleConfirmPayment={() => handleConfirmPayment(el)}
+                      confirmed={el.confirmed}
+                      status={el.status}
+                    />
+                  </>
+                );
+              })}
+
+              <ReceiverDetailsModal
+                showModal={showModal}
+                handleCloseModal={handleCloseModal}
+                newCommitment={matchedData}
+                receive_data={receive_data}
+              />
+
+              <UploadScreenshotModal
+                show={pay}
+                onClose={() => setPay(false)}
+                userId={userId}
+                upload={upload}
+                matchedData={currentMatched}
+                uploadLoading={uploadLoading}
+                onConfirm={() => setPay(false)}
+              />
+
+              <SenderModal
+                showModal={showMergedUser}
+                handleCloseModal={() => setShowMergedUser((prev) => false)}
+                receive_data={mergedUser}
+              />
+
+              {/* {commitmentsArr[0]?.confirmed && (
             <CommitmentSuccessfull
               countdown={commitmentsArr[0]?.eligible_as_receiver || ""}
               receiverId={receiverId}
@@ -1081,55 +1153,57 @@ export default function MainPage() {
               }}
             />
           )} */}
-          {/* You can add the second box here if needed */}
+              {/* You can add the second box here if needed */}
 
-          {openRcv && (
-            <ReceiverConfirmationModal
-              show={openRcv}
-              screenshotUrl={screenshotUrl}
-              matchedItem={rcv_detail}
-              onConfirm={() => confirmHandler(rcv_detail)}
-              onClose={() => setOpenRcv(false)}
-              loading={confirmReceiverLoading}
-            />
-          )}
-
-          {unMatchedReceiver &&
-            unMatchedReceiver.map((el) => (
-              <CommitmentSuccessfullCard
-                giver_id={null}
-                clicked={() => {}}
-                newCommitment={{
-                  amount: el.amount_remaining,
-                  orderId: el.id,
-                }}
-                countdown={el.expires_at}
-                receiver_data={rcv_detail}
-                matchedItem={{ expires_in: el.expires_at }}
-              />
-            ))}
-
-          {receiverArr.length > 0 &&
-            receiverArr.map((el, i) => {
-              return (
-                <CommitmentSuccessfullCard
-                  giver_id={el.giver_id}
-                  key={i}
-                  clicked={() => {
-                    setRcvDetail({ ...el, success: true });
-                    setOpenRcv(true);
-                  }}
-                  newCommitment={{
-                    amount: el.matched_amount,
-                    orderId: el.id,
-                  }}
-                  matchedItem={el}
-                  receiver_data={rcv_detail}
-                  fetchSenderDetail={() => fetchSenderDetail(el)}
-                  status={el.status}
+              {openRcv && (
+                <ReceiverConfirmationModal
+                  show={openRcv}
+                  screenshotUrl={screenshotUrl}
+                  matchedItem={rcv_detail}
+                  onConfirm={() => confirmHandler(rcv_detail)}
+                  onClose={() => setOpenRcv(false)}
+                  loading={confirmReceiverLoading}
                 />
-              );
-            })}
+              )}
+
+              {unMatchedReceiver &&
+                unMatchedReceiver.map((el) => (
+                  <CommitmentSuccessfullCard
+                    giver_id={null}
+                    clicked={() => {}}
+                    newCommitment={{
+                      amount: el.amount_remaining,
+                      orderId: el.id,
+                    }}
+                    countdown={el.expires_at}
+                    receiver_data={rcv_detail}
+                    matchedItem={{ expires_in: el.expires_at }}
+                  />
+                ))}
+
+              {receiverArr.length > 0 &&
+                receiverArr.map((el, i) => {
+                  return (
+                    <CommitmentSuccessfullCard
+                      giver_id={el.giver_id}
+                      key={i}
+                      clicked={() => {
+                        setRcvDetail({ ...el, success: true });
+                        setOpenRcv(true);
+                      }}
+                      newCommitment={{
+                        amount: el.matched_amount,
+                        orderId: el.id,
+                      }}
+                      matchedItem={el}
+                      receiver_data={rcv_detail}
+                      fetchSenderDetail={() => fetchSenderDetail(el)}
+                      status={el.status}
+                    />
+                  );
+                })}
+            </>
+          )}
         </div>
       </div>
 

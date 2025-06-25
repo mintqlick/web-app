@@ -315,12 +315,12 @@ export async function GET(request) {
   }
 
   // block user that did this
-  for (const users of dltedRes) {
-    await supabase
-      .from("users")
-      .update({ blocked: true })
-      .eq("id", users.user_id);
-  }
+  // for (const users of dltedRes) {
+  //   await supabase
+  //     .from("users")
+  //     .update({ blocked: true })
+  //     .eq("id", users.user_id);
+  // }
 
   // check if the person has been confirmed and then set the time to restart
 

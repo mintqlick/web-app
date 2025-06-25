@@ -6,6 +6,9 @@ import DashboardHeader from "@/components/DashboardHeader";
 import Sidebar from "@/components/SideBar";
 import { createClient } from "@/utils/supabase/client";
 import Linkify from "linkify-react";
+import CheckedStatus from "@/utils/background/check-blocked";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 
 const DashboardLayout = ({ children }) => {
   const supabase = createClient();
@@ -40,35 +43,40 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <Box style={{ position: "relative", width: "100vw" }}>
-      {/* Notification Banner */}
-      {notifications.length > 0 && (
-        <div className="fixed top-[10%] z-80 w-[90%] lg:w-full px-3 md:px-6 space-y-2">
-          {notifications.map((note) => (
-            <div
-              key={note.id}
-              className="relative bg-blue-100 border border-blue-300 text-blue-800 rounded-md p-4 shadow-md flex flex-col gap-1"
-            >
-              <button
-                onClick={() => dismissNotification(note.id)}
-                className="absolute top-2 right-3 text-blue-600 hover:text-red-600 text-xl font-bold"
+      <Provider store={store}>
+        <CheckedStatus />
+        {/* Notification Banner */}
+        {notifications.length > 0 && (
+          <div className="fixed top-[10%] z-80 w-[90%] lg:w-full px-3 md:px-6 space-y-2">
+            {notifications.map((note) => (
+              <div
+                key={note.id}
+                className="relative bg-blue-100 border border-blue-300 text-blue-800 rounded-md p-4 shadow-md flex flex-col gap-1"
               >
-                ×
-              </button>
-              <p className="font-semibold text-base sm:text-lg">{note.title}</p>
-              <Linkify options={linkifyOptions}>{note.message}</Linkify>
-            </div>
-          ))}
-        </div>
-      )}
+                <button
+                  onClick={() => dismissNotification(note.id)}
+                  className="absolute top-2 right-3 text-blue-600 hover:text-red-600 text-xl font-bold"
+                >
+                  ×
+                </button>
+                <p className="font-semibold text-base sm:text-lg">
+                  {note.title}
+                </p>
+                <Linkify options={linkifyOptions}>{note.message}</Linkify>
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Main Dashboard Content */}
-      <DashboardHeader />
-      <div className="flex">
-        <Sidebar />
-        <main className="main-content w-full mt-[90px] flex-1 mb-[5rem] lg:mb-0  lg:p-6 bg-white">
-          {children}
-        </main>
-      </div>
+        {/* Main Dashboard Content */}
+        <DashboardHeader />
+        <div className="flex">
+          <Sidebar />
+          <main className="main-content w-full mt-[90px] flex-1 mb-[5rem] lg:mb-0  lg:p-6 bg-white">
+            {children}
+          </main>
+        </div>
+      </Provider>
     </Box>
   );
 };
