@@ -136,8 +136,7 @@ export async function POST(req) {
           return;
         }
 
-        
-
+      
         // Step 2: Decide duration based on history
         const hasPreviousCompleted = previousGives.length > 1;
         const now = new Date();
