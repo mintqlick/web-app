@@ -124,25 +124,38 @@ export async function POST(req) {
           );
         }
       } else {
-        //update the giver status to completed and eligible_time to current time
+        const { data: previousGives, error: previousGivesError } =
+          await supabase
+            .from("merge_givers")
+            .select("id")
+            .eq("user_id", giver.user_id)
+            .eq("status", "completed");
+
+        if (previousGivesError) {
+          console.error("Error checking previous gives:", previousGivesError);
+          return;
+        }
+
+        // Step 2: Decide duration based on history
+        const hasPreviousCompleted = previousGives.length > 0;
+        const now = new Date();
+        const eligibleAsReceiver = new Date(
+          now.getTime() + (hasPreviousCompleted ? 7 : 3) * 24 * 60 * 60 * 1000
+        );
+
+        // Step 3: Update current giver entry
         const { error: updateGiverError } = await supabase
           .from("merge_givers")
           .update({
             status: "completed",
-            eligible_time: new Date(Date.now()),
-            eligible_as_receiver: new Date(
-              Date.now() + 3 * 24 * 60 * 60 * 1000
-            ),
+            eligible_time: now,
+            eligible_as_receiver: eligibleAsReceiver,
             received: false,
           })
           .eq("id", giver_id);
 
         if (updateGiverError) {
           console.error("Error updating giver status:", updateGiverError);
-          return NextResponse.json(
-            { error: "Failed to update giver status" },
-            { status: 500 }
-          );
         }
       }
     }
