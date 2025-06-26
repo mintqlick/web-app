@@ -36,8 +36,7 @@ const FrequentlyAsk = () => {
     {
       value: "item-4",
       question: "Why is there a membership fee?",
-      answer: `The one-time membership fee is used to maintain platform sustainability, cover operational costs, and ensure smooth functioning of the system for all users. It helps us keep NodalCircle running securely, fairly, and without relying on ads, external funding, or user data.
-            This fee is only paid once during your first cycle and is automatically deducted from your first support payout.`,
+      answer: `The $5 membership fee, paid after every 4th payout, is essential to keeping NodalCircle stable and efficient. It helps cover key operational costs such as platform maintenance, system upgrades, fraud prevention, and future improvements. This fee ensures that the platform runs smoothly, support cycles stay consistent, and every member benefits from a reliable and self-sustaining system without the need for constant admin intervention.`,
     },
     {
       value: "item-5",

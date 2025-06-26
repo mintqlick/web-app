@@ -16,8 +16,9 @@ const WhyChooseUs = () => {
             Membership Fee For Sustainability
           </h3>
           <p className="text-base md:text-lg text-gray-600 max-w-xl">
-            A $2 activation fee ensures long-term platform stability,
-            keeping the system running efficiently for all users.
+            After every 4th payout, a $5 monthly membership fee helps keep
+            NodalCircle efficient and sustainable funding fast payouts, platform
+            upgrades, and a reliable earning system for all.
           </p>
           <Image
             src="/images/membership.jpg"
@@ -56,7 +57,8 @@ const WhyChooseUs = () => {
               Guaranteed Payout
             </h3>
             <p className="mt-4 text-base md:text-lg text-gray-600">
-            Get responsive assistance at any time. Our team ensures your contribution journey remains smooth and stress-free.
+              Get responsive assistance at any time. Our team ensures your
+              contribution journey remains smooth and stress-free.
             </p>
           </div>
 
