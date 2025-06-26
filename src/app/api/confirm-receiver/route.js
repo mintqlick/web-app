@@ -136,14 +136,14 @@ export async function POST(req) {
           return;
         }
 
-      
         // Step 2: Decide duration based on history
         const hasPreviousCompleted = previousGives.length > 1;
         const now = new Date();
         const eligibleAsReceiver = new Date(
-          now.getTime() +
-            (hasPreviousCompleted ? 7 : 3) * 24 * 60 * 60 * 1000
+          now.getTime() + (hasPreviousCompleted ? 7 : 3) * 24 * 60 * 60 * 1000
         );
+
+        console.log(eligibleAsReceiver);
 
         // Step 3: Update current giver entry
         const { error: updateGiverError } = await supabase
@@ -191,12 +191,11 @@ export async function POST(req) {
       { status: 500 }
     );
   }
+  console.log(receiver.amount_remaining, receiver.matched);
 
-  if (
-    receiver.amount_remaining === 0 &&
-    receiver.matched &&
-    remaining_receiver.length === 0
-  ) {
+  console.log(receiver.amount_remaining === 0 && receiver.matched);
+  if (receiver.amount_remaining === 0 && receiver.matched) {
+    console.log("here Demola");
     // update the receiver status to completed and eligible_time to current time
     const { error: updateReceiverError } = await supabase
       .from("merge_receivers")
